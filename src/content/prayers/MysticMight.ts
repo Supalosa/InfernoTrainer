@@ -23,10 +23,6 @@ export class MysticMight extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "offensiveMagic";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

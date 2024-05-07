@@ -23,10 +23,6 @@ export class SuperhumanStrength extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "offensiveStrength";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

@@ -23,10 +23,6 @@ export class Preserve extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "preserve";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

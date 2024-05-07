@@ -23,10 +23,6 @@ export class RockSkin extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "defensive";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

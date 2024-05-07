@@ -1,10 +1,10 @@
 import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import InventImage from "../../assets/images/equipment/Masori_mask_(f).png";
-import { Chest } from "../../sdk/gear/Chest";
 import { ItemName } from "../../sdk/ItemName";
 import { Assets } from "../../sdk/utils/Assets";
+import { Helmet } from "../../sdk/gear/Helmet";
 
-export class MasoriMaskF extends Chest {
+export class MasoriMaskF extends Helmet {
   inventorySprite: HTMLImageElement = ImageLoader.createImage(this.inventoryImage);
 
   get inventoryImage() {

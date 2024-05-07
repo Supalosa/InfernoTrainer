@@ -23,10 +23,6 @@ export class SharpEye extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "offensiveRange";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

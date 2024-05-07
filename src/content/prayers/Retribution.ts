@@ -23,10 +23,6 @@ export class Retribution extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

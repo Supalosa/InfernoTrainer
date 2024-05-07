@@ -28,9 +28,13 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
 
 ### Player models
 
-    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,25865,23975,23979,23971,7462,22109,21021,21024 maleModel0,maleModel1 anim 808,819,824,820,822,821,426,5061,7618 name player split
+    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,28254,28256,28258,20366,22981,13239,25739,21295 maleModel0 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390 name player split
+    
+    or
 
-    where:
+    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,25865,23975,23979,23971,7462,22109,21021,21024,23995,22322 maleModel0,maleModel1 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390 name player split
+
+    which corresponds to
 
         - 26684 # tzkal slayer helmet
         - 27235 # masori mask (f)
@@ -43,6 +47,14 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
         - 20997 # twisted bow
         - 12926 # toxic blowpipe
         - 11959 # black chinchompa
+        - 28254 # sanguine torva full helm
+        - 28256 # sanguine torva platebody
+        - 28258 # sanguine torva platelegs
+        - 20366 # torture or
+        - 22981 # ferocious gloves
+        - 13239 # primordial boots
+        - 25739 # sanguine scythe of vitur
+        - 21295 # infernal cape
         - 25865 # bow of faerdhinen
         - 23975 # crystal body
         - 23979 # crystal legs
@@ -51,6 +63,8 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
         - 22109 # ava's assembler
         - 21021 # ancestral top (buggy)
         - 21024 # ancestral bottom (buggy)
+        - 23995 # blade of saeldor (charged)
+        - 22322 # avernic defender
 
 
       - 808 # idle
@@ -62,6 +76,9 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
       - 426 # fire bow
       - 5061 # fire blowpipe
       - 7618 # throw chinchompa
+      - 8057 # scythe idle
+      - 8056 # scythe swing
+      - 390 # sword slash
 
 ### NPC models
 
@@ -92,6 +109,9 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
     # Shield: Idle, Die
     npm run cmd modelBuilder npc 7707 anim 7567,7569 name shield
 
+    # Sol Heredit: Idle, Walk, SpearSlow, Grapple, Shield, TripleAttackLong,TripleAttackShort,Death
+    npm run cmd modelBuilder exclude 52585 npc 12821 anim 10874,10878,10883,10884,10885,10886,10887,10888 name sol2
+
 ### Spotanim models
 
     npm run cmd modelBuilder spotanim 448 name jad_mage_front
@@ -118,6 +138,12 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
     done
     npm run cmd modelBuilder spotanim 660 name tekton_meteor
     npm run cmd modelBuilder spotanim 659 name tekton_meteor_splat
+
+
+    2689-2692 / laser thin
+    2693-2696 - laser wide
+    2697 - spark thing?
+    asset 2698 - laser pool thing
 
 sounds
 range and mage ATTACK  sound 598

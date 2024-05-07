@@ -23,10 +23,6 @@ export class IncredibleReflexes extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "offensiveAttack";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

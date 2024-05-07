@@ -27,9 +27,6 @@ export class Redemption extends BasePrayer {
   overheadImageReference() {
     return OverheadImg;
   }
-  feature() {
-    return "";
-  }
 
   playOnSound() {
     if (Settings.playsAudio) {

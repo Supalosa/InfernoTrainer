@@ -23,10 +23,6 @@ export class RapidHeal extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

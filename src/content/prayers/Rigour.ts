@@ -22,11 +22,7 @@ export class Rigour extends BasePrayer {
   isOverhead() {
     return false;
   }
-
-  feature() {
-    return "offensiveRange";
-  }
-
+  
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

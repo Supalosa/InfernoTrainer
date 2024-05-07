@@ -23,10 +23,6 @@ export class Smite extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "smite";
-  }
-
   playOnSound() {
     if (Settings.playsAudio) {
       // new Audio(OnSound).play();

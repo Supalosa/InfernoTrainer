@@ -19,10 +19,6 @@ export class Augury extends BasePrayer {
     return false;
   }
 
-  feature() {
-    return "offensiveMagic";
-  }
-
   drainRate(): number {
     return 24;
   }
