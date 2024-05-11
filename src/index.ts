@@ -1,33 +1,18 @@
 "use strict";
 
-import { World as World } from "./sdk/World";
-import { Settings } from "./sdk/Settings";
-import { ImageLoader } from "./sdk/utils/ImageLoader";
-import NewRelicBrowser from "new-relic-browser";
-import { Viewport } from "./sdk/Viewport";
-import { TileMarker } from "./content/TileMarker";
-import { Location } from "./sdk/Location";
-import { MapController } from "./sdk/MapController";
-import { Assets } from "./sdk/utils/Assets";
-import { Chrome } from "./sdk/Chrome";
-import { Region } from "./sdk/Region";
-import { InfernoRegion } from "./content/inferno/js/InfernoRegion";
+import { Settings, Region, World, Viewport, MapController, TileMarker, Assets, Location, Chrome, ImageLoader, Trainer } from "@supalosa/oldschool-trainer-sdk";
 
-import SpecialAttackBarBackground from "./assets/images/attackstyles/interface/special_attack_background.png";
+import { VerzikRegion as VerzikRegion } from "./content/inferno/js/VerzikRegion";
 
-declare global {
-  interface Window {
-    newrelic: typeof NewRelicBrowser;
-  }
-}
+const SpecialAttackBarBackground = Assets.getAssetUrl("/assets/images/attackstyles/interface/special_attack_background.png");
 
 Settings.readFromStorage();
 
 // Choose the region based on the URL.
 const AVAILABLE_REGIONS = {
-  'inferno.html': new InfernoRegion(),
+  'verzik.html': new VerzikRegion(),
 };
-const DEFAULT_REGION_PATH = 'inferno.html';
+const DEFAULT_REGION_PATH = 'verzik.html';
 
 const regionName = window.location.pathname.split('/').pop();
 const selectedRegion: Region = (regionName in AVAILABLE_REGIONS) ? AVAILABLE_REGIONS[regionName] : AVAILABLE_REGIONS[DEFAULT_REGION_PATH];
@@ -40,14 +25,6 @@ world.addRegion(selectedRegion);
 
 // Initialise UI
 document.getElementById('sidebar_content').innerHTML = selectedRegion.getSidebarContent();
-
-const use3dViewCheckbox = document.getElementById("use3dView") as HTMLInputElement;
-use3dViewCheckbox.checked = Settings.use3dView;
-use3dViewCheckbox.addEventListener("change", () => {
-  Settings.use3dView = use3dViewCheckbox.checked;
-  Settings.persistToStorage();
-  window.location.reload();
-});
 
 const { player } = selectedRegion.initialiseRegion();
 
@@ -74,7 +51,7 @@ player.destinationLocation = player.location;
 // UI controls
 
 ImageLoader.onAllImagesLoaded(() =>
-  MapController.controller.updateOrbsMask(Viewport.viewport.player.currentStats, Viewport.viewport.player.stats),
+  MapController.controller.updateOrbsMask(Trainer.player.currentStats, Trainer.player.stats),
 );
 
 ImageLoader.onAllImagesLoaded(() => {
@@ -149,8 +126,6 @@ function checkStart() {
 }
 
 /// /////////////////////////////////////////////////////////
-
-window.newrelic.addRelease("inferno-trainer", process.env.COMMIT_REF);
 
 // UI disclaimer
 const topHeaderContainer = document.getElementById("disclaimer_panel");

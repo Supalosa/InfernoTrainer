@@ -65,32 +65,8 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
 
 ### NPC models
 
-    # Zuk: Idle, Fire, Flinch, Die
-    npm run cmd modelBuilder npc 7706 anim 7564,7566,7565,7562 name zuk
-
-    # Ranger: Idle, Walk, Range, Melee, Die, Flinch
-    npm run cmd modelBuilder npc 7698 anim 7602,7603,7605,7604,7606,7607 name ranger
-
-    # Mager: Idle, Walk, Mage, Revive Melee, Die
-    npm run cmd modelBuilder npc 7699 anim 7609,7608,7610,7611,7612,7613 name mager
-
-    # Nibbler: Idle, Walk, Attack, Flinch, Die
-    npm run cmd modelBuilder npc 7691 anim 7573,7572,7574,7575,7676 name nibbler
-
-    # Bat: Idle/Walk, Attack, Flinch, Die
-    npm run cmd modelBuilder npc 7692 anim 7577,7578,7579,7580 name bat
-
-    # Blob: Idle/Walk, Attack, Flinch, Die
-    npm run cmd modelBuilder npc 7693 anim 7586,7586,7581,7582,7583,7585,7584 name blob
-
-    # Meleer: Idle, Walk, Attack, Down, Up, Flinch, Die
-    npm run cmd modelBuilder npc 7697 anim 7595,7596,7597,7600,7601,7598,7599 name meleer
-
-    # Jad: Idle, Walk, Mage, Range, Melee, Flinch, Die
-    npm run cmd modelBuilder npc 7700 anim 7589,7588,7592,7593,7590,7591,7594 name jad
-
-    # Shield: Idle, Die
-    npm run cmd modelBuilder npc 7707 anim 7567,7569 name shield
+    # Verzik: Idle, Walk, Melee, Range
+    npm run cmd modelBuilder npc 10852 anim 8120,8121,8123,8125 name verzik
 
 ### Spotanim models
 
