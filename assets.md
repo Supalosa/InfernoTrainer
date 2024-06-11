@@ -14,8 +14,8 @@ Install the [gltf-transform CLI](https://gltf-transform.dev/) using:
 
 Then in the directory that contains GLTF files:
 
-for file in \*.gltf; do
-gltf-transform optimize --compress meshopt $file $(echo $file | sed 's/\.gltf$/\.glb/')
+for file in *.gltf; do
+    gltf-transform optimize --compress meshopt $file $(echo $file | sed 's/\.gltf$/\.glb/')
 done
 
 ## Scene models
@@ -77,9 +77,6 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
     # Nibbler: Idle, Walk, Attack, Flinch, Die
     npm run cmd modelBuilder npc 7691 anim 7573,7572,7574,7575,7676 name nibbler
 
-    # Nibbler: Idle, Walk, Attack, Flinch, Die
-    npm run cmd modelBuilder npc 7691 anim 7573,7572,7574,7575,7676 name nibbler
-
     # Bat: Idle/Walk, Attack, Flinch, Die
     npm run cmd modelBuilder npc 7692 anim 7577,7578,7579,7580 name bat
 
@@ -94,3 +91,36 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
 
     # Shield: Idle, Die
     npm run cmd modelBuilder npc 7707 anim 7567,7569 name shield
+
+### Spotanim models
+
+    npm run cmd modelBuilder spotanim 448 name jad_mage_front
+    npm run cmd modelBuilder spotanim 449 name jad_mage_middle
+    npm run cmd modelBuilder spotanim 450 name jad_mage_rear
+
+    npm run cmd modelBuilder spotanim 451 name jad_range
+
+    npm run cmd modelBuilder spotanim 1120 name dragon_arrow
+    npm run cmd modelBuilder spotanim 1122 name dragon_dart
+    npm run cmd modelBuilder spotanim 1272 name black_chinchompa_projectile
+
+    npm run cmd modelBuilder spotanim 1382 name bat_projectile
+    npm run cmd modelBuilder spotanim 1378 name blob_range_projectile
+    npm run cmd modelBuilder spotanim 1380 name blob_mage_projectile
+
+    npm run cmd modelBuilder spotanim 1376 name mage_projectile
+    npm run cmd modelBuilder spotanim 1377 name range_projectile
+    npm run cmd modelBuilder spotanim 1375 name zuk_projectile
+
+    # these look terrible with normal optimisation so we do this
+    for file in tekton_meteor*.gltf; do
+        gltf-transform optimize --simplify false --compress meshopt $file $(echo $file | sed 's/\.gltf$/\.glb/')
+    done
+    npm run cmd modelBuilder spotanim 660 name tekton_meteor
+    npm run cmd modelBuilder spotanim 659 name tekton_meteor_splat
+
+sounds
+range and mage ATTACK  sound 598
+death 598
+
+zanik rez 1095 sound
