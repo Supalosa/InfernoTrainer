@@ -301,12 +301,6 @@ export class SolHeredit extends Mob {
 
     this.attackFeedback = AttackIndicators.NONE;
 
-    if (ColosseumSettings.echoLasers) {
-      for (let i = 0; i < 4; ++i) {
-        this.createLaserOrb();
-      }
-    }
-
     if (
       ColosseumSettings.usePhaseTransitions &&
       this.attackDelay <= 0 &&
