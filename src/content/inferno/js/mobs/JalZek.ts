@@ -1,30 +1,23 @@
 "use strict";
 
-import { MagicWeapon } from "../../../../sdk/weapons/MagicWeapon";
-import { MeleeWeapon } from "../../../../sdk/weapons/MeleeWeapon";
-import { Mob, AttackIndicators } from "../../../../sdk/Mob";
-import MagerImage from "../../assets/images/mager.png";
-import MagerSound from "../../assets/sounds/mager.ogg";
-import { InfernoMobDeathStore } from "../InfernoMobDeathStore";
-import { UnitBonuses } from "../../../../sdk/Unit";
-import { Collision } from "../../../../sdk/Collision";
-import { EntityName } from "../../../../sdk/EntityName";
-import { Projectile } from "../../../../sdk/weapons/Projectile";
-import { InfernoRegion } from "../InfernoRegion";
-import { Random } from "../../../../sdk/Random";
-import { Sound } from "../../../../sdk/utils/SoundCache";
-import HitSound from "../../../../assets/sounds/dragon_hit_410.ogg";
+import { Assets, Mob, Projectile, MeleeWeapon, MagicWeapon, Sound, UnitBonuses, Collision, AttackIndicators, Random, Viewport, GLTFModel, EntityNames, Trainer } from "@supalosa/oldschool-trainer-sdk";
 
-import { GLTFModel } from "../../../../sdk/rendering/GLTFModel";
-import { Assets } from "../../../../sdk/utils/Assets";
+import { InfernoMobDeathStore } from "../InfernoMobDeathStore";
+import { InfernoRegion } from "../InfernoRegion";
+
+import MagerImage from "../../assets/images/mager.png";
+import MagerSound from "../../assets/sounds/mage_ranger_598.ogg";
+
+const HitSound = Assets.getAssetUrl("assets/sounds/dragon_hit_410.ogg");
 
 export const MagerModel = Assets.getAssetUrl("models/7699_33000.glb");
+export const MageProjectileModel = Assets.getAssetUrl("models/mage_projectile.glb");
 
 export class JalZek extends Mob {
   shouldRespawnMobs: boolean;
 
-  mobName(): EntityName {
-    return EntityName.JAL_ZEK;
+  mobName() {
+    return EntityNames.JAL_ZEK;
   }
 
   shouldChangeAggro(projectile: Projectile) {
@@ -48,7 +41,13 @@ export class JalZek extends Mob {
 
     this.weapons = {
       stab: new MeleeWeapon(),
-      magic: new MagicWeapon(),
+      magic: new MagicWeapon({
+        model: MageProjectileModel,
+        modelScale: 1 / 128,
+        visualDelayTicks: 2,
+        visualHitEarlyTicks: -1, // hits after landing
+        sound: new Sound(MagerSound, 0.1),
+      }),
     };
 
     // non boosted numbers
@@ -106,10 +105,6 @@ export class JalZek extends Mob {
     return MagerImage;
   }
 
-  get sound() {
-    return new Sound(MagerSound);
-  }
-
   hitSound(damaged) {
     return new Sound(HitSound, 0.1);
   }
@@ -156,7 +151,7 @@ export class JalZek extends Mob {
     this.hadLOS = this.hasLOS;
     this.setHasLOS();
 
-    if (this.canAttack() === false) {
+    if (!this.aggro || this.canAttack() === false) {
       return;
     }
 
@@ -181,10 +176,13 @@ export class JalZek extends Mob {
           mobToResurrect.attackDelay = mobToResurrect.attackSpeed;
 
           mobToResurrect.setLocation(this.respawnLocation(mobToResurrect));
+          mobToResurrect.playAnimation(mobToResurrect.idlePoseId);
+          mobToResurrect.cancelDeath();
+          mobToResurrect.aggro = Trainer.player;
 
           mobToResurrect.perceivedLocation = mobToResurrect.location;
           this.region.addMob(mobToResurrect);
-          // (15, 10) to  (21 , 22)
+          // (15, 10) to  (21 , 22
           this.attackDelay = 8;
           this.playAnimation(3);
         }
@@ -195,10 +193,14 @@ export class JalZek extends Mob {
   }
 
   create3dModel() {
-    return GLTFModel.forRenderable(this, MagerModel, 0.0075);
+    return GLTFModel.forRenderable(this, MagerModel);
   }
 
   override get attackAnimationId() {
     return 2;
+  }
+
+  override get deathAnimationId() {
+    return 5;
   }
 }
