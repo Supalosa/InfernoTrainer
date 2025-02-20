@@ -1,6 +1,6 @@
 {
-  "name": "OldSchoolSDK",
-  "version": "1.0.0",
+  "name": "@supalosa/oldschool-trainer-sdk",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,7 @@
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
+    "html-loader": "^4.2.0",
     "jest": "^27.5.1",
     "lodash": "^4.17.21",
     "prettier": "^3.2.5",
@@ -43,12 +44,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "@types/new-relic-browser": "^0.1118.2",
-    "@types/offscreencanvas": "^2019.6.4",
-    "chebyshev": "^0.2.1",
-    "color-scales": "^3.0.2",
-    "madge": "^7.0.0",
-    "source-map-loader": "^3.0.0",
+    "@supalosa/oldschool-trainer-sdk": "0.1.0",
     "three": "^0.163.0"
   }
 }
