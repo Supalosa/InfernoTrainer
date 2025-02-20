@@ -135,6 +135,13 @@ export class InventoryControls extends BaseControls {
     }
     
     if (!this.canDrag()) {
+      const clickedItem = this.clickedDownItem;
+      if (!(clickedItem as any).isPlaceholder && clickedItem && !this.draggedItem && clickedItem.hasInventoryLeftClick) {
+        InputController.controller.queueAction(() => clickedItem.inventoryLeftClick(Trainer.player));
+        MapController.controller.updateOrbsMask(null, null);
+      } else {
+        clickedItem.selected = true;
+      }
       this.clickedDownItem = null;
       this.cursorLocation = null;
       return;
