@@ -1,0 +1,37 @@
+/* General Styles */
+body {
+    font-family: 'OSRS', sans-serif;
+    background-color: #111;
+    color: #ffff00;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 48px;
+    text-align: center;
+    color: crimson;
+}
+
+.menu-buttons button {
+    display: block;
+    width: 250px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: darkred;
+    color: white;
+    border: 2px solid #600;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.menu-buttons button:hover {
+    background-color: crimson;
+}
+
+/* Simulator Styles */
+canvas {
+    background-color: #000;
+    display: block;
+    margin: auto;
+}

@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/webappicon.png">
-    <meta name="application-name" content="Inferno Trainer">
+    <meta name="application-name" content="Verzik Simulator 2025">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <script src="//wurfl.io/wurfl.js" crossorigin></script>
-    <title>Verzik P3 Tanking Trainer</title>
+    <title>Verzik Simulator 2025</title>
     <style>
       @font-face {
         font-family: 'OSRS';
@@ -37,9 +37,11 @@
       #world{
         position: fixed;
       }
+
       .hidden {
         display: none !important; 
       }
+
       body {
         font-family: 'OSRS';
         background: black;
@@ -79,7 +81,6 @@
       input[type="checkbox"] {
         width: 30px;
       }
-
 
       .stats-font-11 {
         font-family: 'Stats 11'; 
@@ -124,10 +125,49 @@
         image-rendering: pixelated
       }
 
+      /* Start Screen Styles */
+      .start-screen {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #111;
+      }
+
+      .start-screen h1 {
+        font-size: 48px;
+        margin-bottom: 50px;
+        color: crimson;
+      }
+
+      .start-screen button {
+        margin: 20px;
+        padding: 10px;
+        background-color: #FF0000;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 5px;
+        border: none;
+        transition: background-color 0.3s;
+      }
+
+      .start-screen button:hover {
+        background-color: crimson;
+      }
+
     </style>
   </head>
   <body>
-    <canvas id="world" onselectstart="return false" oncontextmenu="return false"></canvas>
+    <!-- Start Screen -->
+    <div class="start-screen">
+      <h1>Verzik Simulator 2025</h1>
+      <button onclick="startSimulation()">Start Simulation</button>
+    </div>
+
+    <!-- Simulation Canvas -->
+    <canvas id="world" style="display:none;"></canvas>
     <div id="disclaimer_panel">All assets are property of Jagex.</div>
     <div id="right_panel">
       <div id="sidebar_content"><!-- replaced by the Region -->Loading content...</div>
@@ -139,15 +179,11 @@
         <input type="color" id="tileMarkerColor" name="tileMarkerColor" value="#FF0000" />
         <label for="tileMarkerColor">Tile Markers</label>
       </div>
-      <div style="
-        width: 100%;
-        text-align: center;
-        padding-top: 10px;
-        padding-bottom: 10px;
-      ">
+      <div style="width: 100%; text-align: center; padding-top: 10px; padding-bottom: 10px;">
         <div id="gpu_warning" />
       </div>
     </div>
+
     <!-- OffscreenCanvas polyfill -->
     <script>
       if (!window.OffscreenCanvas) {
@@ -166,9 +202,31 @@
             return this.canvas;
           }
         };
-      }      
+      }
+      
+      // Function to Start Simulation
+      function startSimulation() {
+        console.log('Starting Simulation...');
+
+        // Hide the start screen
+        document.querySelector('.start-screen').style.display = 'none';
+
+        // Show the simulation canvas
+        const canvas = document.getElementById('world');
+        canvas.style.display = 'block';
+
+        // Initialize the simulator (you need to call your actual simulation logic here)
+        initializeSimulator();  // Example: Make sure you have a function to initialize the sim
+      }
+
+      // Example Initialization of the Simulator (you should replace this with your actual logic)
+      function initializeSimulator() {
+        console.log("Simulator initialized");
+        // Add your logic here to start the simulation
+      }
     </script>
-    
+
+    <!-- Include your simulation JS file (ensure this is the correct path) -->
     <script src="./main.js"></script>
   </body>
 </html>
