@@ -4,6 +4,7 @@ import { Settings, Region, World, Viewport, MapController, TileMarker, Assets, L
 
 // New Relic is loaded via inline script in HTML - just declare the global interface
 import { InfernoRegion } from "./content/inferno/js/InfernoRegion";
+import { InfernoSettings } from "./content/inferno/js/InfernoSettings";
 
 const SpecialAttackBarBackground = Assets.getAssetUrl("/assets/images/attackstyles/interface/special_attack_background.png");
 
@@ -17,6 +18,7 @@ declare global {
 }
 
 Settings.readFromStorage();
+InfernoSettings.readFromStorage();
 
 // Choose the region based on the URL.
 const AVAILABLE_REGIONS = {
