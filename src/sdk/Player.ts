@@ -1,38 +1,37 @@
 "use strict";
-import _ from "lodash";
 
-import { Pathing } from "./Pathing";
-import { Settings } from "./Settings";
-import { LineOfSight } from "./LineOfSight";
-import { minBy, range, filter, find, map, min, uniq, sumBy, flatMap } from "lodash";
-import { Unit, UnitTypes, UnitBonuses, UnitOptions } from "./Unit";
-import { XpDropController } from "./XpDropController";
-import { AttackBonuses, Weapon } from "./gear/Weapon";
-import { BasePrayer } from "./BasePrayer";
-import { XpDrop, XpDropAggregator } from "./XpDrop";
-import { Location } from "./Location";
-import { Mob } from "./Mob";
-import { Equipment } from "./Equipment";
-import { SetEffect } from "./SetEffect";
 import chebyshev from "chebyshev";
-import { ItemName } from "./ItemName";
-import { Item } from "./Item";
+import { filter, find, minBy, range, sumBy, uniq } from "lodash";
+import { BasePrayer } from "./BasePrayer";
 import { Collision } from "./Collision";
 import { Eating } from "./Eating";
-import { PlayerStats } from "./PlayerStats";
-import { PlayerRegenTimer } from "./PlayerRegenTimers";
-import { PrayerController } from "./PrayerController";
+import { Equipment } from "./Equipment";
 import { AmmoType } from "./gear/Ammo";
+import { AttackBonuses, Weapon } from "./gear/Weapon";
+import { Item } from "./Item";
+import { ItemName } from "./ItemName";
+import { LineOfSight } from "./LineOfSight";
+import { Location } from "./Location";
+import { Mob } from "./Mob";
+import { Pathing } from "./Pathing";
+import { PlayerRegenTimer } from "./PlayerRegenTimers";
+import { PlayerStats } from "./PlayerStats";
+import { PrayerController } from "./PrayerController";
 import { Region } from "./Region";
+import { SetEffect } from "./SetEffect";
+import { Settings } from "./Settings";
+import { Unit, UnitBonuses, UnitOptions, UnitTypes } from "./Unit";
 import { Sound } from "./utils/SoundCache";
+import { XpDrop, XpDropAggregator } from "./XpDrop";
+import { XpDropController } from "./XpDropController";
 
 import LeatherHit from "../assets/sounds/hit.ogg";
 import HumanHit from "../assets/sounds/human_hit_513.ogg";
-import { Model } from "./rendering/Model";
 import { TileMarker } from "../content/TileMarker";
+import { Model } from "./rendering/Model";
 
-import { GLTFModel } from "./rendering/GLTFModel";
 import { PlayerAnimationIndices } from "./rendering/GLTFAnimationConstants";
+import { GLTFModel } from "./rendering/GLTFModel";
 import { Trainer } from "./Trainer";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -72,7 +71,7 @@ export class Player extends Unit {
   effects = new PlayerEffects();
   regenTimer: PlayerRegenTimer = new PlayerRegenTimer(this);
 
-  autocastDelay = 1;
+  autocastDelay = 0;
   manualCastHasTarget = false;
 
   eats: Eating = new Eating();
@@ -413,10 +412,6 @@ export class Player extends Unit {
 
   setAggro(mob: Unit) {
     super.setAggro(mob);
-    if (mob !== this.aggro) {
-      // do spam clicks constantly reset autocast delay? idk
-      this.autocastDelay = 1; // not sure if this is actually correct behavior but whatever
-    }
 
     if (this.manualSpellCastSelection && mob != null) {
       this.manualCastHasTarget = true;
@@ -593,26 +588,53 @@ export class Player extends Unit {
 
   moveTowardsDestination() {
     this.nextAngle = this.getTargetAngle();
-    // Calculate run energy
-    const dist = this.pathTargetLocation
-      ? chebyshev([this.location.x, this.location.y], [this.pathTargetLocation.x, this.pathTargetLocation.y])
-      : 0;
-    if (this.running && dist > 1) {
-      const runReduction = 67 + Math.floor(67 + Math.min(Math.max(0, this.weight), 64) / 64);
-      if (this.effects.stamina) {
-        this.currentStats.run -= Math.floor(0.3 * runReduction);
-      } else if (this.equipment.ring && this.equipment.ring.itemName === ItemName.RING_OF_ENDURANCE) {
-        this.currentStats.run -= Math.floor(0.85 * runReduction);
-      } else {
-        this.currentStats.run -= runReduction;
+    
+    // Check if player will move this tick and at what speed
+    const willMoveThisTick = this.destinationLocation && 
+      (this.location.x !== this.destinationLocation.x || this.location.y !== this.destinationLocation.y);
+    
+    // Pre-calculate the movement to determine actual speed used
+    let actualMovementSpeed = 1; // default to walk
+    if (willMoveThisTick) {
+      const speed = this.running ? 2 : 1;
+      const { path } = Pathing.path(this.region, this.location, this.destinationLocation, speed, this.aggro);
+      
+      // Actual movement speed is how many tiles we'll move this tick
+      if (path.length >= 2) {
+        actualMovementSpeed = 2; // Actually running (moving 2 tiles)
+      } else if (path.length === 1) {
+        actualMovementSpeed = 1; // Actually walking (moving 1 tile)  
       }
-    } else {
-      this.currentStats.run += Math.floor(this.currentStats.agility / 6) + 8;
     }
+    
+    // Energy only drains when ACTUALLY running (moving 2 tiles this tick)
+    if (this.running && willMoveThisTick && actualMovementSpeed === 2) {
+      // New energy drain formula: ⌊60 + 67 * clamp[0,64](weight) / 64⌋ * (1 - agility / 300)
+      const clampedWeight = Math.min(Math.max(0, this.weight), 64);
+      const baseReduction = Math.floor(60 + (67 * clampedWeight) / 64);
+      const agilityMultiplier = 1 - this.currentStats.agility / 300;
+      const runReduction = Math.floor(baseReduction * agilityMultiplier);
+
+      let actualReduction = runReduction;
+      if (this.effects.stamina) {
+        actualReduction = Math.floor(0.3 * runReduction);
+      } else if (this.equipment.ring && this.equipment.ring.itemName === ItemName.RING_OF_ENDURANCE) {
+        actualReduction = Math.floor(0.85 * runReduction);
+      }
+
+      this.currentStats.run -= actualReduction;
+    } else {
+      // New energy recovery formula: ⌊agility / 10⌋ + 15
+      const recovery = Math.floor(this.currentStats.agility / 10) + 15;
+      this.currentStats.run += recovery;
+    }
+    
     this.currentStats.run = Math.min(Math.max(this.currentStats.run, 0), 10000);
+    
     if (this.currentStats.run === 0) {
       this.running = false;
     }
+    
     // Tick down stamina
     this.effects.stamina--;
     this.effects.stamina = Math.min(Math.max(this.effects.stamina, 0), 200);

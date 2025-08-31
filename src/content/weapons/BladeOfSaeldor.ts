@@ -1,10 +1,10 @@
 import BladeOfSaeldorImage from "../../assets/images/weapons/Blade_of_saeldor.png";
-import { MeleeWeapon } from "../../sdk/weapons/MeleeWeapon";
-import { ItemName } from "../../sdk/ItemName";
 import { AttackStyle, AttackStyleTypes } from "../../sdk/AttackStylesController";
-import { Assets } from "../../sdk/utils/Assets";
+import { ItemName } from "../../sdk/ItemName";
 import { PlayerAnimationIndices } from "../../sdk/rendering/GLTFAnimationConstants";
+import { Assets } from "../../sdk/utils/Assets";
 import { Sound } from "../../sdk/utils/SoundCache";
+import { MeleeWeapon } from "../../sdk/weapons/MeleeWeapon";
 
 import ScytheAttackSound from "../../assets/sounds/scythe_swing_2524.ogg";
 
@@ -38,6 +38,10 @@ export class BladeOfSaeldor extends MeleeWeapon {
         slayer: 0,
       },
     };
+  }
+
+  get weight(): number {
+    return 1.814;
   }
 
   attackStyles() {

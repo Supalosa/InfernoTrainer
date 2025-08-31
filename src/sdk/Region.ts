@@ -198,6 +198,10 @@ export abstract class Region {
     this.groundItems = {};
     TileMarker.loadAll(this);
     Viewport.viewport.reset();
+    
+    // Set countdown timer like on page load
+    this.world.getReadyTimer = 6;
+    
     const reset = this.initialiseRegion();
     Viewport.viewport.setPlayer(reset.player);
     return reset;

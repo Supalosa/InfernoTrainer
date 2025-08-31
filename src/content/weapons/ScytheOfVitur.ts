@@ -1,15 +1,15 @@
 import ScytheInventImage from "../../assets/images/weapons/scytheOfVitur.png";
-import { MeleeWeapon } from "../../sdk/weapons/MeleeWeapon";
-import { ItemName } from "../../sdk/ItemName";
 import { AttackStyle, AttackStyleTypes } from "../../sdk/AttackStylesController";
-import { Assets } from "../../sdk/utils/Assets";
+import { ItemName } from "../../sdk/ItemName";
 import { PlayerAnimationIndices } from "../../sdk/rendering/GLTFAnimationConstants";
+import { Assets } from "../../sdk/utils/Assets";
 import { Sound } from "../../sdk/utils/SoundCache";
+import { MeleeWeapon } from "../../sdk/weapons/MeleeWeapon";
 
 import ScytheAttackSound from "../../assets/sounds/scythe_swing_2524.ogg";
+import { Collision } from "../../sdk/Collision";
 import { AttackBonuses } from "../../sdk/gear/Weapon";
 import { Unit } from "../../sdk/Unit";
-import { Collision } from "../../sdk/Collision";
 
 const EXTRA_HIT_LOCATIONS = [
   [
@@ -84,6 +84,10 @@ export class ScytheOfVitur extends MeleeWeapon {
 
   hasSpecialAttack(): boolean {
     return false;
+  }
+
+  get weight(): number {
+    return 3.175;
   }
 
   get attackRange() {

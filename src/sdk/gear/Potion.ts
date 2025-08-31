@@ -1,7 +1,7 @@
-import { Item } from "../Item";
-import { ImageLoader } from "../utils/ImageLoader";
 import Vial from "../../assets/images/potions/Vial.png";
+import { Item } from "../Item";
 import { Player } from "../Player";
+import { ImageLoader } from "../utils/ImageLoader";
 
 import PotionSound from "../../assets/sounds/liquid_2401.ogg";
 import { Sound, SoundCache } from "../utils/SoundCache";
@@ -20,7 +20,15 @@ export class Potion extends Item {
   }
 
   get weight(): number {
-    return 0.226;
+    if (this.doses === 4) {
+      return 0.035;
+    } else if (this.doses === 3) {
+      return 0.03;
+    } else if (this.doses === 2) {
+      return 0.025
+    } else if (this.doses === 1) {
+      return 0.02;
+    }
   }
 
   updateInventorySprite() {

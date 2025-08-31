@@ -1,12 +1,12 @@
-import { ItemName } from "../../sdk/ItemName";
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import OneDose from "../../assets/images/potions/Stamina_potion_1.png";
 import TwoDose from "../../assets/images/potions/Stamina_potion_2.png";
 import ThreeDose from "../../assets/images/potions/Stamina_potion_3.png";
 import FourDose from "../../assets/images/potions/Stamina_potion_4.png";
 import Vial from "../../assets/images/potions/Vial.png";
+import { ItemName } from "../../sdk/ItemName";
 import { Player } from "../../sdk/Player";
 import { Potion } from "../../sdk/gear/Potion";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 export class StaminaPotion extends Potion {
   oneDose: HTMLImageElement = ImageLoader.createImage(OneDose);

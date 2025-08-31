@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { Model } from "./Model";
 import { Renderable } from "../Renderable";
-import { Location } from "../Location";
+import { Location3 } from "../Location";
 import { drawLineOnTop } from "./RenderUtils";
 
 export class TileMarkerModel implements Model {
@@ -35,12 +35,21 @@ export class TileMarkerModel implements Model {
     }
   }
 
-  draw(scene: THREE.Scene, clockDelta: number, tickPercent: number, location: Location) {
+  draw(
+    scene: THREE.Scene,
+    clockDelta: number,
+    tickPercent: number,
+    location: Location3,
+    angleRadians: number,
+    pitchRadians: number,
+    visible: boolean,
+    modelOffsets: Location3[],
+  ) {
     if (this.outline.parent !== scene) {
       scene.add(this.outline);
     }
     const { x, y } = location;
-    this.outline.visible = this.renderable.visible(tickPercent);
+    this.outline.visible = this.renderable.visible(tickPercent) && visible;
     this.outline.position.x = x;
     this.outline.position.y = -0.49;
     this.outline.position.z = y;

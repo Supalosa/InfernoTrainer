@@ -1,7 +1,7 @@
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import InventImage from "../../assets/images/equipment/Masori_chaps_(f).png";
 import { Legs } from "../../sdk/gear/Legs";
 import { ItemName } from "../../sdk/ItemName";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 import { Assets } from "../../sdk/utils/Assets";
 
@@ -16,7 +16,7 @@ export class MasoriChapsF extends Legs {
   }
 
   get weight(): number {
-    return 1;
+    return 8.5;
   }
 
   constructor() {

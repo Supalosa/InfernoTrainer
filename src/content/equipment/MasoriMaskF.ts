@@ -1,8 +1,8 @@
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import InventImage from "../../assets/images/equipment/Masori_mask_(f).png";
+import { Helmet } from "../../sdk/gear/Helmet";
 import { ItemName } from "../../sdk/ItemName";
 import { Assets } from "../../sdk/utils/Assets";
-import { Helmet } from "../../sdk/gear/Helmet";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 export class MasoriMaskF extends Helmet {
   inventorySprite: HTMLImageElement = ImageLoader.createImage(this.inventoryImage);
@@ -15,7 +15,7 @@ export class MasoriMaskF extends Helmet {
   }
 
   get weight(): number {
-    return 10;
+    return 1.5;
   }
 
   constructor() {

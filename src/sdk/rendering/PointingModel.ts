@@ -37,14 +37,18 @@ export class PointingModel implements Model {
     clockDelta: number,
     tickPercent: number,
     location: Location3,
-    pitch: number,
     rotation: number,
+    pitch: number,
+    visible: boolean,
+    modelOffsets: Location3[],
   ) {
     if (this.mainMesh.parent !== scene) {
       scene.add(this.mainMesh);
     }
     const size = this.size;
     const { x, y, z } = location;
+
+    this.mainMesh.visible = visible;
 
     // conversion from Location3 to Vector3
     // lerp because we only move the perceived location in client ticks

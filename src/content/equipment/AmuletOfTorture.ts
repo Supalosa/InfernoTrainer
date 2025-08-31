@@ -1,8 +1,8 @@
-import { Necklace } from "../../sdk/gear/Necklace";
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import InventImage from "../../assets/images/equipment/Amulet_of_torture.png";
+import { Necklace } from "../../sdk/gear/Necklace";
 import { ItemName } from "../../sdk/ItemName";
 import { Assets } from "../../sdk/utils/Assets";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 export class AmuletOfTorture extends Necklace {
   inventorySprite: HTMLImageElement = ImageLoader.createImage(this.inventoryImage);
@@ -14,7 +14,7 @@ export class AmuletOfTorture extends Necklace {
     return ItemName.AMULET_OF_TORTURE;
   }
   get weight(): number {
-    return 0.005;
+    return 0.01;
   }
 
   constructor() {

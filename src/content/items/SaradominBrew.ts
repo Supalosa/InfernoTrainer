@@ -1,12 +1,12 @@
-import { ItemName } from "../../sdk/ItemName";
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import OneDose from "../../assets/images/potions/Saradomin_brew_1.png";
 import TwoDose from "../../assets/images/potions/Saradomin_brew_2.png";
 import ThreeDose from "../../assets/images/potions/Saradomin_brew_3.png";
 import FourDose from "../../assets/images/potions/Saradomin_brew_4.png";
 import Vial from "../../assets/images/potions/Vial.png";
+import { ItemName } from "../../sdk/ItemName";
 import { Player } from "../../sdk/Player";
 import { Potion } from "../../sdk/gear/Potion";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 export class SaradominBrew extends Potion {
   oneDose: HTMLImageElement = ImageLoader.createImage(OneDose);
@@ -19,6 +19,7 @@ export class SaradominBrew extends Potion {
     this.doses = doses;
     this.updateInventorySprite();
   }
+
   get inventoryImage() {
     if (this.doses === 4) {
       return FourDose;

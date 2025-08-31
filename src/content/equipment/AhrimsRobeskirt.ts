@@ -1,7 +1,7 @@
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import InventImage from "../../assets/images/equipment/Ahrims_robeskirt.png";
 import { Legs } from "../../sdk/gear/Legs";
 import { ItemName } from "../../sdk/ItemName";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 export class AhrimsRobeskirt extends Legs {
   inventorySprite: HTMLImageElement = ImageLoader.createImage(this.inventoryImage);
@@ -14,7 +14,7 @@ export class AhrimsRobeskirt extends Legs {
   }
 
   get weight(): number {
-    return 1;
+    return 11.339;
   }
 
   constructor() {

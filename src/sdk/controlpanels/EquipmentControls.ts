@@ -1,13 +1,13 @@
+import UsedSpotBackground from "../../assets/images/interface/equipment_spot_used.png";
 import EquipmentPanel from "../../assets/images/panels/equipment.png";
 import EquipmentTab from "../../assets/images/tabs/equipment.png";
-import { BaseControls } from "./BaseControls";
-import UsedSpotBackground from "../../assets/images/interface/equipment_spot_used.png";
-import { Settings } from "../Settings";
 import { ControlPanelController } from "../ControlPanelController";
-import { ImageLoader } from "../utils/ImageLoader";
 import { EQUIPMENT_TYPE_TO_SLOT, EquipmentTypes } from "../Equipment";
 import { InputController } from "../Input";
+import { Settings } from "../Settings";
 import { Trainer } from "../Trainer";
+import { ImageLoader } from "../utils/ImageLoader";
+import { BaseControls } from "./BaseControls";
 
 export class EquipmentControls extends BaseControls {
   static instance: EquipmentControls | null = null;
@@ -144,7 +144,6 @@ export class EquipmentControls extends BaseControls {
       context.globalAlpha = 1.0;
     }
   }
-
   draw(context, ctrl: ControlPanelController, x: number, y: number) {
     super.draw(context, ctrl, x, y);
     const scale = Settings.controlPanelScale;
@@ -160,5 +159,21 @@ export class EquipmentControls extends BaseControls {
     this.drawEquipment(context, x, y, 28, 169, scale, EquipmentTypes.GLOVES);
     this.drawEquipment(context, x, y, 84, 169, scale, EquipmentTypes.FEET);
     this.drawEquipment(context, x, y, 140, 169, scale, EquipmentTypes.RING);
+
+    const weight = `Weight: ${Trainer.player.weight.toFixed(3)}kg`
+
+    context.font = 16 * scale + "px Stats_11";
+    context.fillStyle = "#000";
+    context.fillText(
+      weight,
+      x + 56 * scale,
+      y + 268 * scale,
+    );
+    context.fillStyle = "#FFFFff";
+    context.fillText(
+      weight,
+      x + 55 * scale,
+      y + 267 * scale,
+    );
   }
 }

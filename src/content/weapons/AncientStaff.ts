@@ -1,11 +1,17 @@
 "use strict";
 
 import InventoryImage from "../../assets/images/equipment/Ancient_staff.png";
-import { MeleeWeapon } from "../../sdk/weapons/MeleeWeapon";
-import { ItemName } from "../../sdk/ItemName";
 import { AttackStyle, AttackStyleTypes } from "../../sdk/AttackStylesController";
+import { AttackBonuses } from "../../sdk/gear/Weapon";
+import { ItemName } from "../../sdk/ItemName";
+import { Unit } from "../../sdk/Unit";
+import { BarrageSpell } from "../../sdk/weapons/BarrageSpell";
+import { BloodBarrageSpell } from "../../sdk/weapons/BloodBarrageSpell";
+import { MeleeWeapon } from "../../sdk/weapons/MeleeWeapon";
 
 export class AncientStaff extends MeleeWeapon {
+  autocastSpell: BarrageSpell = new BloodBarrageSpell();
+
   constructor() {
     super();
 
@@ -37,16 +43,32 @@ export class AncientStaff extends MeleeWeapon {
     };
   }
 
-  attackStyles() {
-    return [AttackStyle.ACCURATE, AttackStyle.AGGRESSIVECRUSH, AttackStyle.DEFENSIVE];
+  get weight(): number {
+    return 2.267;
   }
+
+  attack(from: Unit, to: Unit, bonuses: AttackBonuses = {}): boolean {
+    if (this.attackStyle() === AttackStyle.AUTOCAST) {
+      if (from.isPlayer) {
+        this.autocastSpell.cast(from, to);
+        return true;
+      }
+    }
+
+    return super.attack(from, to, bonuses);
+  }
+
+  attackStyles() {
+    return [AttackStyle.ACCURATE, AttackStyle.AGGRESSIVECRUSH, AttackStyle.DEFENSIVE, AttackStyle.AUTOCAST];
+  }
+
 
   attackStyleCategory(): AttackStyleTypes {
     return AttackStyleTypes.STAFF;
   }
 
   defaultStyle(): AttackStyle {
-    return AttackStyle.AGGRESSIVECRUSH;
+    return AttackStyle.AUTOCAST;
   }
 
   get itemName(): ItemName {
@@ -62,12 +84,14 @@ export class AncientStaff extends MeleeWeapon {
   }
 
   get attackRange() {
-    // TODO: Override with spell selection
+    if (this.attackStyle() === AttackStyle.AUTOCAST) {
+      return 10;
+    }
     return 1;
   }
 
   get attackSpeed() {
-    return 4;
+    return 5;
   }
 
   get inventoryImage() {

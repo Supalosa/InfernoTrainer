@@ -1,7 +1,7 @@
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import InventImage from "../../assets/images/equipment/Dagon'hai_robe_top.png";
 import { Chest } from "../../sdk/gear/Chest";
 import { ItemName } from "../../sdk/ItemName";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 export class DagonhaiRobeTop extends Chest {
   inventorySprite: HTMLImageElement = ImageLoader.createImage(this.inventoryImage);
@@ -14,7 +14,7 @@ export class DagonhaiRobeTop extends Chest {
   }
 
   get weight(): number {
-    return 4;
+    return 2.267;
   }
   constructor() {
     super();

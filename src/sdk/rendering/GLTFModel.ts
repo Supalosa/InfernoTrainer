@@ -1,11 +1,11 @@
 import * as THREE from "three";
 
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-import { Model } from "./Model";
-import { Renderable, RenderableListener } from "../Renderable";
 import { Location, Location3 } from "../Location";
+import { Renderable, RenderableListener } from "../Renderable";
+import { Model } from "./Model";
 import { drawLineNormally, drawLineOnTop } from "./RenderUtils";
 
 const OUTLINE_NORMAL = 0xffffff;
@@ -74,7 +74,7 @@ export class GLTFModel implements Model, RenderableListener {
   // models are loaded and inserted into `loadedModel` in indeterminate orders, so we save the index of each model
   private modelOrder: number[] = [];
 
-  // options 
+  // options
   private scale: number;
   private verticalOffset: number;
   private originOffset: Location;
@@ -323,10 +323,10 @@ export class GLTFModel implements Model, RenderableListener {
     }
 
     const { x, y, z } = location;
-    this.outline.position.x = x;
-    this.outline.position.y = -0.49;
-    this.outline.position.z = y;
-    this.outline.visible = this.renderable.drawOutline;
+     this.outline.position.x = x;
+     this.outline.position.y = -0.49;
+     this.outline.position.z = y;
+     this.outline.visible = this.renderable.drawOutline && visible;
     if (this.renderable.drawTrueTile) {
       const { x: trueX, y: trueY } = this.renderable.getTrueLocation();
       this.trueTile.position.x = trueX;
@@ -338,7 +338,7 @@ export class GLTFModel implements Model, RenderableListener {
         drawLineNormally(this.trueTile);
       }
     }
-    this.trueTile.visible = this.renderable.drawTrueTile;
+     this.trueTile.visible = this.renderable.drawTrueTile && visible;
 
     this.clickHull.position.x = x + this.renderable.size / 2;
     this.clickHull.position.z = y - this.renderable.size / 2;

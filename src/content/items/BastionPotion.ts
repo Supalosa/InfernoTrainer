@@ -1,12 +1,12 @@
-import { ItemName } from "../../sdk/ItemName";
-import { ImageLoader } from "../../sdk/utils/ImageLoader";
 import OneDose from "../../assets/images/potions/Bastion_potion_1.png";
 import TwoDose from "../../assets/images/potions/Bastion_potion_2.png";
 import ThreeDose from "../../assets/images/potions/Bastion_potion_3.png";
 import FourDose from "../../assets/images/potions/Bastion_potion_4.png";
 import Vial from "../../assets/images/potions/Vial.png";
+import { ItemName } from "../../sdk/ItemName";
 import { Player } from "../../sdk/Player";
 import { Potion } from "../../sdk/gear/Potion";
+import { ImageLoader } from "../../sdk/utils/ImageLoader";
 
 export class BastionPotion extends Potion {
   oneDose: HTMLImageElement = ImageLoader.createImage(OneDose);
@@ -20,6 +20,12 @@ export class BastionPotion extends Potion {
     this.updateInventorySprite();
   }
 
+  get weight(): number {
+    if (this.doses === 4) {
+      return 0.134;
+    }
+    return 0.03; // Yep, lol
+  }
   get inventoryImage() {
     if (this.doses === 4) {
       return FourDose;

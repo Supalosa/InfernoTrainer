@@ -1,14 +1,23 @@
 import * as THREE from "three";
 import { Model } from "./Model";
 import { Renderable } from "../Renderable";
-import { Location } from "../Location";
+import { Location3 } from "../Location";
 
 export class EmptyModel implements Model {
   static forRenderable(r: Renderable) {
     return new EmptyModel();
   }
 
-  draw(scene: THREE.Scene, clockDelta: number, tickPercent: number, location: Location) {
+  draw(
+    scene: THREE.Scene,
+    clockDelta: number,
+    tickPercent: number,
+    location: Location3,
+    angleRadians: number,
+    pitchRadians: number,
+    visible: boolean,
+    modelOffsets: Location3[],
+  ) {
     // do nothing
   }
 
