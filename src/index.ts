@@ -2,18 +2,23 @@
 
 import { Settings, Region, World, Viewport, MapController, TileMarker, Assets, Location, Chrome, ImageLoader, Trainer, ControlPanelController } from "@supalosa/oldschool-trainer-sdk";
 
-import NewRelicBrowser from "new-relic-browser";
+// New Relic is loaded via inline script in HTML - just declare the global interface
 import { InfernoRegion } from "./content/inferno/js/InfernoRegion";
+import { InfernoSettings } from "./content/inferno/js/InfernoSettings";
 
 const SpecialAttackBarBackground = Assets.getAssetUrl("/assets/images/attackstyles/interface/special_attack_background.png");
 
 declare global {
   interface Window {
-    newrelic: typeof NewRelicBrowser;
+    newrelic: {
+      addRelease: (name: string, version: string) => void;
+      // Add other New Relic methods as needed
+    };
   }
 }
 
 Settings.readFromStorage();
+InfernoSettings.readFromStorage();
 
 // Choose the region based on the URL.
 const AVAILABLE_REGIONS = {

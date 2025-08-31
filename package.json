@@ -1,10 +1,10 @@
 {
-  "name": "@supalosa/oldschool-trainer-sdk",
+  "name": "@supalosa/inferno-trainer",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx webpack serve",
+    "start": "npx webpack serve --host 0.0.0.0",
     "build": "webpack",
     "lint": "eslint . --ext .ts --fix",
     "prettier": "npx prettier --write ."
@@ -44,7 +44,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "@supalosa/oldschool-trainer-sdk": "0.1.0",
+    "@supalosa/oldschool-trainer-sdk": "file:../osrs-sdk",
     "three": "^0.163.0"
   }
 }
