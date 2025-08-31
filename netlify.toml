@@ -1,0 +1,6 @@
+# redirect to infernotrainer
+[[redirects]]
+from = "https://inferno.colosim.com/*"
+to = "https://infernotrainer.com/:splat"
+status = 301
+force = true
