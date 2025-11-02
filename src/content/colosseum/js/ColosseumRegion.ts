@@ -1,6 +1,6 @@
 "use strict";
 
-import { Region, Viewport, Settings, Player, CardinalDirection, ImageLoader, Trainer } from "@supalosa/oldschool-trainer-sdk";
+import { Region, Viewport, Settings, Player, CardinalDirection, ImageLoader, Trainer } from "osrs-sdk";
 
 
 import ColosseumMapImage from "../assets/images/map.png";

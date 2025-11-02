@@ -21,7 +21,7 @@ import {
   Sound,
   SoundCache,
   Trainer,
-} from "@supalosa/oldschool-trainer-sdk";
+} from "osrs-sdk";
 
 import { SolGroundSlam } from "../entities/SolGroundSlam";
 import { RingBuffer } from "../utils/RingBuffer";

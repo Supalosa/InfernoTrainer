@@ -2,7 +2,7 @@
 
 import _ from "lodash";
 
-import { Entity, Region, CollisionType, LineOfSightMask, Random, Projectile, Pathing, Location, Trainer } from "@supalosa/oldschool-trainer-sdk";
+import { Entity, Region, CollisionType, LineOfSightMask, Random, Projectile, Pathing, Location, Trainer } from "osrs-sdk";
 
 import { SolarFlareModel } from "../rendering/SolarFlareModel";
 

@@ -1,6 +1,6 @@
 "use strict"
 
-import { InvisibleMovementBlocker, TileMarkerModel } from "@supalosa/oldschool-trainer-sdk";
+import { InvisibleMovementBlocker, TileMarkerModel } from "osrs-sdk";
 
 export class WallMan extends InvisibleMovementBlocker {
 
