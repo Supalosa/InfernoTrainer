@@ -1,6 +1,6 @@
 import { TorvaFullhelm, AmuletOfTorture, InfernalCape, DragonArrows, TorvaPlatebody, TorvaPlatelegs, PrimordialBoots, FerociousGloves, UltorRing, AvernicDefender, SuperCombatPotion, UnitOptions } from "osrs-sdk";
 import { SaradominBrew, SuperRestore } from "osrs-sdk";
-import { ScytheOfVitur, BladeOfSaeldor, Player } from "osrs-sdk";
+import { ScytheOfVitur, BladeOfSaeldor, NoxiousHalberd, Player } from "osrs-sdk";
 
 export class ColosseumLoadout {
   loadoutType: string;
@@ -27,7 +27,7 @@ export class ColosseumLoadout {
       inventory: [
         new BladeOfSaeldor(),
         new AvernicDefender(),
-        null,
+        new NoxiousHalberd(),
         null,
         new SaradominBrew(),
         new SaradominBrew(),
