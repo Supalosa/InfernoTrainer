@@ -28,11 +28,11 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
 
 ### Player models
 
-    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,28254,28256,28258,20366,22981,13239,25739,21295 maleModel0 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390 name player split
+    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,28254,28256,28258,20366,22981,13239,25739,21295,29796,29801,30753,30750,30756,31097,28338,23995,22322 maleModel0 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390,440,813 name player split
     
     or
 
-    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,25865,23975,23979,23971,7462,22109,21021,21024,23995,22322 maleModel0,maleModel1 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390 name player split
+    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,25865,23975,23979,23971,7462,22109,21021,21024,23995,22322,29796 maleModel0,maleModel1 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390,440,813 name player split
 
     which corresponds to
 
@@ -65,6 +65,13 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
         - 21024 # ancestral bottom (buggy)
         - 23995 # blade of saeldor (charged)
         - 22322 # avernic defender
+        - 29796 # noxious halberd
+        - 29801 # amulet of rancour
+        - 30753 # oathplate chest
+        - 30750 # oathplate helm
+        - 30756 # oathplate legs
+        - 31097 # avernic treads (max)
+        - 28338 # soulreaper axe
 
 
       - 808 # idle
@@ -79,6 +86,10 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
       - 8057 # scythe idle
       - 8056 # scythe swing
       - 390 # sword slash
+      - 440 # halberd slash
+      - 813 # halberd idle
+      - ??? # soulreaper axe slash
+      - ??? # soulreaper axe idle
 
 ### NPC models
 
