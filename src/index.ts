@@ -1,9 +1,9 @@
 "use strict";
 
-import { World, Settings, ImageLoader, Viewport, TileMarker, Location, MapController, Assets, Chrome, Region, Trainer, ControlPanelController } from "@supalosa/oldschool-trainer-sdk";
+import { World, Settings, ImageLoader, Viewport, TileMarker, Location, MapController, Assets, Chrome, Region, Trainer, ControlPanelController } from "osrs-sdk";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
 
-const SpecialAttackBarBackground = Assets.getAssetUrl("/assets/images/attackstyles/interface/special_attack_background.png");
+const SpecialAttackBarBackground = Assets.getAssetUrl("assets/images/attackstyles/interface/special_attack_background.png");
 
 Settings.readFromStorage();
 

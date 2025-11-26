@@ -1,6 +1,6 @@
 "use strict";
 
-import { Assets, Entity, CollisionType, GLTFModel, Model, LineOfSightMask } from "@supalosa/oldschool-trainer-sdk";
+import { Assets, Entity, CollisionType, GLTFModel, Model, LineOfSightMask } from "osrs-sdk";
 
 const SceneModel = Assets.getAssetUrl("models/colosseum_partial.glb");
 export class ColosseumScene extends Entity {

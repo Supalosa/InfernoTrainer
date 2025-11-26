@@ -1,6 +1,6 @@
-import { TorvaFullhelm, AmuletOfTorture, InfernalCape, DragonArrows, TorvaPlatebody, TorvaPlatelegs, PrimordialBoots, FerociousGloves, UltorRing, AvernicDefender, SuperCombatPotion, UnitOptions } from "@supalosa/oldschool-trainer-sdk";
-import { SaradominBrew, SuperRestore } from "@supalosa/oldschool-trainer-sdk";
-import { ScytheOfVitur, BladeOfSaeldor, Player } from "@supalosa/oldschool-trainer-sdk";
+import { TorvaFullhelm, AmuletOfTorture, InfernalCape, DragonArrows, TorvaPlatebody, TorvaPlatelegs, PrimordialBoots, FerociousGloves, UltorRing, AvernicDefender, SuperCombatPotion, UnitOptions } from "osrs-sdk";
+import { SaradominBrew, SuperRestore } from "osrs-sdk";
+import { ScytheOfVitur, BladeOfSaeldor, NoxiousHalberd, SoulreaperAxe, Player } from "osrs-sdk";
 
 export class ColosseumLoadout {
   loadoutType: string;
@@ -27,8 +27,8 @@ export class ColosseumLoadout {
       inventory: [
         new BladeOfSaeldor(),
         new AvernicDefender(),
-        null,
-        null,
+        new NoxiousHalberd(),
+        new SoulreaperAxe(),
         new SaradominBrew(),
         new SaradominBrew(),
         new SuperCombatPotion(),

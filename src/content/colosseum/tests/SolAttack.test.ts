@@ -1,6 +1,6 @@
 import "../../../../test/setupFiles";
 
-import { DelayedAction, EquipmentControls, Player, Settings, TestRegion, Viewport, World } from "@supalosa/oldschool-trainer-sdk";
+import { DelayedAction, EquipmentControls, Player, Settings, TestRegion, Viewport, World } from "osrs-sdk";
 import { Attacks, SolHeredit } from "../js/mobs/SolHeredit";
 
 
