@@ -28,7 +28,7 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
 
 ### Player models
 
-    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,28254,28256,28258,20366,22981,13239,25739,21295,29796,29801,30753,30750,30756,31097,28338,23995,22322 maleModel0 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390,440,813 name player split
+    npm run cmd modelBuilder item 26684,27235,27238,27241,26235,28902,13237,22249,12926,20997,11959,28254,28256,28258,20366,22981,13239,25739,21295,29796,29801,30753,30750,30756,31097,28338,23995,22322 maleModel0 anim 808,819,824,820,822,821,426,5061,7618,8057,8056,390,440,813,10172,10169 name player split
     
     or
 
@@ -88,8 +88,8 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
       - 390 # sword slash
       - 440 # halberd slash
       - 813 # halberd idle
-      - ??? # soulreaper axe slash
-      - ??? # soulreaper axe idle
+      - 10172 # soulreaper axe slash (note: spec is 10173)
+      - 10169 # soulreaper axe idle pose
 
 ### NPC models
 
@@ -124,7 +124,6 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
     npm run cmd modelBuilder exclude 52585 npc 12821 anim 10874,10878,10883,10884,10885,10886,10887,10888 name sol2
 
 ### Spotanim models
-
     npm run cmd modelBuilder spotanim 448 name jad_mage_front
     npm run cmd modelBuilder spotanim 449 name jad_mage_middle
     npm run cmd modelBuilder spotanim 450 name jad_mage_rear
