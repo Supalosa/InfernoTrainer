@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { Model, Location } from "@supalosa/oldschool-trainer-sdk";
+import { Model, Location } from "osrs-sdk";
 
 import { SolarFlareOrb } from "../entities/SolarFlareOrb";
 

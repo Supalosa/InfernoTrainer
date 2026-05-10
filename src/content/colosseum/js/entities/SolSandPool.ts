@@ -14,7 +14,7 @@ import {
   Random,
   Location,
   Trainer,
-} from "@supalosa/oldschool-trainer-sdk";
+} from "osrs-sdk";
 
 import { SandPoolModel } from "../rendering/SandPoolModel";
 

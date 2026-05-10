@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Model, Location } from "@supalosa/oldschool-trainer-sdk";
+import { Model, Location } from "osrs-sdk";
 
 import { Edge, LaserOrb, ORB_SHOOT_DIRECTIONS } from "../entities/LaserOrb";
 import { ColosseumConstants } from "../Constants";

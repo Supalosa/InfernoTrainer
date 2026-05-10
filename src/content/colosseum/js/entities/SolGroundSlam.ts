@@ -1,6 +1,6 @@
 "use strict";
 
-import { Weapon, Unit, AttackBonuses, ProjectileOptions, Random, Projectile, Entity, Region, CollisionType, LineOfSightMask, Location } from "@supalosa/oldschool-trainer-sdk";
+import { Weapon, Unit, AttackBonuses, ProjectileOptions, Random, Projectile, Entity, Region, CollisionType, LineOfSightMask, Location } from "osrs-sdk";
 
 import { GroundSlamModel } from "../rendering/GroundSlamModel";
 

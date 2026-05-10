@@ -11,7 +11,7 @@ import {
   Pathing,
   Location,
   Trainer,
-} from "@supalosa/oldschool-trainer-sdk";
+} from "osrs-sdk";
 
 import _ from "lodash";
 
