@@ -1,4 +1,27 @@
-import { TorvaFullhelm, AmuletOfTorture, InfernalCape, DragonArrows, TorvaPlatebody, TorvaPlatelegs, PrimordialBoots, FerociousGloves, UltorRing, AvernicDefender, SuperCombatPotion, UnitOptions } from "osrs-sdk";
+import {
+  AbyssalTentacle,
+  AmuletOfFury,
+  AmuletOfTorture,
+  AraneaBoots,
+  AvernicDefender,
+  BarrowsGloves,
+  BerserkerRing_i,
+  CrystalBody,
+  CrystalHelm,
+  CrystalLegs,
+  DragonArrows,
+  DragonDefender,
+  FerociousGloves,
+  InfernalCape,
+  NoxiousHalberd,
+  PrimordialBoots,
+  SuperCombatPotion,
+  TorvaFullhelm,
+  TorvaPlatebody,
+  TorvaPlatelegs,
+  UltorRing,
+  UnitOptions,
+} from "osrs-sdk";
 import { SaradominBrew, SuperRestore } from "osrs-sdk";
 import { ScytheOfVitur, BladeOfSaeldor, Player } from "osrs-sdk";
 
@@ -49,6 +72,46 @@ export class ColosseumLoadout {
     };
   }
 
+  loadoutCrystalNally() {
+    return {
+      equipment: {
+        weapon: new NoxiousHalberd(),
+        offhand: null,
+        helmet: new CrystalHelm(),
+        necklace: new AmuletOfFury(),
+        cape: new InfernalCape(),
+        ammo: new DragonArrows(),
+        chest: new CrystalBody(),
+        legs: new CrystalLegs(),
+        feet: new AraneaBoots(),
+        gloves: new BarrowsGloves(),
+        ring: new BerserkerRing_i(),
+      },
+      inventory: [
+        new AbyssalTentacle(),
+        new DragonDefender(),
+        null,
+        null,
+        new SaradominBrew(),
+        new SaradominBrew(),
+        new SuperCombatPotion(),
+        new SuperCombatPotion(),
+        new SaradominBrew(),
+        new SaradominBrew(),
+        new SuperRestore(),
+        new SuperRestore(),
+        new SaradominBrew(),
+        new SaradominBrew(),
+        new SuperRestore(),
+        new SuperRestore(),
+        null,
+        null,
+        null,
+        null,
+      ],
+    };
+  }
+
   setStats(player: Player) {
     player.stats.prayer = 99;
     player.currentStats.prayer = 99;
@@ -61,6 +124,9 @@ export class ColosseumLoadout {
     switch (this.loadoutType) {
       case "max_melee":
         loadout = this.loadoutMaxMelee();
+        break;
+      case "crystal_nally":
+        loadout = this.loadoutCrystalNally();
         break;
     }
     return loadout;
