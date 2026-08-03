@@ -26,6 +26,11 @@ import { SaradominBrew, SuperRestore } from "osrs-sdk";
 import { ScytheOfVitur, BladeOfSaeldor, Player } from "osrs-sdk";
 
 export class ColosseumLoadout {
+  static readonly availableLoadouts = [
+    { value: "max_melee", label: "Max Melee" },
+    { value: "crystal_nally", label: "Crystal Nally" },
+  ];
+
   loadoutType: string;
 
   constructor(loadoutType: string) {
@@ -120,15 +125,13 @@ export class ColosseumLoadout {
   }
 
   getLoadout(): UnitOptions {
-    let loadout: UnitOptions;
     switch (this.loadoutType) {
       case "max_melee":
-        loadout = this.loadoutMaxMelee();
-        break;
+        return this.loadoutMaxMelee() as unknown as UnitOptions;
       case "crystal_nally":
-        loadout = this.loadoutCrystalNally();
-        break;
+        return this.loadoutCrystalNally() as unknown as UnitOptions;
+      default:
+        return this.loadoutMaxMelee() as unknown as UnitOptions;
     }
-    return loadout;
   }
 }
