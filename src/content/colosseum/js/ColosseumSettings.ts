@@ -8,6 +8,7 @@ export class ColosseumSettings {
   static useGrapple = true;
   static usePhaseTransitions = true;
   static solarFlareLevel = 1;
+  static showSolarFlareTiles = false;
   static echoMaxHp = false;
   static echoEnrage = false;
   static echoLasers = false;
@@ -19,6 +20,7 @@ export class ColosseumSettings {
     window.localStorage.setItem("useGrapple", String(ColosseumSettings.useGrapple));
     window.localStorage.setItem("usePhaseTransitions", String(ColosseumSettings.usePhaseTransitions));
     window.localStorage.setItem("solarFlareLevel", String(ColosseumSettings.solarFlareLevel));
+    window.localStorage.setItem("showSolarFlareTiles", String(ColosseumSettings.showSolarFlareTiles));
     window.localStorage.setItem("echoMaxHp", String(ColosseumSettings.echoMaxHp));
     window.localStorage.setItem("echoEnrage", String(ColosseumSettings.echoEnrage));
     window.localStorage.setItem("echoLasers", String(ColosseumSettings.echoLasers));
@@ -31,6 +33,7 @@ export class ColosseumSettings {
     ColosseumSettings.useGrapple = window.localStorage.getItem("useGrapple") !== "false" || false;
     ColosseumSettings.usePhaseTransitions = window.localStorage.getItem("usePhaseTransitions") !== "false" || false;
     ColosseumSettings.solarFlareLevel = parseInt(window.localStorage.getItem("solarFlareLevel") ?? '1');
+    ColosseumSettings.showSolarFlareTiles = window.localStorage.getItem("showSolarFlareTiles") === "true";
     ColosseumSettings.echoMaxHp = window.localStorage.getItem("echoMaxHp") === "true";
     ColosseumSettings.echoEnrage = window.localStorage.getItem("echoEnrage") === "true";
     ColosseumSettings.echoLasers = window.localStorage.getItem("echoLasers") === "true";

@@ -13,8 +13,16 @@ import SidebarContent from "../sidebar.html";
 import { WallMan } from "./entities/WallMan";
 import { ColosseumSettings } from "./ColosseumSettings";
 import { SolarFlareOrb } from "./entities/SolarFlareOrb";
+import { SolarFlareTile } from "./entities/SolarFlareTile";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+const SOLAR_FLARE_PATHS = [
+  { location: { x: 21, y: 20 }, startAtIndex: 2 },
+  { location: { x: 28, y: 20 }, startAtIndex: 3 },
+  { location: { x: 21, y: 27 }, startAtIndex: 1 },
+  { location: { x: 28, y: 27 }, startAtIndex: 0 },
+];
 
 export class ColosseumRegion extends Region {
   mapImage: HTMLImageElement = ImageLoader.createImage(ColosseumMapImage);
@@ -136,7 +144,15 @@ export class ColosseumRegion extends Region {
       ColosseumSettings.persistToStorage();
       this.updateSolarFlares();
     });
+    const solarFlareTilesCheckbox = document.getElementById("show_solar_flare_tiles") as HTMLInputElement;
+    solarFlareTilesCheckbox.checked = ColosseumSettings.showSolarFlareTiles;
+    solarFlareTilesCheckbox.addEventListener("change", () => {
+      ColosseumSettings.showSolarFlareTiles = solarFlareTilesCheckbox.checked;
+      ColosseumSettings.persistToStorage();
+      this.updateSolarFlareTiles();
+    });
     this.updateSolarFlares();
+    this.updateSolarFlareTiles();
 
     setupAttackConfig("echo_max_hp", "echoMaxHp");
     setupAttackConfig("echo_enrage", "echoEnrage");
@@ -169,10 +185,9 @@ export class ColosseumRegion extends Region {
       return;
     }
     if (this.entities.filter((entity) => entity instanceof SolarFlareOrb).length === 0) {
-      this.addEntity(new SolarFlareOrb(this, { x: 21, y: 20 }, ColosseumSettings.solarFlareLevel, 2));
-      this.addEntity(new SolarFlareOrb(this, { x: 28, y: 20 }, ColosseumSettings.solarFlareLevel, 3));
-      this.addEntity(new SolarFlareOrb(this, { x: 21, y: 27 }, ColosseumSettings.solarFlareLevel, 1));
-      this.addEntity(new SolarFlareOrb(this, { x: 28, y: 27 }, ColosseumSettings.solarFlareLevel, 0));
+      SOLAR_FLARE_PATHS.forEach(({ location, startAtIndex }) => {
+        this.addEntity(new SolarFlareOrb(this, { ...location }, ColosseumSettings.solarFlareLevel, startAtIndex));
+      });
     } else {
       this.entities
         .filter((entity) => entity instanceof SolarFlareOrb)
@@ -185,6 +200,28 @@ export class ColosseumRegion extends Region {
   private despawnSolarFlares() {
     this.entities
       .filter((entity) => entity instanceof SolarFlareOrb)
+      .forEach((entity) => {
+        entity.dying = 0;
+        this.removeEntity(entity);
+      });
+  }
+
+  private updateSolarFlareTiles() {
+    if (!ColosseumSettings.showSolarFlareTiles) {
+      this.despawnSolarFlareTiles();
+      return;
+    }
+    if (this.entities.some((entity) => entity instanceof SolarFlareTile)) {
+      return;
+    }
+    SOLAR_FLARE_PATHS.forEach(({ location }) => {
+      this.addEntity(new SolarFlareTile(this, { ...location }));
+    });
+  }
+
+  private despawnSolarFlareTiles() {
+    this.entities
+      .filter((entity) => entity instanceof SolarFlareTile)
       .forEach((entity) => {
         entity.dying = 0;
         this.removeEntity(entity);
