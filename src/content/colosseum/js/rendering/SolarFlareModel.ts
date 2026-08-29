@@ -4,6 +4,30 @@ import { Model, Location } from "osrs-sdk";
 
 import { SolarFlareOrb } from "../entities/SolarFlareOrb";
 
+const SOLAR_FLARE_PATH_SIZE = 5;
+const SOLAR_FLARE_PATH_INSET = 1;
+const solarFlarePathShape = new THREE.Shape([
+  new THREE.Vector2(0, 0),
+  new THREE.Vector2(SOLAR_FLARE_PATH_SIZE, 0),
+  new THREE.Vector2(SOLAR_FLARE_PATH_SIZE, SOLAR_FLARE_PATH_SIZE),
+  new THREE.Vector2(0, SOLAR_FLARE_PATH_SIZE),
+]);
+solarFlarePathShape.holes.push(
+  new THREE.Path([
+    new THREE.Vector2(SOLAR_FLARE_PATH_INSET, SOLAR_FLARE_PATH_INSET),
+    new THREE.Vector2(SOLAR_FLARE_PATH_INSET, SOLAR_FLARE_PATH_SIZE - SOLAR_FLARE_PATH_INSET),
+    new THREE.Vector2(SOLAR_FLARE_PATH_SIZE - SOLAR_FLARE_PATH_INSET, SOLAR_FLARE_PATH_SIZE - SOLAR_FLARE_PATH_INSET),
+    new THREE.Vector2(SOLAR_FLARE_PATH_SIZE - SOLAR_FLARE_PATH_INSET, SOLAR_FLARE_PATH_INSET),
+  ]),
+);
+const SOLAR_FLARE_PATH_GEOMETRY = new THREE.ShapeGeometry(solarFlarePathShape);
+const SOLAR_FLARE_PATH_MATERIAL = new THREE.MeshBasicMaterial({
+  color: 0x000000,
+  side: THREE.FrontSide,
+  transparent: true,
+  opacity: 0.2,
+  depthWrite: false,
+});
 
 export class SolarFlareModel implements Model {
   static forSolarFlare(r: SolarFlareOrb) {
@@ -75,6 +99,36 @@ export class SolarFlareModel implements Model {
 
   getWorldPosition(): THREE.Vector3 {
     return this.sphere.getWorldPosition(new THREE.Vector3());
+  }
+
+  async preload() {
+    //
+  }
+}
+
+export class SolarFlareTileModel implements Model {
+  private path: THREE.Mesh;
+
+  constructor(location: Location) {
+    this.path = new THREE.Mesh(SOLAR_FLARE_PATH_GEOMETRY, SOLAR_FLARE_PATH_MATERIAL);
+    this.path.rotation.x = -Math.PI / 2;
+    this.path.position.set(location.x, -0.495, location.y + SOLAR_FLARE_PATH_SIZE - 1);
+  }
+
+  draw(scene: THREE.Scene) {
+    if (this.path.parent !== scene) {
+      scene.add(this.path);
+    }
+  }
+
+  destroy(scene: THREE.Scene) {
+    if (this.path.parent === scene) {
+      scene.remove(this.path);
+    }
+  }
+
+  getWorldPosition(): THREE.Vector3 {
+    return this.path.getWorldPosition(new THREE.Vector3());
   }
 
   async preload() {
