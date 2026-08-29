@@ -3,7 +3,6 @@ import "../../../../test/setupFiles";
 import { DelayedAction, EquipmentControls, Player, Settings, TestRegion, Viewport, World } from "osrs-sdk";
 import { Attacks, SolHeredit } from "../js/mobs/SolHeredit";
 
-
 // sol heredit movement tests
 describe("sol heredit attacks", () => {
   let region: TestRegion;
@@ -246,7 +245,7 @@ describe("sol heredit attacks", () => {
       expect(EquipmentControls.instance.equipmentInteractions).toHaveLength(1);
       world.tickWorld(3);
       expect(EquipmentControls.instance.equipmentInteractions).toHaveLength(2);
-      world.tickWorld();
+      world.tickWorld(2);
       expect(EquipmentControls.instance.equipmentInteractions).toHaveLength(1);
     });
   });
