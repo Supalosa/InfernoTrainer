@@ -6,6 +6,7 @@
   "scripts": {
     "start": "npx webpack serve",
     "build": "webpack",
+    "test": "jest",
     "lint": "eslint . --ext .ts --fix",
     "prettier": "npx prettier --write ."
   },
