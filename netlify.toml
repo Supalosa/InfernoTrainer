@@ -6,5 +6,10 @@
 # clones and builds the unpublished SDK from its cache-render branch. Set
 # OSRS_ASSET_BASE_URL in Netlify to select the host for legacy SDK assets.
 [context.beta]
-  command = "set -eux; SDK_TMP=$(mktemp -d); git clone --depth 1 --branch feat/cache-render-bundle https://github.com/OldSchoolSDK/osrs-sdk.git \"$SDK_TMP\"; cd \"$SDK_TMP\"; npm ci; npm run build; npm pack --pack-destination \"$SDK_TMP\"; SDK_TARBALL=$(find \"$SDK_TMP\" -maxdepth 1 -type f -name 'osrs-sdk-*.tgz' -print -quit); test -n \"$SDK_TARBALL\"; cd - >/dev/null; npm install --no-save \"$SDK_TARBALL\"; npm run build"
+  command = "set -eux; SDK_TMP=$(mktemp -d); git clone --depth 1 --branch \"$OSRS_SDK_BRANCH\" \"$OSRS_SDK_REPO\" \"$SDK_TMP\"; cd \"$SDK_TMP\"; npm ci; npm run build; npm pack --pack-destination \"$SDK_TMP\"; SDK_TARBALL=$(find \"$SDK_TMP\" -maxdepth 1 -type f -name 'osrs-sdk-*.tgz' -print -quit); test -n \"$SDK_TARBALL\"; cd - >/dev/null; npm install --no-save \"$SDK_TARBALL\"; npm run build"
   publish = "dist"
+
+[context.beta.environment]
+  OSRS_SDK_REPO = "https://github.com/OldSchoolSDK/osrs-sdk.git"
+  OSRS_SDK_BRANCH = "feat/cache-render-bundle"
+  OSRS_ASSET_BASE_URL = "https://assets-soltrainer.netlify.app"

@@ -48,8 +48,10 @@ To select a hosted cache-render bundle at build/dev-server time:
 ### Netlify beta builds
 
 The `beta` branch uses the `[context.beta]` configuration in `netlify.toml`.
-That build clones the SDK's `feat/cache-render-bundle` branch, builds it,
-packages it, and installs the resulting tarball before building the trainer.
+That build clones the SDK repository and branch named by `OSRS_SDK_REPO` and
+`OSRS_SDK_BRANCH` (defaulting to the cache-render branch), builds it, packages
+it, and installs the resulting tarball before building the trainer. These
+values can be overridden in Netlify for a fork or another SDK branch.
 Set this environment variable for that Netlify deploy context:
 
     OSRS_CACHE_RENDER_MANIFEST_URL=https://assets.example.com/osrs-cache-render/beta/manifest.json
