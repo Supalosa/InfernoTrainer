@@ -47,15 +47,21 @@ To select a hosted cache-render bundle at build/dev-server time:
 
 ### Netlify beta builds
 
-The `beta` branch uses the `[context.beta]` configuration in `netlify.toml`.
-That build clones the SDK repository and branch named by `OSRS_SDK_REPO` and
-`OSRS_SDK_BRANCH` (defaulting to the cache-render branch), builds it, packages
-it, and installs the resulting tarball before building the trainer. These
-values can be overridden in Netlify for a fork or another SDK branch.
-Set this environment variable for that Netlify deploy context:
+The `beta` branch uses the `[context.beta]` configuration in `netlify.toml` and
+[`scripts/build-beta.sh`](scripts/build-beta.sh). That build clones the SDK
+repository and branch named by `OSRS_SDK_REPO` and
+`OSRS_SDK_BRANCH` (defaulting to the cache-render branch), builds it, downloads
+and extracts the cache-render assets, packages the SDK, and installs the
+resulting tarball before building the trainer. The generated cache bundle is
+copied into `dist/cache-render` and served by the trainer site. The OpenRS2
+cache is stored under `/opt/build/cache/osrs-cache-render` (or
+`NETLIFY_CACHE_DIR` when provided), so subsequent builds reuse it. These values
+can be overridden in Netlify for a fork or another SDK branch.
 
-    OSRS_CACHE_RENDER_MANIFEST_URL=https://assets.example.com/osrs-cache-render/beta/manifest.json
+The beta context uses these asset settings:
+
     OSRS_ASSET_BASE_URL=https://assets-soltrainer.netlify.app
+    OSRS_CACHE_RENDER_MANIFEST_URL=/cache-render/manifest.json
 
 The trainer build bundles that SDK into `dist/main.js`. Since the SDK branch is
 cloned by name, each beta deploy uses the latest commit on that branch. For a
