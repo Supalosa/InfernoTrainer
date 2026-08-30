@@ -1,6 +1,6 @@
 import "../../../../test/setupFiles";
 
-import { DelayedAction, EquipmentControls, Player, Settings, TestRegion, Viewport, World } from "osrs-sdk";
+import { DelayedAction, EquipmentControls, EquipmentTypes, Player, Settings, TestRegion, Viewport, World } from "osrs-sdk";
 import { Attacks, SolHeredit } from "../js/mobs/SolHeredit";
 
 
@@ -248,6 +248,18 @@ describe("sol heredit attacks", () => {
       expect(EquipmentControls.instance.equipmentInteractions).toHaveLength(2);
       world.tickWorld();
       expect(EquipmentControls.instance.equipmentInteractions).toHaveLength(1);
+    });
+
+    test("check a final-two-tick grapple parry grants max damage rolls for the next attack", () => {
+      boss.setAggro(player);
+      region.addMob(boss);
+      boss.forceAttack = Attacks.GRAPPLE;
+      world.tickWorld();
+      world.tickWorld(3);
+      Object.values(EquipmentTypes).forEach((slot) => EquipmentControls.instance.equipmentInteractions[0](slot));
+      world.tickWorld();
+
+      expect(player.forceMaxDamageRollsOnNextAttack).toBe(true);
     });
   });
 });

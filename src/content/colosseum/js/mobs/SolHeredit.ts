@@ -144,6 +144,14 @@ const GRAPPLE_SLOTS: { [slot in EquipmentTypes]?: string } = {
   [EquipmentTypes.FEET]: "<col=ff0000>I'LL CUT YOUR </color><col=ffffff>FEET</color><col=ff0000> OFF!</color>",
 };
 
+const GRAPPLE_BODY_PARTS: { [slot in EquipmentTypes]?: string } = {
+  [EquipmentTypes.CHEST]: "body",
+  [EquipmentTypes.BACK]: "back",
+  [EquipmentTypes.GLOVES]: "hands",
+  [EquipmentTypes.LEGS]: "legs",
+  [EquipmentTypes.FEET]: "feet",
+};
+
 // used when the player messed up the parry
 class ParryUnblockableWeapon extends MeleeWeapon {
   override isBlockable() {
@@ -181,6 +189,8 @@ export class SolHeredit extends Mob {
 
   // for instancing of slams
   tickNumber = 0;
+  private grappleParryMessage: string | null = null;
+  private grappleParryMessageTimer = 0;
 
   mobName() {
     return "Sol Heredit";
@@ -307,6 +317,9 @@ export class SolHeredit extends Mob {
   }
 
   attackIfPossible() {
+    if (this.grappleParryMessageTimer > 0 && --this.grappleParryMessageTimer === 0) {
+      this.grappleParryMessage = null;
+    }
     this.tickNumber++;
     this.laserOrbCooldown--;
     const overhead = this.aggro?.prayerController.overhead();
@@ -657,6 +670,8 @@ export class SolHeredit extends Mob {
     this.setOverheadText(overheadText);
 
     let didParry = false;
+    let didPerfectParry = false;
+    const perfectParryStartTick = this.region.world.globalTickCounter + 3;
 
     DelayedAction.registerDelayedAction(
       new DelayedAction(() => {
@@ -667,12 +682,23 @@ export class SolHeredit extends Mob {
     EquipmentControls?.instance.addEquipmentInteraction((clickedSlot) => {
       if (clickedSlot === slot) {
         didParry = true;
+        if (!didPerfectParry) {
+          this.grappleParryMessage = `You successfully defend your ${GRAPPLE_BODY_PARTS[slot]} from Sol Heredit's grapple!`;
+          this.grappleParryMessageTimer = 8;
+          if (this.region.world.globalTickCounter >= perfectParryStartTick) {
+            didPerfectParry = true;
+            this.grappleParryMessage = "You perfectly parry Sol Heredit's grapple!";
+          }
+        }
       }
     });
     DelayedAction.registerDelayedNpcAction(
       new DelayedAction(() => {
         if (didParry) {
           SoundCache.play(GRAPPLE_PARRY);
+        }
+        if (didPerfectParry) {
+          this.aggro?.grantMaxDamageRollsOnNextAttack();
         }
         // queue damage to be played this tick (remember NPCs take turn before enemy)
         this.aggro?.addProjectile(
@@ -986,6 +1012,10 @@ export class SolHeredit extends Mob {
     context.save();
     context.translate(10, context.canvas.height - 10);
     this.drawOverheadText(context, scale, false, `${this.mobName()}: `);
+    if (this.grappleParryMessage) {
+      context.translate(0, -30);
+      this.drawText(context, [{ text: this.grappleParryMessage, color: "006400" }], scale, false);
+    }
 
     context.restore();
   }

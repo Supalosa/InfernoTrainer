@@ -163,6 +163,18 @@ export class ColosseumRegion extends Region {
       ColosseumSettings.persistToStorage();
       this.updateSolarFlareTiles();
     });
+    const renderFpsDropdown = document.getElementById("render_fps") as HTMLSelectElement;
+    renderFpsDropdown.value = Settings.renderFps.toString();
+    renderFpsDropdown.addEventListener("change", () => {
+      Settings.renderFps = parseInt(renderFpsDropdown.value);
+      Settings.persistToStorage();
+    });
+    const smoothAnimationsCheckbox = document.getElementById("smooth_cache_animations") as HTMLInputElement;
+    smoothAnimationsCheckbox.checked = Settings.smoothCacheAnimations;
+    smoothAnimationsCheckbox.addEventListener("change", () => {
+      Settings.smoothCacheAnimations = smoothAnimationsCheckbox.checked;
+      Settings.persistToStorage();
+    });
     this.updateSolarFlares();
     this.updateSolarFlareTiles();
 
