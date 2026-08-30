@@ -363,6 +363,14 @@ export class SolHeredit extends Mob {
     const dx = this.aggro.location.x - tx,
       dy = this.aggro.location.y - ty;
     const isAdjacent = Math.abs(dx) <= 1 && Math.abs(dy) <= 1;
+    const targetIsUnderSol = Collision.collisionMath(
+      this.location.x,
+      this.location.y,
+      this.size,
+      this.aggro.location.x,
+      this.aggro.location.y,
+      this.aggro.size,
+    );
     this.hasLOS = isAdjacent;
 
     if (this.canAttack() === false) {
@@ -371,7 +379,7 @@ export class SolHeredit extends Mob {
 
     // can phase without being in range
     const inRange = this.hasLOS || this.forceAttack === Attacks.PHASE_TRANSITION;
-    if (inRange && this.attackDelay <= 0 && this.stationaryTimer > 0) {
+    if (inRange && this.attackDelay <= 0 && (this.stationaryTimer > 0 || targetIsUnderSol)) {
       const nextAttack = this.selectAttack();
       this.forceAttack = null;
       let nextDelay = 0;
