@@ -99,20 +99,32 @@ export class ColosseumRegion extends Region {
     // NW 19,18
     // SE 34,33
     // SW 19,33
+    const wallModelAt = (x: number, y: number) => {
+      // Corner pillars overlap the perimeter at x 19..20 / 33..34 and
+      // y 18..19 / 32..33. Keep those movement blockers invisible.
+      const inCornerPillar = (x <= 20 || x >= 33) && (y <= 19 || y >= 32);
+      // Keep the outermost corner tile visible; it is the wall man on the
+      // outside edge of each pillar rather than part of the pillar overlap.
+      const outerCorner = (x === 19 || x === 34) && (y === 18 || y === 33);
+      return inCornerPillar && !outerCorner ? null : (x + y) % 2 === 0 ? 50963 : 50964;
+    };
 
     for (let xx = 19; xx <= 34; ++xx) {
-      this.addEntity(new WallMan(this, { x: xx, y: 18 }));
-      this.addEntity(new WallMan(this, { x: xx, y: 33 }));
+      const wallModel = wallModelAt(xx, 18);
+      this.addEntity(new WallMan(this, { x: xx, y: 18 }, wallModel));
+      this.addEntity(new WallMan(this, { x: xx, y: 33 }, wallModelAt(xx, 33)));
     }
 
     for (let yy = 18; yy <= 33; ++yy) {
-      this.addEntity(new WallMan(this, { x: 19, y: yy }));
-      this.addEntity(new WallMan(this, { x: 34, y: yy }));
+      this.addEntity(new WallMan(this, { x: 19, y: yy }, wallModelAt(19, yy)));
+      this.addEntity(new WallMan(this, { x: 34, y: yy }, wallModelAt(34, yy)));
     }
-    this.addEntity(new WallMan(this, { x: 33, y: 19 }));
-    this.addEntity(new WallMan(this, { x: 20, y: 19 }));
-    this.addEntity(new WallMan(this, { x: 33, y: 32 }));
-    this.addEntity(new WallMan(this, { x: 20, y: 32 }));
+    // Additional blockers sit just inside the corner pillars and remain
+    // invisible; only the open perimeter needs cache-rendered models.
+    this.addEntity(new WallMan(this, { x: 33, y: 19 }, null));
+    this.addEntity(new WallMan(this, { x: 20, y: 19 }, null));
+    this.addEntity(new WallMan(this, { x: 33, y: 32 }, null));
+    this.addEntity(new WallMan(this, { x: 20, y: 32 }, null));
 
     this.addMob(new SolHeredit(this, { x: 25, y: 24 }, { aggro: player }));
 
