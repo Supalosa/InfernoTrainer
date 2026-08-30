@@ -90,6 +90,9 @@ export class ColosseumRegion extends Region {
     });
 
     this.addPlayer(player);
+    
+    player.freeze(this.world.getReadyTimer);
+    // TODO: reset the camera too
 
     const loadout = new ColosseumLoadout("max_melee");
     loadout.setStats(player);

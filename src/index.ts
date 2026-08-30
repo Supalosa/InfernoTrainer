@@ -30,7 +30,7 @@ const selectedRegion: Region = (regionName in AVAILABLE_REGIONS) ? AVAILABLE_REG
 
 // Create world
 const world = new World();
-world.getReadyTimer = 6;
+world.getReadyTimer = 5;
 selectedRegion.world = world;
 world.addRegion(selectedRegion);
 

@@ -21,6 +21,7 @@ import {
   Sound,
   SoundCache,
   Trainer,
+  Viewport,
 } from "osrs-sdk";
 
 import { SolGroundSlam } from "../entities/SolGroundSlam";
@@ -48,6 +49,7 @@ import LaserFire from "../../assets/sounds/8230_laser_fire.ogg";
 import { SolSandPool } from "../entities/SolSandPool";
 import { Edge, LaserOrb } from "../entities/LaserOrb";
 import { ColosseumConstants } from "../Constants";
+import { Button } from "osrs-sdk/src/sdk/ui/Button";
 
 const PLAYER_DEATH_TAUNTS = [
   "How disappointing...",
@@ -69,6 +71,7 @@ enum SolAnimations {
   TripleAttackLong = 5, // 10886
   TripleAttackShort = 6, // 10887
   Death = 7, // 10888
+  Land = 8, // 10877
 }
 
 enum AttackDirection {
@@ -214,6 +217,7 @@ export class SolHeredit extends Mob {
 
   dead() {
     super.dead();
+    Viewport.viewport.components.push(new Button("Reset", 120, 60, () => Trainer.reset()));
   }
 
   tauntPlayerDeath() {
@@ -224,6 +228,7 @@ export class SolHeredit extends Mob {
   setStats() {
     this.laserOrbs = [];
     this.stunned = 4;
+    this.attackDelay = 6;
     this.weapons = {
       stab: new MeleeWeapon(),
     };
@@ -239,6 +244,9 @@ export class SolHeredit extends Mob {
 
     // with boosts
     this.currentStats = JSON.parse(JSON.stringify(this.stats));
+
+    this.playAnimation(SolAnimations.Land);
+    this.setRotationImmediate(Math.PI * 1.5); // south
   }
 
   get bonuses(): UnitBonuses {
