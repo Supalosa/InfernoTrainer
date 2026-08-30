@@ -48,7 +48,7 @@ export class SandPoolModel implements Model {
     this.circle.position.x = x + this.sandPool.size / 2;
     this.circle.position.y = -0.49;
     this.circle.position.z = y - this.sandPool.size / 2;
-    if (this.sandPool.age >= 3 && this.sandPool.age < 5 && this.beam.parent !== scene) {
+    if (this.sandPool.age >= 2 && this.sandPool.age < 5 && this.beam.parent !== scene) {
       this.beam.position.x = x + this.sandPool.size / 2;
       this.beam.position.y = BEAM_HEIGHT / 2 - 0.5;
       this.beam.position.z = y - this.sandPool.size / 2;
