@@ -215,6 +215,11 @@ export class SolHeredit extends Mob {
     return true;
   }
 
+  get clickboxRadius() {
+    // Sol's decoded model is the intended geometric clickbox.
+    return null;
+  }
+
   dead() {
     super.dead();
     Viewport.viewport.components.push(new Button("Reset", 120, 60, () => Trainer.reset()));
