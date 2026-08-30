@@ -24,7 +24,6 @@ import {
 } from "osrs-sdk";
 
 import { SolGroundSlam } from "../entities/SolGroundSlam";
-import { RingBuffer } from "../utils/RingBuffer";
 import { ColosseumSettings } from "../ColosseumSettings";
 
 import SpearStart from "../../assets/sounds/8147_spear.ogg";
@@ -162,6 +161,7 @@ class ParryUnblockableWeapon extends MeleeWeapon {
 const MIN_LASER_ORB_COOLDOWN = 25;
 const MAX_LASER_ORB_COOLDOWN = 35;
 const ENRAGE_LASER_ORB_COOLDOWN = 12;
+const PROTECTION_PRAYERS = ["Protect from Melee", "Protect from Range", "Protect from Magic"];
 
 export class SolHeredit extends Mob {
   shouldRespawnMobs: boolean;
@@ -182,15 +182,15 @@ export class SolHeredit extends Mob {
   poolCache: { [xy: string]: boolean } = {};
   finalPhasePoolTimer = 7; // once the phase transition is up
 
-  // melee prayer overhead history of target
-  overheadHistory: RingBuffer = new RingBuffer(5);
-
   stationaryTimer = 0;
 
   // for instancing of slams
   tickNumber = 0;
   private grappleParryMessage: string | null = null;
   private grappleParryMessageTimer = 0;
+  private eagerPrayerMessage: string | null = null;
+  private eagerPrayerMessageTimer = 0;
+  private tripleParryAttackTicks: number[] = [];
 
   mobName() {
     return "Sol Heredit";
@@ -320,10 +320,11 @@ export class SolHeredit extends Mob {
     if (this.grappleParryMessageTimer > 0 && --this.grappleParryMessageTimer === 0) {
       this.grappleParryMessage = null;
     }
+    if (this.eagerPrayerMessageTimer > 0 && --this.eagerPrayerMessageTimer === 0) {
+      this.eagerPrayerMessage = null;
+    }
     this.tickNumber++;
     this.laserOrbCooldown--;
-    const overhead = this.aggro?.prayerController.overhead();
-    this.overheadHistory.push(overhead && (["Protect from Melee", "Protect from Range", "Protect from Magic"].includes(overhead.name)));
     this.attackStyle = this.attackStyleForNewAttack();
 
     this.attackFeedback = AttackIndicators.NONE;
@@ -353,6 +354,8 @@ export class SolHeredit extends Mob {
     if (!this.aggro) {
       return;
     }
+
+    this.punishEagerProtectionPrayer();
 
     this.hadLOS = this.hasLOS;
     // override LOS check to attack melee diagonally
@@ -718,53 +721,61 @@ export class SolHeredit extends Mob {
   }
 
   private _attackTriple(short: boolean) {
+    const attackStartTick = this.region.world.globalTickCounter;
+    // Each delayed parry creates a one-tick melee projectile, so the prayer
+    // check belongs on the following tick when that hitsplat lands.
+    this.tripleParryAttackTicks = short ? [attackStartTick + 3, attackStartTick + 6, attackStartTick + 9] : [attackStartTick + 3, attackStartTick + 6, attackStartTick + 10];
+    this.punishEagerProtectionPrayer();
     SoundCache.play(TRIPLE_START);
     SoundCache.play(TRIPLE_CHARGE_1);
-    DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(15, 3).bind(this), 2));
+    DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(15).bind(this), 2));
     DelayedAction.registerDelayedAction(
       new DelayedAction(() => {
         SoundCache.play(TRIPLE_PARRY_1);
       }, 3),
     );
     DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_CHARGE_2), 4));
-    DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(short ? 25 : 30, 2).bind(this), 5));
+    DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(short ? 25 : 30).bind(this), 5));
     DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_2), 6));
     if (short) {
       DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_CHARGE_3_SHORT), 6));
-      DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(35, 2).bind(this), 8));
+      DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(35).bind(this), 8));
       DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_3), 9));
     } else {
       DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_CHARGE_3_LONG), 6));
-      DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(45, 3).bind(this), 9));
+      DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(45).bind(this), 9));
       DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_3), 10));
     }
   }
 
-  private wasOverheadOn(ticks: number) {
-    for (let i = 0; i < ticks; ++i) {
-      if (this.overheadHistory.pop()) {
-        return true;
-      }
+  private punishEagerProtectionPrayer() {
+    const currentTick = this.region.world.globalTickCounter;
+    if (this.tripleParryAttackTicks.length > 0 && currentTick > this.tripleParryAttackTicks[this.tripleParryAttackTicks.length - 1]) {
+      this.tripleParryAttackTicks = [];
+      return;
     }
-    return false;
+    if (this.tripleParryAttackTicks.length === 0 || this.tripleParryAttackTicks.includes(currentTick)) {
+      return;
+    }
+    const activePrayer = this.aggro?.prayerController.activePrayers().find((prayer) => PROTECTION_PRAYERS.includes(prayer.name));
+    if (activePrayer) {
+      this.aggro.prayerController.disableProtectionPrayersForTicks(3);
+      this.eagerPrayerMessage = "Sol Heredit doesn't take kindly to your eager prayer.";
+      this.eagerPrayerMessageTimer = 8;
+    }
   }
 
-  private doParryAttack = (damage: number, ticks: number) => () => {
-    const overheadWasOn = this.wasOverheadOn(ticks);
+  private doParryAttack = (damage: number) => () => {
     this.aggro?.addProjectile(
       new Projectile(
-        overheadWasOn ? new ParryUnblockableWeapon() : new MeleeWeapon(),
+        new MeleeWeapon(),
         damage,
         this,
         this.aggro,
         "stab",
-        { hidden: true, setDelay: 1, checkPrayerAtHit: !overheadWasOn },
+        { hidden: true, setDelay: 1, checkPrayerAtHit: true },
       ),
     );
-    this.aggro?.prayerController.findPrayerByName("Protect from Melee").deactivate();
-    this.aggro?.prayerController.findPrayerByName("Protect from Range").deactivate();
-    this.aggro?.prayerController.findPrayerByName("Protect from Magic").deactivate();
-    this.overheadHistory.clear();
   };
 
   private phaseTransition(toPhase: number) {
@@ -1015,6 +1026,10 @@ export class SolHeredit extends Mob {
     if (this.grappleParryMessage) {
       context.translate(0, -30);
       this.drawText(context, [{ text: this.grappleParryMessage, color: "006400" }], scale, false);
+    }
+    if (this.eagerPrayerMessage) {
+      context.translate(0, -60);
+      this.drawText(context, [{ text: this.eagerPrayerMessage, color: "ff0000" }], scale, false);
     }
 
     context.restore();
