@@ -30,7 +30,34 @@ Sure. Right now the code is undergoing rapid development and the API is not stab
 
 Use Node 16 for now. There's an SSL error on version >= 18.
 
+To use a local checkout of `osrs-sdk` from the sibling directory (note: the SDK **must** be a sibling of this project and have the name `osrs-sdk`), run:
+
+    npm run link:sdk
+
+This builds the SDK  and uses the standard npm link workflow without changing
+the committed dependency or lockfile. Re-run it after SDK source changes, then
+restart the trainer dev server. Use `npm unlink osrs-sdk` followed by
+`npm install` to restore the published package.
+
+To select a hosted cache-render bundle at build/dev-server time:
+
+    OSRS_CACHE_RENDER_MANIFEST_URL=https://assets.example.com/osrs-cache-render/manifest.json npm run start
+
     npm run start
+
+### Netlify beta builds
+
+The `beta` branch uses the `[context.beta]` configuration in `netlify.toml`.
+That build clones the SDK's `feat/cache-render-bundle` branch, builds it,
+packages it, and installs the resulting tarball before building the trainer.
+Set this environment variable for that Netlify deploy context:
+
+    OSRS_CACHE_RENDER_MANIFEST_URL=https://assets.example.com/osrs-cache-render/beta/manifest.json
+
+The trainer build bundles that SDK into `dist/main.js`. Since the SDK branch is
+cloned by name, each beta deploy uses the latest commit on that branch. For a
+fully reproducible deploy, change the command to check out a specific commit
+after cloning.
 
 Running test
 

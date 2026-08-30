@@ -49,6 +49,9 @@ const config = {
       ],
     }),
     new webpack.EnvironmentPlugin(["COMMIT_REF", "BUILD_DATE", "DEPLOY_URL"]),
+    new webpack.DefinePlugin({
+      __OSRS_CACHE_RENDER_MANIFEST_URL__: JSON.stringify(process.env.OSRS_CACHE_RENDER_MANIFEST_URL || ""),
+    }),
   ],
   module: {
     rules: [

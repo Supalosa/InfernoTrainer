@@ -1,7 +1,19 @@
 "use strict";
 
-import { World, Settings, ImageLoader, Viewport, TileMarker, Location, MapController, Assets, Chrome, Region, Trainer, ControlPanelController } from "osrs-sdk";
+import { World, Settings, ImageLoader, Viewport, TileMarker, Location, MapController, Assets, Chrome, Region, Trainer, ControlPanelController, CacheRender } from "osrs-sdk";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
+
+declare const __OSRS_CACHE_RENDER_MANIFEST_URL__: string;
+
+declare global {
+  interface Window {
+    OSRS_CACHE_RENDER_MANIFEST_URL?: string;
+  }
+}
+
+// The build-time environment variable takes precedence; the window override
+// remains useful for ad-hoc browser testing.
+CacheRender.configure(__OSRS_CACHE_RENDER_MANIFEST_URL__ || window.OSRS_CACHE_RENDER_MANIFEST_URL || "http://127.0.0.1:8081/manifest.json");
 
 const SpecialAttackBarBackground = Assets.getAssetUrl("assets/images/attackstyles/interface/special_attack_background.png");
 

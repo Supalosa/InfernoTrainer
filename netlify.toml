@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Netlify uses this context for deploys of the `beta` branch. The beta build
+# clones and builds the unpublished SDK from its cache-render branch.
+[context.beta]
+  command = "set -e; SDK_TMP=$(mktemp -d); git clone --depth 1 --branch feat/cache-render-bundle https://github.com/OldSchoolSDK/osrs-sdk.git \"$SDK_TMP\"; npm --prefix \"$SDK_TMP\" ci; npm --prefix \"$SDK_TMP\" run build; npm --prefix \"$SDK_TMP\" pack --pack-destination \"$SDK_TMP\"; npm install --no-save \"$SDK_TMP\"/osrs-sdk-*.tgz; npm run build"
+  publish = "dist"
