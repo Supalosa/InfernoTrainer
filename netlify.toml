@@ -5,5 +5,5 @@
 # Netlify uses this context for deploys of the `beta` branch. The beta build
 # clones and builds the unpublished SDK from its cache-render branch.
 [context.beta]
-  command = "set -e; SDK_TMP=$(mktemp -d); git clone --depth 1 --branch feat/cache-render-bundle https://github.com/OldSchoolSDK/osrs-sdk.git \"$SDK_TMP\"; npm --prefix \"$SDK_TMP\" ci; npm --prefix \"$SDK_TMP\" run build; npm --prefix \"$SDK_TMP\" pack --pack-destination \"$SDK_TMP\" >/dev/null; SDK_TARBALL=$(find \"$SDK_TMP\" -maxdepth 1 -type f -name 'osrs-sdk-*.tgz' -print -quit); test -n \"$SDK_TARBALL\"; npm install --no-save \"$SDK_TARBALL\"; npm run build"
+  command = "set -eux; SDK_TMP=$(mktemp -d); git clone --depth 1 --branch feat/cache-render-bundle https://github.com/OldSchoolSDK/osrs-sdk.git \"$SDK_TMP\"; cd \"$SDK_TMP\"; npm ci; npm run build; npm pack --pack-destination \"$SDK_TMP\"; SDK_TARBALL=$(find \"$SDK_TMP\" -maxdepth 1 -type f -name 'osrs-sdk-*.tgz' -print -quit); test -n \"$SDK_TARBALL\"; cd - >/dev/null; npm install --no-save \"$SDK_TARBALL\"; npm run build"
   publish = "dist"
