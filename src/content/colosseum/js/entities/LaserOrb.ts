@@ -66,9 +66,6 @@ export class LaserOrb extends Entity {
   firingFreeze = 0;
   private boundaries: [Location, Location];
 
-  // if >0, this orb follows the player
-  echoFollowDuration = 0;
-
   static onEdge(region: Region, edge: Edge) {
     const boundaries = pickLocation(edge);
     return new LaserOrb(region, boundaries, edge);
@@ -94,7 +91,6 @@ export class LaserOrb extends Entity {
       x: this.location.x,
       y: this.location.y,
     };
-    this.echoFollowDuration = 0;
   }
 
   create3dModel() {
@@ -147,28 +143,13 @@ export class LaserOrb extends Entity {
 
   tick() {
     const player = Trainer.player;
-    if (this.echoFollowDuration > 0) {
-      --this.echoFollowDuration;
-      if ((this.direction.x > 0 && this.location.x > player.location.x) || (this.direction.x < 0 && this.location.x < player.location.x)) {
-        this.direction.x *= -1;
-      } else {
-        this.direction.x *= -1;
-      }
-      if ((this.direction.y > 0 && this.location.y > player.location.y) || (this.direction.y < 0 && this.location.y < player.location.y)) {
-        this.direction.y *= -1;
-      } else {
-        this.direction.y *= -1;
-      }
-    }
     if (this.firingFreeze <= 0 && this.moveTick <= 0) {
       this.lastLocation = {
         x: this.location.x,
         y: this.location.y,
       };
-      if (this.echoFollowDuration <= 0 || !this.isInLineWithPlayer()) {
-        this.location.x += this.direction.x;
-        this.location.y += this.direction.y;
-      }
+      this.location.x += this.direction.x;
+      this.location.y += this.direction.y;
       // reverse direction
       if (
         (this.location.x === this.boundaries[0].x && this.location.y === this.boundaries[0].y) ||
@@ -187,10 +168,6 @@ export class LaserOrb extends Entity {
 
     --this.moveTick;
     --this.firingFreeze;
-  }
-
-  echoFollowPlayer(ticks: number) {
-    this.echoFollowDuration = ticks;
   }
 
   isInLineWithPlayer() {

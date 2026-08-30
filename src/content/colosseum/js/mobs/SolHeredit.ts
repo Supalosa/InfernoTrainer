@@ -208,7 +208,7 @@ export class SolHeredit extends Mob {
       defence: 200,
       range: 350,
       magic: 300,
-      hitpoint: ColosseumSettings.echoMaxHp ? 1725 : 1500,
+      hitpoint: 1500,
     };
 
     // with boosts
@@ -314,7 +314,7 @@ export class SolHeredit extends Mob {
         this.setOverheadText(message);
       }
     }
-    if ((this.phaseId === 5 || ColosseumSettings.echoEnrage) && this.aggro) {
+    if (this.phaseId === 5 && this.aggro) {
       if (--this.finalPhasePoolTimer === 0) {
         this.tryPlacePools(this.aggro.location.x, this.aggro.location.y, 1);
         this.finalPhasePoolTimer = 3;
@@ -823,9 +823,6 @@ export class SolHeredit extends Mob {
     } else {
       this.laserOrbCooldown = ENRAGE_LASER_ORB_COOLDOWN;
     }
-    if (ColosseumSettings.echoLasers || ColosseumSettings.echoEnrage) {
-      this.laserOrbCooldown = ENRAGE_LASER_ORB_COOLDOWN;
-    }
     DelayedAction.registerDelayedAction(
       new DelayedAction(() => {
         SoundCache.play(LASER_CHARGE);
@@ -836,14 +833,6 @@ export class SolHeredit extends Mob {
         SoundCache.play(LASER_FIRE);
       }, 7),
     );
-    // echo: pick two orbs to follow the player for 12 ticks
-    if (ColosseumSettings.echoLasers) {
-      const northSouthOrb = Random.get() < 0.5 ? Edge.NORTH : Edge.SOUTH;
-      const eastWestOrb = Random.get() < 0.5 ? Edge.NORTH : Edge.SOUTH;
-      this.laserOrbs
-      .filter((orb) => orb.edge === northSouthOrb || orb.edge === eastWestOrb)
-      .forEach((orb) => orb.echoFollowPlayer(ENRAGE_LASER_ORB_COOLDOWN))
-    }
   }
 
   create3dModel() {

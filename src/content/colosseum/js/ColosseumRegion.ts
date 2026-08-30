@@ -166,10 +166,6 @@ export class ColosseumRegion extends Region {
     this.updateSolarFlares();
     this.updateSolarFlareTiles();
 
-    setupAttackConfig("echo_max_hp", "echoMaxHp");
-    setupAttackConfig("echo_enrage", "echoEnrage");
-    setupAttackConfig("echo_lasers", "echoLasers");
-
     const creditsButton = document.getElementById("credits_button") as HTMLButtonElement;
     let showCredits = false;
     creditsButton.addEventListener("click", () => {
