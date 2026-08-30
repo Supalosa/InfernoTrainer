@@ -56,6 +56,14 @@ export class ColosseumLoadout {
     player.currentStats.defence = 99;
   }
 
+  applyStartingBoosts(player: Player) {
+    // a fake supercombat boost
+    for (const stat of ["attack", "strength", "defence"] as const) {
+      const boost = Math.floor(player.stats[stat] * 0.15) + 5;
+      player.currentStats[stat] = player.stats[stat] + boost;
+    }
+  }
+
   getLoadout(): UnitOptions {
     let loadout: UnitOptions;
     switch (this.loadoutType) {

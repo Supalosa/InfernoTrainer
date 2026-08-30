@@ -93,6 +93,7 @@ export class ColosseumRegion extends Region {
 
     const loadout = new ColosseumLoadout("max_melee");
     loadout.setStats(player);
+    loadout.applyStartingBoosts(player);
     player.setUnitOptions(loadout.getLoadout());
 
     // NE 34,18
