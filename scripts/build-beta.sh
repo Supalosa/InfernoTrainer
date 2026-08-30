@@ -13,6 +13,10 @@ git clone --depth 1 --branch "${OSRS_SDK_BRANCH}" "${OSRS_SDK_REPO}" "${SDK_TMP}
 git clone --depth 1 --branch "${OSRS_CACHE_READER_BRANCH}" "${OSRS_CACHE_READER_REPO}" "${READER_TMP}"
 ln -s "${CACHE_ROOT}/.cache-render" "${SDK_TMP}/.cache-render"
 
+pushd "${READER_TMP}" >/dev/null
+npm ci
+popd >/dev/null
+
 pushd "${SDK_TMP}" >/dev/null
 npm ci
 npm run assets
