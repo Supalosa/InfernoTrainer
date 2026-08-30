@@ -12,5 +12,7 @@
 [context.beta.environment]
   OSRS_SDK_REPO = "https://github.com/OldSchoolSDK/osrs-sdk.git"
   OSRS_SDK_BRANCH = "feat/cache-render-bundle"
+  OSRS_CACHE_READER_REPO = "https://github.com/Supalosa/osrscachereader.git"
+  OSRS_CACHE_READER_BRANCH = "feat/reader-only-entrypoint"
   OSRS_ASSET_BASE_URL = "https://assets-soltrainer.netlify.app"
   OSRS_CACHE_RENDER_MANIFEST_URL = "/cache-render/manifest.json"

@@ -10,7 +10,7 @@ CACHE_ROOT="${NETLIFY_CACHE_DIR:-/opt/build/cache}/osrs-cache-render"
 
 mkdir -p "${CHECKOUT_ROOT}" "${CACHE_ROOT}/.cache-render"
 git clone --depth 1 --branch "${OSRS_SDK_BRANCH}" "${OSRS_SDK_REPO}" "${SDK_TMP}"
-git clone --depth 1 https://github.com/Dezinater/osrscachereader.git "${READER_TMP}"
+git clone --depth 1 --branch "${OSRS_CACHE_READER_BRANCH}" "${OSRS_CACHE_READER_REPO}" "${READER_TMP}"
 ln -s "${CACHE_ROOT}/.cache-render" "${SDK_TMP}/.cache-render"
 
 pushd "${SDK_TMP}" >/dev/null
