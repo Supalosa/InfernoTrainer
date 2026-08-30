@@ -53,6 +53,7 @@ packages it, and installs the resulting tarball before building the trainer.
 Set this environment variable for that Netlify deploy context:
 
     OSRS_CACHE_RENDER_MANIFEST_URL=https://assets.example.com/osrs-cache-render/beta/manifest.json
+    OSRS_ASSET_BASE_URL=https://assets-soltrainer.netlify.app
 
 The trainer build bundles that SDK into `dist/main.js`. Since the SDK branch is
 cloned by name, each beta deploy uses the latest commit on that branch. For a
