@@ -50,6 +50,17 @@ import { SolSandPool } from "../entities/SolSandPool";
 import { Edge, LaserOrb } from "../entities/LaserOrb";
 import { ColosseumConstants } from "../Constants";
 
+const PLAYER_DEATH_TAUNTS = [
+  "How disappointing...",
+  "I knew you weren't the one.",
+  "You had me excited for a moment.",
+  "Your lack of coordination is concerning.",
+  "Your light shines no more.",
+  "Maybe next time...",
+  "Pathetic, really...",
+  "I was just getting into my rhythm...",
+];
+
 enum SolAnimations {
   Idle = 0, // 10874
   Walk = 1, // 10878
@@ -193,6 +204,11 @@ export class SolHeredit extends Mob {
 
   dead() {
     super.dead();
+  }
+
+  tauntPlayerDeath() {
+    this.overheadText = PLAYER_DEATH_TAUNTS[Math.floor(Random.get() * PLAYER_DEATH_TAUNTS.length)];
+    this.overheadTextTimer = 8;
   }
 
   setStats() {
@@ -659,7 +675,7 @@ export class SolHeredit extends Mob {
           SoundCache.play(GRAPPLE_PARRY);
         }
         // queue damage to be played this tick (remember NPCs take turn before enemy)
-        this.aggro.addProjectile(
+        this.aggro?.addProjectile(
           new Projectile(
             new ParryUnblockableWeapon(),
             didParry ? 0 : 20 + Math.floor(Random.get() * 25),
@@ -736,10 +752,12 @@ export class SolHeredit extends Mob {
         this.tryPlacePools(x, y, numOtherPools);
       }, 1),
     );
-    this.aggro = null;
+    this.setAggro(null);
     DelayedAction.registerDelayedAction(
       new DelayedAction(() => {
-        this.aggro = lastAggro;
+        if (!lastAggro.hasDiedAndAwaitingRemoval) {
+          this.setAggro(lastAggro);
+        }
       }, 5),
     );
     if (toPhase >= 1 && toPhase <= 4) {

@@ -1,6 +1,6 @@
 "use strict";
 
-import { Region, Viewport, Settings, Player, CardinalDirection, ImageLoader, Trainer } from "osrs-sdk";
+import { Region, Viewport, Settings, Player, Unit, CardinalDirection, ImageLoader, Trainer } from "osrs-sdk";
 
 
 import ColosseumMapImage from "../assets/images/map.png";
@@ -237,6 +237,16 @@ export class ColosseumRegion extends Region {
   }
 
   private enableReplay = false;
+  override onUnitDeath(unit: Unit) {
+    if (unit instanceof Player) {
+      this.mobs.forEach((mob) => {
+        if (mob instanceof SolHeredit) {
+          mob.tauntPlayerDeath();
+        }
+      });
+    }
+  }
+
   private replayTick = 1;
   override postTick() {
     if (!this.enableReplay || this.world.getReadyTimer > 0) {
