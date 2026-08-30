@@ -437,6 +437,7 @@ export class SolHeredit extends Mob {
     const radius = (Math.abs(fromX - toX) - 1) / 2 + 1;
     for (let xx = fromX; xx < toX; ++xx) {
       for (let yy = toY; yy > fromY; --yy) {
+        if (!this.isArenaTile(xx, yy)) continue;
         const radX = Math.abs(fromX + midX - xx);
         const radY = Math.abs(fromY + midY - yy + 1);
         if ((radX === exceptRadius && radY <= exceptRadius) || (radY === exceptRadius && radX <= exceptRadius)) {
@@ -448,6 +449,13 @@ export class SolHeredit extends Mob {
         );
       }
     }
+  }
+
+  private isArenaTile(x: number, y: number) {
+    // Hazards stop at the inside edge of the wallmen; never place them on the
+    // perimeter tiles themselves.
+    return x > ColosseumConstants.ARENA_WEST && x < ColosseumConstants.ARENA_EAST &&
+      y > ColosseumConstants.ARENA_NORTH && y < ColosseumConstants.ARENA_SOUTH;
   }
 
   // Bresenham's line algorirthm
@@ -466,9 +474,11 @@ export class SolHeredit extends Mob {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const delay = n / length;
-      this.region.addEntity(
-        new SolGroundSlam(this.region, { x: fromX, y: fromY }, this, this.aggro, delay, this.tickNumber),
-      );
+      if (this.isArenaTile(fromX, fromY)) {
+        this.region.addEntity(
+          new SolGroundSlam(this.region, { x: fromX, y: fromY }, this, this.aggro, delay, this.tickNumber),
+        );
+      }
       n++;
       if (fromX === toX && fromY === toY) break;
       const e2 = 2 * err;

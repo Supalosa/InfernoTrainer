@@ -1,6 +1,6 @@
 "use strict"
 
-import { CacheRenderModel, CacheRenderReferences, InvisibleMovementBlocker, TileMarkerModel } from "osrs-sdk";
+import { CacheRenderInstancedModel, CacheRenderReferences, InvisibleMovementBlocker, TileMarkerModel } from "osrs-sdk";
 
 export class WallMan extends InvisibleMovementBlocker {
     constructor(region, location, private readonly modelId: number | null = 50963) {
@@ -33,6 +33,6 @@ export class WallMan extends InvisibleMovementBlocker {
 
     override create3dModel() {
         if (this.modelId == null) return TileMarkerModel.forRenderable(this, null);
-        return CacheRenderModel.forRenderable(this, CacheRenderReferences.model(this.modelId));
+        return CacheRenderInstancedModel.forRenderable(this, CacheRenderReferences.model(this.modelId));
     }
 }
