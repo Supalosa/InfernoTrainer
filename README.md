@@ -52,9 +52,8 @@ The `beta` branch uses the `[context.beta]` configuration in `netlify.toml` and
 repository and branch named by `OSRS_SDK_REPO` and
 `OSRS_SDK_BRANCH` (defaulting to the cache-render branch), builds it, downloads
 and extracts the cache-render assets using the cache reader repository and
-branch named by `OSRS_CACHE_READER_REPO` and `OSRS_CACHE_READER_BRANCH`,
-packages the SDK, and installs the
-resulting tarball before building the trainer. The generated cache bundle is
+branch named by `OSRS_CACHE_READER_REPO` and `OSRS_CACHE_READER_BRANCH`, then
+installs that built SDK checkout before building the trainer. The generated cache bundle is
 copied into `dist/cache-render` and served by the trainer site. The OpenRS2
 cache is stored under `/opt/build/cache/osrs-cache-render` (or
 `NETLIFY_CACHE_DIR` when provided), so subsequent builds reuse it. These values

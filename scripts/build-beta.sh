@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# TODO: Fix the SDK build/package declaration output so this normalization is
+# no longer required here.
+
+# Netlify build script that allows us to build against a specific branch of osrs-sdk and osrscachereader.
+
 TRAINER_ROOT="${PWD}"
 WORK_TMP="$(mktemp -d)"
 CHECKOUT_ROOT="${WORK_TMP}/checkout"
@@ -21,12 +26,15 @@ pushd "${SDK_TMP}" >/dev/null
 npm ci
 npm run assets
 npm run build
-npm pack --pack-destination "${SDK_TMP}"
-SDK_TARBALL="$(find "${SDK_TMP}" -maxdepth 1 -type f -name 'osrs-sdk-*.tgz' -print -quit)"
-test -n "${SDK_TARBALL}"
+# webpack emits declarations below lib/osrs-sdk/src, while package.json's
+# public types entrypoint is lib/index.d.ts. Flatten that generated tree before
+# installing so the trainer's TypeScript compiler sees the same SDK API.
+if [[ -f lib/osrs-sdk/src/index.d.ts ]]; then
+  cp -a lib/osrs-sdk/src/. lib/
+fi
 popd >/dev/null
 
-npm install --no-save "${SDK_TARBALL}"
+npm install --no-save "${SDK_TMP}"
 npm run build
 mkdir -p dist/cache-render
 cp -a "${SDK_TMP}/cache-render-bundle/." dist/cache-render/
