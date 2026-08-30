@@ -110,7 +110,7 @@ Using Dezinator's `osrscachereader` at https://github.com/Dezinater/osrscacherea
     npm run cmd modelBuilder npc 7707 anim 7567,7569 name shield
 
     # Sol Heredit: Idle, Walk, SpearSlow, Grapple, Shield, TripleAttackLong,TripleAttackShort,Death
-    npm run cmd modelBuilder exclude 52585 npc 12821 anim 10874,10878,10883,10884,10885,10886,10887,10888 name sol2
+    npm run cmd modelBuilder npc 12821 anim 10874,10878,10883,10884,10885,10886,10887,10888 name sol2
 
 ### Spotanim models
 

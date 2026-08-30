@@ -3,10 +3,10 @@
 import _ from "lodash";
 
 import {
-  Assets,
+  CacheRenderModel,
+  CacheRenderReferences,
   DelayedAction,
   EquipmentControls,
-  GLTFModel,
   Collision,
   Region,
   Location,
@@ -49,8 +49,6 @@ import LaserFire from "../../assets/sounds/8230_laser_fire.ogg";
 import { SolSandPool } from "../entities/SolSandPool";
 import { Edge, LaserOrb } from "../entities/LaserOrb";
 import { ColosseumConstants } from "../Constants";
-
-export const SolHereditModel = Assets.getAssetUrl("models/sol2.glb");
 
 enum SolAnimations {
   Idle = 0, // 10874
@@ -839,7 +837,7 @@ export class SolHeredit extends Mob {
   }
 
   create3dModel() {
-    return GLTFModel.forRenderable(this, SolHereditModel, { scale: 0.02 });
+    return CacheRenderModel.forRenderable(this, CacheRenderReferences.npc(12821));
   }
 
   override get idlePoseId() {
