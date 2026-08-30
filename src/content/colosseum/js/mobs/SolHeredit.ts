@@ -292,8 +292,7 @@ export class SolHeredit extends Mob {
   }
 
   get attackSpeed() {
-    // irrelevant
-    return 7;
+    return 0;
   }
 
   get attackRange() {
