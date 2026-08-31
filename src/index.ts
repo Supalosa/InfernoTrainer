@@ -18,6 +18,63 @@ CacheRender.configure(__OSRS_CACHE_RENDER_MANIFEST_URL__ || window.OSRS_CACHE_RE
 const SpecialAttackBarBackground = Assets.getAssetUrl("assets/images/attackstyles/interface/special_attack_background.png");
 
 Settings.readFromStorage();
+applyTransferredSettings();
+
+type TransferredSettings = {
+  version: 1;
+  hotkeys?: Partial<Record<"inventory" | "spellbook" | "equipment" | "prayer" | "combat", string>>;
+  ui?: {
+    zoomScale?: number;
+    maxUiScale?: number;
+    menuVisible?: boolean;
+  };
+};
+
+/**
+ * Applies settings sent from colosim.com before any UI is created. The payload
+ * is deliberately limited to portable preferences, rather than arbitrary
+ * local-storage data.
+ */
+function applyTransferredSettings() {
+  const encodedSettings = new URLSearchParams(window.location.search).get("settings");
+  if (!encodedSettings) return;
+
+  try {
+    const base64 = encodedSettings.replace(/-/g, "+").replace(/_/g, "/");
+    const paddedBase64 = base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), "=");
+    const settings = JSON.parse(atob(paddedBase64)) as TransferredSettings;
+    if (settings.version !== 1) return;
+
+    const hotkeySettings: Record<keyof NonNullable<TransferredSettings["hotkeys"]>, "inventory_key" | "spellbook_key" | "equipment_key" | "prayer_key" | "combat_key"> = {
+      inventory: "inventory_key",
+      spellbook: "spellbook_key",
+      equipment: "equipment_key",
+      prayer: "prayer_key",
+      combat: "combat_key",
+    };
+    for (const [key, setting] of Object.entries(hotkeySettings)) {
+      const value = settings.hotkeys?.[key as keyof typeof hotkeySettings];
+      if (typeof value === "string" && value.length > 0) {
+        Settings[setting] = value;
+      }
+    }
+
+    if (Number.isFinite(settings.ui?.zoomScale)) {
+      Settings.zoomScale = Math.max(0.5, Math.min(2, settings.ui.zoomScale));
+    }
+    if (Number.isFinite(settings.ui?.maxUiScale)) {
+      Settings.maxUiScale = Math.max(0.5, Math.min(2, settings.ui.maxUiScale));
+    }
+    if (typeof settings.ui?.menuVisible === "boolean") {
+      Settings.menuVisible = settings.ui.menuVisible;
+    }
+
+    Settings.persistToStorage();
+    window.history.replaceState({}, "", `${window.location.pathname}${window.location.hash}`);
+  } catch {
+    // Ignore malformed or obsolete transfer links and use the saved settings.
+  }
+}
 
 // Choose the region based on the URL.
 const AVAILABLE_REGIONS = {
