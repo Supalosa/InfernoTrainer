@@ -49,7 +49,7 @@ import LaserFire from "../../assets/sounds/8230_laser_fire.ogg";
 import { SolSandPool } from "../entities/SolSandPool";
 import { Edge, LaserOrb } from "../entities/LaserOrb";
 import { ColosseumConstants } from "../Constants";
-import { Button } from "osrs-sdk/src/sdk/ui/Button";
+import { Button } from "osrs-sdk";
 
 const PLAYER_DEATH_TAUNTS = [
   "How disappointing...",
