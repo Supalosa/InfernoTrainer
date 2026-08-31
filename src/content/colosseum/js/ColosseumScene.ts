@@ -4,6 +4,11 @@ import { Assets, Entity, CacheRenderSceneModel, CollisionType, GLTFModel, Model,
 
 const SceneModel = Assets.getAssetUrl("models/colosseum_partial.glb");
 export const useStaticScene = new URLSearchParams(window.location.search).get("static-scene") === "1";
+
+// Temporary integration shim. Keep the cache asset region-local and tune this
+// at the trainer boundary until trainer coordinates adopt the cache origin.
+const CacheSceneOffset = { x: -6, y: -3, elevation: -7.5 };
+
 export class ColosseumScene extends Entity {
   get collisionType() {
     return CollisionType.NONE;
@@ -38,7 +43,10 @@ export class ColosseumScene extends Entity {
     // 400. Cache model units are 1/128 world units, so the compiler's
     // origin-normalized terrain sits (1360 - 400) / 128 = 7.5 units above
     // trainer plane zero.
-    if (!useStaticScene) return new CacheRenderSceneModel("region:7216", { elevation: -7.5 });
+    if (!useStaticScene) return new CacheRenderSceneModel("region:7216", {
+      elevation: CacheSceneOffset.elevation,
+      originOffset: CacheSceneOffset,
+    });
     // one day we'll figure out the offsets used in the exporter...
     return new GLTFModel(this, [SceneModel], { scale: 1, verticalOffset: -11.2, 
       originOffset: {
