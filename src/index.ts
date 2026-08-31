@@ -2,10 +2,42 @@
 
 import { World, Settings, ImageLoader, Viewport, TileMarker, Location, MapController, Assets, Chrome, Region, Trainer, ControlPanelController } from "osrs-sdk";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
+import { ColosseumSettings } from "./content/colosseum/js/ColosseumSettings";
 
 const SpecialAttackBarBackground = Assets.getAssetUrl("assets/images/attackstyles/interface/special_attack_background.png");
 
 Settings.readFromStorage();
+ColosseumSettings.readFromStorage();
+
+const betaBanner = document.getElementById("beta_banner");
+const betaBannerLink = document.getElementById("beta_banner_link") as HTMLAnchorElement;
+const dismissBetaBanner = document.getElementById("dismiss_beta_banner");
+if (ColosseumSettings.betaBannerDismissed) {
+  betaBanner.classList.add("hidden");
+} else {
+  // port the settings over to new beta sitwe
+  const settings = {
+    version: 1,
+    hotkeys: {
+      inventory: Settings.inventory_key,
+      spellbook: Settings.spellbook_key,
+      equipment: Settings.equipment_key,
+      prayer: Settings.prayer_key,
+      combat: Settings.combat_key,
+    },
+    ui: {
+      zoomScale: Settings.zoomScale,
+      maxUiScale: Settings.maxUiScale,
+      menuVisible: Settings.menuVisible,
+    },
+  };
+  betaBannerLink.href = `https://beta.colosim.com?settings=${btoa(JSON.stringify(settings)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "")}`;
+}
+dismissBetaBanner.addEventListener("click", () => {
+  ColosseumSettings.betaBannerDismissed = true;
+  ColosseumSettings.persistToStorage();
+  betaBanner.classList.add("hidden");
+});
 
 // Choose the region based on the URL.
 const AVAILABLE_REGIONS = {

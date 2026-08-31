@@ -37,6 +37,33 @@
       #world{
         position: fixed;
       }
+      #beta_banner {
+        position: fixed;
+        z-index: 10;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border: 1px #FFFF00 solid;
+        background: black;
+        padding: 10px 18px;
+        color: #FFFF00;
+        font-size: 16px;
+        text-align: center;
+      }
+      #beta_banner a, #beta_banner a:visited {
+        color: #FFFF00;
+        text-decoration: none;
+      }
+      #beta_banner button {
+        width: auto;
+        margin: 0 0 0 12px;
+        padding: 0 4px;
+        border: 0;
+        color: #FFFF00;
+        background: transparent;
+        font-size: 16px;
+        cursor: pointer;
+      }
       .hidden {
         display: none !important; 
       }
@@ -137,6 +164,10 @@
   </head>
   <body>
     <canvas id="world" onselectstart="return false" oncontextmenu="return false"></canvas>
+    <div id="beta_banner">
+      <a id="beta_banner_link" href="https://beta.colosim.com">Try the updated version of Colosim</a>
+      <button id="dismiss_beta_banner" type="button" aria-label="Dismiss beta banner">×</button>
+    </div>
     <div id="disclaimer_panel">All assets are property of Jagex.</div>
     <div id="right_panel">
       <div id="sidebar_content"><!-- replaced by the Region -->Loading content...</div>

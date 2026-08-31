@@ -12,6 +12,7 @@ export class ColosseumSettings {
   static echoMaxHp = false;
   static echoEnrage = false;
   static echoLasers = false;
+  static betaBannerDismissed = false;
 
   static persistToStorage() {
     window.localStorage.setItem("useShields", String(ColosseumSettings.useShields));
@@ -24,6 +25,7 @@ export class ColosseumSettings {
     window.localStorage.setItem("echoMaxHp", String(ColosseumSettings.echoMaxHp));
     window.localStorage.setItem("echoEnrage", String(ColosseumSettings.echoEnrage));
     window.localStorage.setItem("echoLasers", String(ColosseumSettings.echoLasers));
+    window.localStorage.setItem("betaBannerDismissed", String(ColosseumSettings.betaBannerDismissed));
   }
 
   static readFromStorage() {
@@ -37,5 +39,6 @@ export class ColosseumSettings {
     ColosseumSettings.echoMaxHp = window.localStorage.getItem("echoMaxHp") === "true";
     ColosseumSettings.echoEnrage = window.localStorage.getItem("echoEnrage") === "true";
     ColosseumSettings.echoLasers = window.localStorage.getItem("echoLasers") === "true";
+    ColosseumSettings.betaBannerDismissed = window.localStorage.getItem("betaBannerDismissed") === "true";
   }
 }
