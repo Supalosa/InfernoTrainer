@@ -6,7 +6,7 @@ import { Region, Viewport, Settings, Player, Unit, CardinalDirection, ImageLoade
 import ColosseumMapImage from "../assets/images/map.png";
 
 import { ColosseumLoadout } from "./ColosseumLoadout";
-import { ColosseumScene } from "./ColosseumScene";
+import { ColosseumScene, useStaticScene } from "./ColosseumScene";
 import { Attacks, SolHeredit as SolHeredit } from "./mobs/SolHeredit";
 
 import SidebarContent from "../sidebar.html";
@@ -134,7 +134,7 @@ export class ColosseumRegion extends Region {
 
     // Add 3d scene
     if (Settings.use3dView) {
-      this.addEntity(new ColosseumScene(this, { x: 0, y: 48 }));
+      this.addEntity(new ColosseumScene(this, { x: 0, y: useStaticScene ? 48 : 0 }));
     }
 
     // setup UI and settings
