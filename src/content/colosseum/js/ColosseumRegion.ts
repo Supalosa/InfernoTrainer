@@ -24,6 +24,10 @@ const SOLAR_FLARE_PATHS = [
   { location: { x: 28, y: 27 }, startAtIndex: 0 },
 ];
 
+// Temporary scene-extraction aid. It is deliberately URL-gated so normal
+// Colosseum sessions retain their collision blockers and UI.
+const sceneDebug = new URLSearchParams(window.location.search).get("scene-debug") === "1";
+
 export class ColosseumRegion extends Region {
   mapImage: HTMLImageElement = ImageLoader.createImage(ColosseumMapImage);
 
@@ -90,6 +94,17 @@ export class ColosseumRegion extends Region {
     });
 
     this.addPlayer(player);
+
+    if (sceneDebug) {
+      const coordinates = document.createElement("div");
+      coordinates.style.cssText = "position:fixed;top:8px;left:8px;z-index:10000;padding:6px 8px;background:#000c;color:#0f0;font:14px monospace;pointer-events:none";
+      document.body.appendChild(coordinates);
+      const updateCoordinates = () => {
+        coordinates.textContent = `scene debug — player: ${player.location.x}, ${player.location.y}`;
+        requestAnimationFrame(updateCoordinates);
+      };
+      updateCoordinates();
+    }
     
     player.freeze(this.world.getReadyTimer);
     // TODO: reset the camera too
@@ -112,22 +127,24 @@ export class ColosseumRegion extends Region {
       return inCornerPillar ? null : (x + y) % 2 === 0 ? 50963 : 50964;
     };
 
-    for (let xx = 19; xx <= 34; ++xx) {
-      const wallModel = wallModelAt(xx, 18);
-      this.addEntity(new WallMan(this, { x: xx, y: 18 }, wallModel));
-      this.addEntity(new WallMan(this, { x: xx, y: 33 }, wallModelAt(xx, 33)));
-    }
+    if (!sceneDebug) {
+      for (let xx = 19; xx <= 34; ++xx) {
+        const wallModel = wallModelAt(xx, 18);
+        this.addEntity(new WallMan(this, { x: xx, y: 18 }, wallModel));
+        this.addEntity(new WallMan(this, { x: xx, y: 33 }, wallModelAt(xx, 33)));
+      }
 
-    for (let yy = 18; yy <= 33; ++yy) {
-      this.addEntity(new WallMan(this, { x: 19, y: yy }, wallModelAt(19, yy)));
-      this.addEntity(new WallMan(this, { x: 34, y: yy }, wallModelAt(34, yy)));
+      for (let yy = 18; yy <= 33; ++yy) {
+        this.addEntity(new WallMan(this, { x: 19, y: yy }, wallModelAt(19, yy)));
+        this.addEntity(new WallMan(this, { x: 34, y: yy }, wallModelAt(34, yy)));
+      }
+      // Additional blockers sit just inside the corner pillars and remain
+      // invisible; only the open perimeter needs cache-rendered models.
+      this.addEntity(new WallMan(this, { x: 33, y: 19 }, null));
+      this.addEntity(new WallMan(this, { x: 20, y: 19 }, null));
+      this.addEntity(new WallMan(this, { x: 33, y: 32 }, null));
+      this.addEntity(new WallMan(this, { x: 20, y: 32 }, null));
     }
-    // Additional blockers sit just inside the corner pillars and remain
-    // invisible; only the open perimeter needs cache-rendered models.
-    this.addEntity(new WallMan(this, { x: 33, y: 19 }, null));
-    this.addEntity(new WallMan(this, { x: 20, y: 19 }, null));
-    this.addEntity(new WallMan(this, { x: 33, y: 32 }, null));
-    this.addEntity(new WallMan(this, { x: 20, y: 32 }, null));
 
     this.addMob(new SolHeredit(this, { x: 25, y: 24 }, { aggro: player }));
 
