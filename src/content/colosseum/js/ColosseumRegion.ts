@@ -105,12 +105,11 @@ export class ColosseumRegion extends Region {
     // SW 19,33
     const wallModelAt = (x: number, y: number) => {
       // Corner pillars overlap the perimeter at x 19..20 / 33..34 and
-      // y 18..19 / 32..33. Keep those movement blockers invisible.
+      // y 18..19 / 32..33. Keep every blocker in those footprints invisible:
+      // the cache scene already supplies the pillar geometry, including the
+      // outer corner tiles reached by both perimeter loops.
       const inCornerPillar = (x <= 20 || x >= 33) && (y <= 19 || y >= 32);
-      // Keep the outermost corner tile visible; it is the wall man on the
-      // outside edge of each pillar rather than part of the pillar overlap.
-      const outerCorner = (x === 19 || x === 34) && (y === 18 || y === 33);
-      return inCornerPillar && !outerCorner ? null : (x + y) % 2 === 0 ? 50963 : 50964;
+      return inCornerPillar ? null : (x + y) % 2 === 0 ? 50963 : 50964;
     };
 
     for (let xx = 19; xx <= 34; ++xx) {
