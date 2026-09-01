@@ -437,9 +437,13 @@ export class SolHeredit extends Mob {
     const canSpecial = this.specialAttackCooldown <= 0;
 
     const attackPool = [
-      // hacky 2x weighting for autos
+      // hacky 4x weighting for autos
       ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
       ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
+      ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
+      ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
+      ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
+      ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
       ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
       ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
       ...(ColosseumSettings.useTriple && canSpecial && this.phaseId >= 3 && [Attacks.TRIPLE_LONG]),
