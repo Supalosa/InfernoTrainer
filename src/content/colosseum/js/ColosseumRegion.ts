@@ -1,6 +1,6 @@
 "use strict";
 
-import { Region, Viewport, Settings, Player, Unit, CardinalDirection, ImageLoader, Trainer } from "osrs-sdk";
+import { Region, Viewport, Settings, Player, Unit, CardinalDirection, ImageLoader, Trainer, CanvasSpriteModel, CollisionType, LineOfSightMask, Entity } from "osrs-sdk";
 
 
 import ColosseumMapImage from "../assets/images/map.png";
@@ -27,6 +27,29 @@ const SOLAR_FLARE_PATHS = [
 // Temporary scene-extraction aid. It is deliberately URL-gated so normal
 // Colosseum sessions retain their collision blockers and UI.
 const sceneDebug = new URLSearchParams(window.location.search).get("scene-debug") === "1";
+
+/** A camera-facing, moving coordinate label used only by ?scene-debug=1. */
+class SceneCoordinateLabel extends Entity {
+  constructor(region: Region, private readonly player: Player, private readonly dx: number, private readonly dy: number) {
+    super(region, { x: 0, y: 0 });
+  }
+
+  get collisionType() { return CollisionType.NONE; }
+  get lineOfSight() { return LineOfSightMask.NONE; }
+  get color() { return "#00000000"; }
+  get drawOutline() { return false; }
+  getPerceivedLocation() { return { x: this.player.location.x + this.dx, y: this.player.location.y + this.dy, z: 1 }; }
+  getTrueLocation() { return this.getPerceivedLocation(); }
+  draw(_tickPercent: number, context: OffscreenCanvasRenderingContext2D, _offset = { x: 0, y: 0 }, scale = 1) {
+    const { x, y } = this.getPerceivedLocation();
+    context.fillStyle = "#ffff00";
+    context.font = `8px OSRS`;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(`${x},${y}`, scale / 2, scale / 2 + 6);
+  }
+  create3dModel() { return CanvasSpriteModel.forRenderable(this); }
+}
 
 export class ColosseumRegion extends Region {
   mapImage: HTMLImageElement = ImageLoader.createImage(ColosseumMapImage);
@@ -104,6 +127,12 @@ export class ColosseumRegion extends Region {
         requestAnimationFrame(updateCoordinates);
       };
       updateCoordinates();
+
+      // 21 × 21 labels: every tile up to ten tiles from the player. The
+      // labels follow the player rather than being fixed to the spawn point.
+      for (let dx = -10; dx <= 10; dx++) for (let dy = -10; dy <= 10; dy++) {
+        this.addEntity(new SceneCoordinateLabel(this, player, dx, dy));
+      }
     }
     
     player.freeze(this.world.getReadyTimer);
