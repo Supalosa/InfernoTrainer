@@ -118,6 +118,27 @@ const POOL_SHRIEK = new Sound(PoolShriek, 0.1);
 const LASER_CHARGE = new Sound(LaserCharge, 0.1);
 const LASER_FIRE = new Sound(LaserFire, 0.1);
 
+const SOL_SOUNDS = [
+  SPEAR_START,
+  SPEAR_END,
+  SHIELD_START,
+  SHIELD_END,
+  TRIPLE_START,
+  TRIPLE_CHARGE_1,
+  TRIPLE_CHARGE_2,
+  TRIPLE_CHARGE_3_SHORT,
+  TRIPLE_CHARGE_3_LONG,
+  TRIPLE_PARRY_1,
+  TRIPLE_PARRY_2,
+  TRIPLE_PARRY_3,
+  GRAPPLE_CHARGE,
+  GRAPPLE_PARRY,
+  POOL_SPAWN,
+  POOL_SHRIEK,
+  LASER_CHARGE,
+  LASER_FIRE,
+];
+
 const SPECIAL_ATTACK_COOLDOWN = 2;
 
 export enum Attacks {
@@ -916,6 +937,13 @@ export class SolHeredit extends Mob {
 
   create3dModel() {
     return CacheRenderModel.forRenderable(this, CacheRenderReferences.npc(12821));
+  }
+
+  override async preload() {
+    await Promise.all([
+      super.preload(),
+      ...SOL_SOUNDS.map((sound) => SoundCache.preload(sound.src)),
+    ]);
   }
 
   override get idlePoseId() {
