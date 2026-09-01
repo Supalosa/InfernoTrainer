@@ -59,6 +59,11 @@ cache is stored under `/opt/build/cache/osrs-cache-render` (or
 `NETLIFY_CACHE_DIR` when provided), so subsequent builds reuse it. These values
 can be overridden in Netlify for a fork or another SDK branch.
 
+`OSRS_OPENRS2_CACHE_ID` pins the OpenRS2 cache used for the asset bundle. It is
+set to `2437`, whose cache revision is `236`; its associated XTEAs are required
+to decode the renderer's map assets. Do not advance this value to a later cache
+without confirming that its XTEAs are available.
+
 The beta context uses these asset settings:
 
     OSRS_ASSET_BASE_URL=https://assets-soltrainer.netlify.app

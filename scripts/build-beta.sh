@@ -12,6 +12,7 @@ CHECKOUT_ROOT="${WORK_TMP}/checkout"
 SDK_TMP="${CHECKOUT_ROOT}/osrs-sdk"
 READER_TMP="${CHECKOUT_ROOT}/osrscachereader"
 CACHE_ROOT="${NETLIFY_CACHE_DIR:-/opt/build/cache}/osrs-cache-render"
+: "${OSRS_OPENRS2_CACHE_ID:?OSRS_OPENRS2_CACHE_ID must name the OpenRS2 cache to extract}"
 
 mkdir -p "${CHECKOUT_ROOT}" "${CACHE_ROOT}/.cache-render"
 git clone --depth 1 --branch "${OSRS_SDK_BRANCH}" "${OSRS_SDK_REPO}" "${SDK_TMP}"
@@ -24,7 +25,7 @@ popd >/dev/null
 
 pushd "${SDK_TMP}" >/dev/null
 npm ci
-npm run assets
+npm run assets -- "${OSRS_OPENRS2_CACHE_ID}"
 npm run build
 # webpack emits declarations below lib/osrs-sdk/src, while package.json's
 # public types entrypoint is lib/index.d.ts. Flatten that generated tree before

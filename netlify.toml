@@ -14,5 +14,8 @@
   OSRS_SDK_BRANCH = "feat/cache-render-bundle"
   OSRS_CACHE_READER_REPO = "https://github.com/Supalosa/osrscachereader.git"
   OSRS_CACHE_READER_BRANCH = "feat/reader-only-entrypoint"
+  # Keep the cache and its XTEAs together. Later caches do not have the XTEAs
+  # needed to decode this renderer's map assets.
+  OSRS_OPENRS2_CACHE_ID = "2437"
   OSRS_ASSET_BASE_URL = "https://assets-soltrainer.netlify.app"
   OSRS_CACHE_RENDER_MANIFEST_URL = "/cache-render/manifest.json"
