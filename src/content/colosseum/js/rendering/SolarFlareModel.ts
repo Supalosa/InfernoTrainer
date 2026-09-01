@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-import { Model, Location } from "osrs-sdk";
+import { GROUND_OVERLAY_Y, GroundOverlayRenderOrder, Model, Location } from "osrs-sdk";
 
 import { SolarFlareOrb } from "../entities/SolarFlareOrb";
 
@@ -26,6 +26,7 @@ const SOLAR_FLARE_PATH_MATERIAL = new THREE.MeshBasicMaterial({
   side: THREE.FrontSide,
   transparent: true,
   opacity: 0.2,
+  depthTest: false,
   depthWrite: false,
 });
 
@@ -112,7 +113,8 @@ export class SolarFlareTileModel implements Model {
   constructor(location: Location) {
     this.path = new THREE.Mesh(SOLAR_FLARE_PATH_GEOMETRY, SOLAR_FLARE_PATH_MATERIAL);
     this.path.rotation.x = -Math.PI / 2;
-    this.path.position.set(location.x, -0.495, location.y + SOLAR_FLARE_PATH_SIZE - 1);
+    this.path.position.set(location.x, GROUND_OVERLAY_Y, location.y + SOLAR_FLARE_PATH_SIZE - 1);
+    this.path.renderOrder = GroundOverlayRenderOrder.MARKED_TILE - 1;
   }
 
   draw(scene: THREE.Scene) {
