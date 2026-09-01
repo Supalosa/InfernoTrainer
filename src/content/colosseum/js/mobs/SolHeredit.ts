@@ -221,7 +221,7 @@ export class SolHeredit extends Mob {
   }
 
   shouldChangeAggro(projectile: Projectile) {
-    return this.aggro != projectile.from && this.autoRetaliate;
+    return !this.isFrozen() && this.aggro != projectile.from && this.autoRetaliate;
   }
 
   get combatLevel() {
