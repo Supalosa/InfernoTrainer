@@ -9,9 +9,8 @@ import { ColosseumLoadout } from "./ColosseumLoadout";
 import { ColosseumScene, useStaticScene } from "./ColosseumScene";
 import { Attacks, SolHeredit as SolHeredit } from "./mobs/SolHeredit";
 
-import SidebarContent from "../sidebar.html";
 import { WallMan } from "./entities/WallMan";
-import { ColosseumSettings } from "./ColosseumSettings";
+import { colosseumSettings } from "./ColosseumSettings";
 import { SolarFlareOrb } from "./entities/SolarFlareOrb";
 import { SolarFlareTile } from "./entities/SolarFlareTile";
 
@@ -72,17 +71,6 @@ export class ColosseumRegion extends Region {
 
   rightClickActions(): any[] {
     return [];
-  }
-
-  initializeAndGetLoadoutType() {
-    const loadoutSelector = document.getElementById("loadouts") as HTMLInputElement;
-    loadoutSelector.value = Settings.loadout;
-    loadoutSelector.addEventListener("change", () => {
-      Settings.loadout = loadoutSelector.value;
-      Settings.persistToStorage();
-    });
-
-    return loadoutSelector.value;
   }
 
   drawWorldBackground(context: OffscreenCanvasRenderingContext2D, scale: number) {
@@ -182,86 +170,38 @@ export class ColosseumRegion extends Region {
       this.addEntity(new ColosseumScene(this, { x: 0, y: useStaticScene ? 48 : 0 }));
     }
 
-    // setup UI and settings
-    ColosseumSettings.readFromStorage();
-
-    const setupAttackConfig = (elementId: string, field: keyof typeof ColosseumSettings) => {
-      const checkbox = document.getElementById(elementId) as HTMLInputElement;
-      checkbox.checked = ColosseumSettings[field] as boolean;
-      checkbox.addEventListener("change", () => {
-        (ColosseumSettings[field] as boolean) = checkbox.checked;
-        ColosseumSettings.persistToStorage();
-      });
-    };
-    setupAttackConfig("use_shield", "useShields");
-    setupAttackConfig("use_spears", "useSpears");
-    setupAttackConfig("use_triple", "useTriple");
-    setupAttackConfig("use_grapple", "useGrapple");
-    setupAttackConfig("use_phase_transitions", "usePhaseTransitions");
-    const solarFlareDropdown = document.getElementById("solar_flare_level") as HTMLSelectElement;
-    solarFlareDropdown.value = ColosseumSettings.solarFlareLevel.toString();
-    solarFlareDropdown.addEventListener("change", () => {
-      ColosseumSettings.solarFlareLevel = parseInt(solarFlareDropdown.value);
-      ColosseumSettings.persistToStorage();
-      this.updateSolarFlares();
-    });
-    const solarFlareTilesCheckbox = document.getElementById("show_solar_flare_tiles") as HTMLInputElement;
-    solarFlareTilesCheckbox.checked = ColosseumSettings.showSolarFlareTiles;
-    solarFlareTilesCheckbox.addEventListener("change", () => {
-      ColosseumSettings.showSolarFlareTiles = solarFlareTilesCheckbox.checked;
-      ColosseumSettings.persistToStorage();
-      this.updateSolarFlareTiles();
-    });
-    const renderFpsDropdown = document.getElementById("render_fps") as HTMLSelectElement;
-    renderFpsDropdown.value = Settings.renderFps.toString();
-    renderFpsDropdown.addEventListener("change", () => {
-      Settings.renderFps = parseInt(renderFpsDropdown.value);
-      Settings.persistToStorage();
-    });
-    const smoothAnimationsCheckbox = document.getElementById("smooth_cache_animations") as HTMLInputElement;
-    smoothAnimationsCheckbox.checked = Settings.smoothCacheAnimations;
-    smoothAnimationsCheckbox.addEventListener("change", () => {
-      Settings.smoothCacheAnimations = smoothAnimationsCheckbox.checked;
-      Settings.persistToStorage();
-    });
     this.updateSolarFlares();
     this.updateSolarFlareTiles();
-
-    const creditsButton = document.getElementById("credits_button") as HTMLButtonElement;
-    let showCredits = false;
-    creditsButton.addEventListener("click", () => {
-      showCredits = !showCredits;
-      document.getElementById("credits").innerHTML = !showCredits
-        ? ""
-        : `
-      <ul>
-        <li>Jagex</li>
-        <li>Supalosa (engine and logic)</li>
-        <li>Tesla Owner (engine)</li>
-        <li>KiwiIskadda (detailed feedback)</li>
-        <li>Syndra, Varadium, ro0bo, zyth (early feedback and testing)</li>
-        <li>@kattykoo on discord (dm for colosseum tips and tricks)</li>
-      </ul>`;
-    });
     return {
       player: player,
     };
   }
 
+  setSolarFlareLevel(level: number) {
+    colosseumSettings.set({ solarFlareLevel: level });
+    this.updateSolarFlares();
+  }
+
+  setShowSolarFlareTiles(show: boolean) {
+    colosseumSettings.set({ showSolarFlareTiles: show });
+    this.updateSolarFlareTiles();
+  }
+
   private updateSolarFlares() {
-    if (ColosseumSettings.solarFlareLevel === 0) {
+    const { solarFlareLevel } = colosseumSettings.getSnapshot();
+    if (solarFlareLevel === 0) {
       this.despawnSolarFlares();
       return;
     }
     if (this.entities.filter((entity) => entity instanceof SolarFlareOrb).length === 0) {
       SOLAR_FLARE_PATHS.forEach(({ location, startAtIndex }) => {
-        this.addEntity(new SolarFlareOrb(this, { ...location }, ColosseumSettings.solarFlareLevel, startAtIndex));
+        this.addEntity(new SolarFlareOrb(this, { ...location }, solarFlareLevel, startAtIndex));
       });
     } else {
       this.entities
         .filter((entity) => entity instanceof SolarFlareOrb)
         .forEach((entity) => {
-          (entity as SolarFlareOrb).setLevel(ColosseumSettings.solarFlareLevel);
+          (entity as SolarFlareOrb).setLevel(solarFlareLevel);
         });
     }
   }
@@ -276,7 +216,7 @@ export class ColosseumRegion extends Region {
   }
 
   private updateSolarFlareTiles() {
-    if (!ColosseumSettings.showSolarFlareTiles) {
+    if (!colosseumSettings.getSnapshot().showSolarFlareTiles) {
       this.despawnSolarFlareTiles();
       return;
     }
@@ -391,7 +331,4 @@ export class ColosseumRegion extends Region {
     ++this.replayTick;
   }
 
-  getSidebarContent() {
-    return SidebarContent;
-  }
 }

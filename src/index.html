@@ -136,26 +136,7 @@
     </style>
   </head>
   <body>
-    <canvas id="world" onselectstart="return false" oncontextmenu="return false"></canvas>
-    <div id="disclaimer_panel">All assets are property of Jagex.</div>
-    <div id="right_panel">
-      <div id="sidebar_content"><!-- replaced by the Region -->Loading content...</div>
-      <button id="settings">Settings</button>
-      <hr />
-      <span>More settings:</span>
-      <div>
-        <input type="color" id="tileMarkerColor" name="tileMarkerColor" value="#FF0000" />
-        <label for="tileMarkerColor">Tile Markers</label>
-      </div>
-      <div style="
-        width: 100%;
-        text-align: center;
-        padding-top: 10px;
-        padding-bottom: 10px;
-      ">
-        <div id="gpu_warning" />
-      </div>
-    </div>
+    <div id="root"></div>
     <!-- OffscreenCanvas polyfill -->
     <script>
       if (!window.OffscreenCanvas) {

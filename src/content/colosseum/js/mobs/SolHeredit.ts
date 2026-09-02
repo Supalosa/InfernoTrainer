@@ -25,7 +25,7 @@ import {
 } from "osrs-sdk";
 
 import { SolGroundSlam } from "../entities/SolGroundSlam";
-import { ColosseumSettings } from "../ColosseumSettings";
+import { colosseumSettings } from "../ColosseumSettings";
 
 import SpearStart from "../../assets/sounds/8147_spear.ogg";
 import SpearEnd from "../../assets/sounds/8047_spear_swing.ogg";
@@ -363,7 +363,7 @@ export class SolHeredit extends Mob {
     this.attackFeedback = AttackIndicators.NONE;
 
     if (
-      ColosseumSettings.usePhaseTransitions &&
+      colosseumSettings.getSnapshot().usePhaseTransitions &&
       this.attackDelay <= 0 &&
       this.phaseId < PHASE_TRANSITION_POINTS.length - 1
     ) {
@@ -456,20 +456,21 @@ export class SolHeredit extends Mob {
       return this.forceAttack;
     }
     const canSpecial = this.specialAttackCooldown <= 0;
+    const settings = colosseumSettings.getSnapshot();
 
     const attackPool = [
       // hacky 4x weighting for autos
-      ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
-      ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
-      ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
-      ...(ColosseumSettings.useShields && [Attacks.SHIELD]),
-      ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
-      ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
-      ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
-      ...(ColosseumSettings.useSpears && [Attacks.SPEAR]),
-      ...(ColosseumSettings.useTriple && canSpecial && this.phaseId >= 3 && [Attacks.TRIPLE_LONG]),
-      ...(ColosseumSettings.useTriple && canSpecial && this.phaseId >= 1 && this.phaseId < 3 && [Attacks.TRIPLE_SHORT]),
-      ...(ColosseumSettings.useGrapple && canSpecial && this.phaseId >= 2 && [Attacks.GRAPPLE]),
+      ...(settings.useShields && [Attacks.SHIELD]),
+      ...(settings.useShields && [Attacks.SHIELD]),
+      ...(settings.useShields && [Attacks.SHIELD]),
+      ...(settings.useShields && [Attacks.SHIELD]),
+      ...(settings.useSpears && [Attacks.SPEAR]),
+      ...(settings.useSpears && [Attacks.SPEAR]),
+      ...(settings.useSpears && [Attacks.SPEAR]),
+      ...(settings.useSpears && [Attacks.SPEAR]),
+      ...(settings.useTriple && canSpecial && this.phaseId >= 3 && [Attacks.TRIPLE_LONG]),
+      ...(settings.useTriple && canSpecial && this.phaseId >= 1 && this.phaseId < 3 && [Attacks.TRIPLE_SHORT]),
+      ...(settings.useGrapple && canSpecial && this.phaseId >= 2 && [Attacks.GRAPPLE]),
     ];
     if (attackPool.length === 0) {
       // at least allow it to do something
