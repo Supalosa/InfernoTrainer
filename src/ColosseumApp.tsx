@@ -8,8 +8,9 @@ import {
   TrainerInstance,
   TrainerLoadingState,
 } from "osrs-sdk";
-import { DefaultSidebar, GameOverlay, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
+import { DefaultSidebar, GameOverlay, LoadoutManager, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
+import { colosseumLoadout } from "./content/colosseum/js/ColosseumLoadout";
 import {
   colosseumSettings,
   ColosseumSettingsState,
@@ -22,6 +23,8 @@ declare global {
     OSRS_CACHE_RENDER_MANIFEST_URL?: string;
   }
 }
+
+const loadoutTemplates = [colosseumLoadout];
 
 type TransferredSettings = {
   version: 1;
@@ -86,7 +89,7 @@ function createTrainer() {
   colosseumSettings.load();
 
   const regions: Record<string, Region> = {
-    "colosseum.html": new ColosseumRegion(),
+    "colosseum.html": new ColosseumRegion(loadoutTemplates),
   };
   const regionName = window.location.pathname.split("/").pop() ?? "colosseum.html";
   const region = regions[regionName] ?? regions["colosseum.html"];
@@ -123,7 +126,7 @@ function Credits() {
   );
 }
 
-function Sidebar({ region }: { region: ColosseumRegion }) {
+function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; region: ColosseumRegion }) {
   const settings = useSettingsSnapshot();
   const colosseumSettingsSnapshot = useSettingsStore(colosseumSettings);
   const [showCredits, setShowCredits] = useState(false);
@@ -171,6 +174,7 @@ function Sidebar({ region }: { region: ColosseumRegion }) {
       <hr />
 
       <button type="button" onClick={() => ControlPanelController.controller.setActiveControl("SETTINGS")}>Settings</button>
+      <button type="button" onClick={onLoadoutToggle}>Loadout</button>
       <hr />
       <span>More settings:</span>
       <div>
@@ -195,6 +199,7 @@ function Sidebar({ region }: { region: ColosseumRegion }) {
 export function ColosseumApp() {
   const [trainer] = useState(createTrainer);
   const [loading, setLoading] = useState<TrainerLoadingState>();
+  const [loadoutOpen, setLoadoutOpen] = useState(false);
 
   return (
     <TrainerApp
@@ -204,9 +209,17 @@ export function ColosseumApp() {
       <GameOverlay>
         <div id="disclaimer_panel">Work in progress.<br />All assets are property of Jagex.</div>
         <TrainerLoadingSplash state={loading} />
+        <LoadoutManager
+          loadouts={loadoutTemplates}
+          open={loadoutOpen}
+          onClose={() => setLoadoutOpen(false)}
+        />
       </GameOverlay>
       <DefaultSidebar>
-        <Sidebar region={trainer.region as ColosseumRegion} />
+        <Sidebar
+          onLoadoutToggle={() => setLoadoutOpen((open) => !open)}
+          region={trainer.region as ColosseumRegion}
+        />
       </DefaultSidebar>
     </TrainerApp>
   );

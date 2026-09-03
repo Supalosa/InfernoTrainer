@@ -1,11 +1,12 @@
 "use strict";
 
 import { Region, Viewport, Settings, Player, Unit, CardinalDirection, ImageLoader, Trainer, CanvasSpriteModel, CollisionType, LineOfSightMask, Entity } from "osrs-sdk";
+import type { Loadout } from "osrs-sdk";
 
 
 import ColosseumMapImage from "../assets/images/map.png";
 
-import { ColosseumLoadout } from "./ColosseumLoadout";
+import { colosseumLoadout, configureColosseumPlayer } from "./ColosseumLoadout";
 import { ColosseumScene, useStaticScene } from "./ColosseumScene";
 import { Attacks, SolHeredit as SolHeredit } from "./mobs/SolHeredit";
 
@@ -51,6 +52,10 @@ class SceneCoordinateLabel extends Entity {
 }
 
 export class ColosseumRegion extends Region {
+  constructor(loadouts: Loadout[] = [colosseumLoadout]) {
+    super(loadouts);
+  }
+
   mapImage: HTMLImageElement = ImageLoader.createImage(ColosseumMapImage);
 
   get initialFacing() {
@@ -126,11 +131,6 @@ export class ColosseumRegion extends Region {
     player.freeze(this.world.getReadyTimer);
     // TODO: reset the camera too
 
-    const loadout = new ColosseumLoadout("max_melee");
-    loadout.setStats(player);
-    loadout.applyStartingBoosts(player);
-    player.setUnitOptions(loadout.getLoadout());
-
     // NE 34,18
     // NW 19,18
     // SE 34,33
@@ -175,6 +175,12 @@ export class ColosseumRegion extends Region {
     return {
       player: player,
     };
+  }
+
+  override reset(startWorld = true) {
+    const reset = super.reset(startWorld);
+    configureColosseumPlayer(reset.player);
+    return reset;
   }
 
   setSolarFlareLevel(level: number) {

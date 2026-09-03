@@ -1,76 +1,63 @@
-import { TorvaFullhelm, AmuletOfTorture, InfernalCape, DragonArrows, TorvaPlatebody, TorvaPlatelegs, PrimordialBoots, FerociousGloves, UltorRing, AvernicDefender, SuperCombatPotion, UnitOptions } from "osrs-sdk";
-import { SaradominBrew, SuperRestore } from "osrs-sdk";
-import { ScytheOfVitur, BladeOfSaeldor, DragonClaws, NoxiousHalberd, Player } from "osrs-sdk";
+import { CACHE_ASSETS, Player } from "osrs-sdk";
+import type { Loadout } from "osrs-sdk";
 
-export class ColosseumLoadout {
-  loadoutType: string;
+export const colosseumLoadout: Loadout = {
+  name: "Default",
+  equipment: {
+    weapon: CACHE_ASSETS.items.scytheOfVitur.id,
+    offhand: null,
+    helmet: CACHE_ASSETS.items.torvaFullHelm.id,
+    necklace: CACHE_ASSETS.items.amuletOfTorture.id,
+    cape: CACHE_ASSETS.items.infernalCape.id,
+    ammo: CACHE_ASSETS.items.dragonArrows.id,
+    chest: CACHE_ASSETS.items.torvaPlatebody.id,
+    legs: CACHE_ASSETS.items.torvaPlatelegs.id,
+    feet: CACHE_ASSETS.items.primordialBoots.id,
+    gloves: CACHE_ASSETS.items.ferociousGloves.id,
+    ring: CACHE_ASSETS.items.ultorRing.id,
+  },
+  inventory: [
+    CACHE_ASSETS.items.bladeOfSaeldor.id,
+    CACHE_ASSETS.items.avernicDefender.id,
+    CACHE_ASSETS.items.noxiousHalberd.id,
+    CACHE_ASSETS.items.dragonClaws.id,
+    CACHE_ASSETS.items.saradominBrew.id,
+    CACHE_ASSETS.items.saradominBrew.id,
+    CACHE_ASSETS.items.superCombatPotion.id,
+    CACHE_ASSETS.items.superCombatPotion.id,
+    CACHE_ASSETS.items.saradominBrew.id,
+    CACHE_ASSETS.items.saradominBrew.id,
+    CACHE_ASSETS.items.superRestore.id,
+    CACHE_ASSETS.items.superRestore.id,
+    CACHE_ASSETS.items.saradominBrew.id,
+    CACHE_ASSETS.items.saradominBrew.id,
+    CACHE_ASSETS.items.superRestore.id,
+    CACHE_ASSETS.items.superRestore.id,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+};
 
-  constructor(loadoutType: string) {
-    this.loadoutType = loadoutType;
-  }
+/** Apply the Colosseum's fixed player stats and starting boost after Region.reset(). */
+export function configureColosseumPlayer(player: Player) {
+  player.stats.prayer = 99;
+  player.currentStats.prayer = 99;
+  player.stats.defence = 99;
+  player.currentStats.defence = 99;
 
-  loadoutMaxMelee() {
-    return {
-      equipment: {
-        weapon: new ScytheOfVitur(),
-        offhand: null,
-        helmet: new TorvaFullhelm(),
-        necklace: new AmuletOfTorture(),
-        cape: new InfernalCape(),
-        ammo: new DragonArrows(),
-        chest: new TorvaPlatebody(),
-        legs: new TorvaPlatelegs(),
-        feet: new PrimordialBoots(),
-        gloves: new FerociousGloves(),
-        ring: new UltorRing(),
-      },
-      inventory: [
-        new BladeOfSaeldor(),
-        new AvernicDefender(),
-        new NoxiousHalberd(),
-        new DragonClaws(),
-        new SaradominBrew(),
-        new SaradominBrew(),
-        new SuperCombatPotion(),
-        new SuperCombatPotion(),
-        new SaradominBrew(),
-        new SaradominBrew(),
-        new SuperRestore(),
-        new SuperRestore(),
-        new SaradominBrew(),
-        new SaradominBrew(),
-        new SuperRestore(),
-        new SuperRestore(),
-        null,
-        null,
-        null,
-        null,
-      ],
-    };
-  }
-
-  setStats(player: Player) {
-    player.stats.prayer = 99;
-    player.currentStats.prayer = 99;
-    player.stats.defence = 99;
-    player.currentStats.defence = 99;
-  }
-
-  applyStartingBoosts(player: Player) {
-    // a fake supercombat boost
-    for (const stat of ["attack", "strength", "defence"] as const) {
-      const boost = Math.floor(player.stats[stat] * 0.15) + 5;
-      player.currentStats[stat] = player.stats[stat] + boost;
-    }
-  }
-
-  getLoadout(): UnitOptions {
-    let loadout: UnitOptions;
-    switch (this.loadoutType) {
-      case "max_melee":
-        loadout = this.loadoutMaxMelee();
-        break;
-    }
-    return loadout;
+  // A fake supercombat boost.
+  for (const stat of ["attack", "strength", "defence"] as const) {
+    const boost = Math.floor(player.stats[stat] * 0.15) + 5;
+    player.currentStats[stat] = player.stats[stat] + boost;
   }
 }
