@@ -329,6 +329,12 @@ export class SolHeredit extends Mob {
     return 5;
   }
 
+  // The unanimated cache model is 360 units tall and NPC 12821 applies a
+  // vertical scale of 300/128. Convert cache units to world tiles.
+  override get logicalHeight() {
+    return (360 * (300 / 128)) / 128;
+  }
+
   attackStyleForNewAttack() {
     return "stab" as const;
   }
@@ -1070,8 +1076,8 @@ export class SolHeredit extends Mob {
     return true;
   }
 
-  override drawUILayer(tickPercent, offset, context, scale, hitsplatsAbove) {
-    super.drawUILayer(tickPercent, offset, context, scale, hitsplatsAbove);
+  override drawUILayer(tickPercent, projector, context, scale) {
+    super.drawUILayer(tickPercent, projector, context, scale);
     // draw overhead text on the bottom left to simulate chatbox
     context.save();
     context.translate(10, context.canvas.height - 10);
