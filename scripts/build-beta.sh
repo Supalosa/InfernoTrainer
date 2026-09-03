@@ -35,7 +35,9 @@ if [[ -f lib/osrs-sdk/src/index.d.ts ]]; then
 fi
 popd >/dev/null
 
-npm install --no-save "${SDK_TMP}"
+# The SDK React bindings are a separate workspace package and are not included
+# when npm installs only the SDK workspace root.
+npm install --no-save "${SDK_TMP}" "${SDK_TMP}/packages/osrs-sdk-react"
 npm run build
 mkdir -p dist/cache-render
 cp -a "${SDK_TMP}/cache-render-bundle/." dist/cache-render/
