@@ -18,7 +18,7 @@ describe("sol heredit attacks", () => {
     world = new World();
     region.world = world;
     world.addRegion(region);
-    Viewport.setupViewport(region, true);
+    Viewport.setupViewport(region, document.createElement("canvas"), document.createElement("div"), true);
     player = new Player(region, { x: 15, y: 15 });
     boss = new SolHeredit(region, { x: 13, y: 20 }, { aggro: player });
     boss.stunned = 0;

@@ -8,7 +8,7 @@ import {
   TrainerInstance,
   TrainerLoadingState,
 } from "osrs-sdk";
-import { TrainerApp, TrainerLoading, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
+import { DefaultSidebar, GameOverlay, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
 import {
   colosseumSettings,
@@ -129,7 +129,7 @@ function Sidebar({ region }: { region: ColosseumRegion }) {
   const [showCredits, setShowCredits] = useState(false);
 
   return (
-    <div id="right_panel" className={settings.menuVisible ? undefined : "hidden"}>
+    <div>
       <span style={{ color: "lime" }}>Right click Sol to skip to specific phases.</span>
       <hr />
       <p>Attack sequence selector:</p>
@@ -157,29 +157,6 @@ function Sidebar({ region }: { region: ColosseumRegion }) {
           onChange={(event) => region.setShowSolarFlareTiles(event.currentTarget.checked)}
         />
         Solar Flare Tiles
-      </label>
-      <br />
-      <hr />
-
-      <p>Rendering:</p>
-      <label htmlFor="render_fps">FPS cap</label>
-      <select
-        id="render_fps"
-        value={settings.renderFps}
-        onChange={(event) => Settings.set({ renderFps: Number(event.currentTarget.value) })}
-      >
-        <option value={30}>30 FPS</option>
-        <option value={60}>60 FPS</option>
-        <option value={120}>120 FPS</option>
-        <option value={0}>Unlimited</option>
-      </select>
-      <label>
-        <input
-          type="checkbox"
-          checked={settings.smoothCacheAnimations}
-          onChange={(event) => Settings.set({ smoothCacheAnimations: event.currentTarget.checked })}
-        />
-        Smooth animations
       </label>
       <br />
       <hr />
@@ -220,10 +197,17 @@ export function ColosseumApp() {
   const [loading, setLoading] = useState<TrainerLoadingState>();
 
   return (
-    <TrainerApp trainer={trainer} onLoadingStateChange={setLoading}>
-      <TrainerLoading state={loading} style={{ left: 10, position: "absolute", top: 10 }} />
-      <div id="disclaimer_panel">Work in progress.<br />All assets are property of Jagex.</div>
-      <Sidebar region={trainer.region as ColosseumRegion} />
+    <TrainerApp
+      trainer={trainer}
+      onLoadingStateChange={setLoading}
+    >
+      <GameOverlay>
+        <div id="disclaimer_panel">Work in progress.<br />All assets are property of Jagex.</div>
+        <TrainerLoadingSplash state={loading} />
+      </GameOverlay>
+      <DefaultSidebar>
+        <Sidebar region={trainer.region as ColosseumRegion} />
+      </DefaultSidebar>
     </TrainerApp>
   );
 }
