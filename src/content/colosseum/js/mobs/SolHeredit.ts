@@ -663,6 +663,12 @@ export class SolHeredit extends Mob {
     this.firstSpear = true;
     // used above 50%
     this.playAnimation(SolAnimations.TripleAttackShort);
+    this.addSpotAnim({
+      id: CACHE_ASSETS.spotAnims.solTripleAttackShort.id,
+      channel: "sol-triple-attack",
+      animation: SolAnimations.TripleAttackShort,
+      height: 0,
+    });
     this._attackTriple(true);
     return this.phaseId >= 2 ? 11 : 12; // should be 11 between 50% and 75%
   }
@@ -672,6 +678,12 @@ export class SolHeredit extends Mob {
     this.firstSpear = true;
     // used below 50%
     this.playAnimation(SolAnimations.TripleAttackLong);
+    this.addSpotAnim({
+      id: CACHE_ASSETS.spotAnims.solTripleAttackLong.id,
+      channel: "sol-triple-attack",
+      animation: SolAnimations.TripleAttackLong,
+      height: 0,
+    });
     this._attackTriple(false);
     return 12;
   }
