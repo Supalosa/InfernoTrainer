@@ -12,6 +12,8 @@ import {
   Location,
   EquipmentTypes,
   AttackIndicators,
+  CACHE_ASSETS,
+  cacheSound,
   Mob,
   Pathing,
   Random,
@@ -26,25 +28,9 @@ import {
 
 import { SolGroundSlam } from "../entities/SolGroundSlam";
 import { colosseumSettings } from "../ColosseumSettings";
-
-import SpearStart from "../../assets/sounds/8147_spear.ogg";
-import SpearEnd from "../../assets/sounds/8047_spear_swing.ogg";
-import ShieldStart from "../../assets/sounds/8150_shield_start.ogg";
-import ShieldEnd from "../../assets/sounds/8145_shield_stomp.ogg";
-import TripleStart from "../../assets/sounds/8211_triple_charge.ogg";
-import TripleCharge1 from "../../assets/sounds/8317_triple_charge_1.ogg";
-import TripleCharge2 from "../../assets/sounds/8274_triple_charge_2.ogg";
-import TripleCharge3Short from "../../assets/sounds/8218_triple_charge_3_short.ogg";
-import TripleCharge3Long from "../../assets/sounds/8113_triple_charge_3_long.ogg";
 import TripleParry1 from "../../assets/sounds/8140_triple_parry_1.ogg";
 import TripleParry2 from "../../assets/sounds/8171_triple_parry_2.ogg";
 import TripleParry3 from "../../assets/sounds/8242_triple_parry_3.ogg";
-import GrappleCharge from "../../assets/sounds/8329_grapple_charge.ogg";
-import GrappleParry from "../../assets/sounds/8081_grapple_parry.ogg";
-import PoolSpawn from "../../assets/sounds/8053_pool_spawn.ogg";
-import PoolShriek from "../../assets/sounds/8093_pool_shriek.ogg";
-import LaserCharge from "../../assets/sounds/8253_laser.ogg";
-import LaserFire from "../../assets/sounds/8230_laser_fire.ogg";
 
 import { SolSandPool } from "../entities/SolSandPool";
 import { Edge, LaserOrb } from "../entities/LaserOrb";
@@ -96,43 +82,22 @@ const DIRECTIONS = [
   { dx: -1, dy: 1 },
 ];
 
-const SPEAR_START = new Sound(SpearStart, 0.1);
-const SPEAR_END = new Sound(SpearEnd, 0.1);
-const SHIELD_START = new Sound(ShieldStart, 0.1);
-const SHIELD_END = new Sound(ShieldEnd, 0.1);
-const TRIPLE_START = new Sound(TripleStart, 0.1);
-const TRIPLE_CHARGE_1 = new Sound(TripleCharge1, 0.1);
-const TRIPLE_CHARGE_2 = new Sound(TripleCharge2, 0.1);
-const TRIPLE_CHARGE_3_SHORT = new Sound(TripleCharge3Short, 0.1);
-const TRIPLE_CHARGE_3_LONG = new Sound(TripleCharge3Long, 0.1);
+// Empirically it seems like all the frame sounds (where pretty much all of Sol's sounds come from)
+// are delayed by 240ms. I haven't done enough testing to know if this is true for all framesounsd in the engine
+// so we added a way to configure the delay per-model.
+const SOL_FRAME_SOUNDS_DELAY_MS = 240;
 
-const TRIPLE_PARRY_1 = new Sound(TripleParry1, 0.1);
-const TRIPLE_PARRY_2 = new Sound(TripleParry2, 0.1);
-const TRIPLE_PARRY_3 = new Sound(TripleParry3, 0.1);
+const TRIPLE_PARRY_1 = new Sound(cacheSound(CACHE_ASSETS.sounds.solTripleParry1.id), 0.1);
+const TRIPLE_PARRY_2 = new Sound(cacheSound(CACHE_ASSETS.sounds.solTripleParry2.id), 0.1);
+const TRIPLE_PARRY_3 = new Sound(cacheSound(CACHE_ASSETS.sounds.solTripleParry3.id), 0.1);
 
-const GRAPPLE_CHARGE = new Sound(GrappleCharge, 0.1);
-const GRAPPLE_PARRY = new Sound(GrappleParry, 0.1);
 
-const POOL_SPAWN = new Sound(PoolSpawn, 0.1);
-const POOL_SHRIEK = new Sound(PoolShriek, 0.1);
-const LASER_CHARGE = new Sound(LaserCharge, 0.1);
-const LASER_FIRE = new Sound(LaserFire, 0.1);
+const POOL_SPAWN = new Sound(cacheSound(CACHE_ASSETS.sounds.solPoolSpawn.id), 0.1);
+const POOL_SHRIEK = new Sound(cacheSound(CACHE_ASSETS.sounds.solPoolShriek.id), 0.1);
+const LASER_CHARGE = new Sound(cacheSound(CACHE_ASSETS.sounds.solLaserCharge.id), 0.1);
+const LASER_FIRE = new Sound(cacheSound(CACHE_ASSETS.sounds.solLaserFire.id), 0.1);
 
 const SOL_SOUNDS = [
-  SPEAR_START,
-  SPEAR_END,
-  SHIELD_START,
-  SHIELD_END,
-  TRIPLE_START,
-  TRIPLE_CHARGE_1,
-  TRIPLE_CHARGE_2,
-  TRIPLE_CHARGE_3_SHORT,
-  TRIPLE_CHARGE_3_LONG,
-  TRIPLE_PARRY_1,
-  TRIPLE_PARRY_2,
-  TRIPLE_PARRY_3,
-  GRAPPLE_CHARGE,
-  GRAPPLE_PARRY,
   POOL_SPAWN,
   POOL_SHRIEK,
   LASER_CHARGE,
@@ -489,11 +454,9 @@ export class SolHeredit extends Mob {
   private attackSpear() {
     this.freeze(6);
     this.playAnimation(SolAnimations.SpearSlow);
-    SoundCache.play(SPEAR_START);
     DelayedAction.registerDelayedAction(
       new DelayedAction(this.firstSpear ? this.doFirstSpear.bind(this) : this.doSecondSpear.bind(this), 2),
     );
-    DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(SPEAR_END), 3));
     this.firstSpear = !this.firstSpear;
     this.firstShield = true;
     return this.phaseId < 2 ? 7 : 6;
@@ -502,11 +465,9 @@ export class SolHeredit extends Mob {
   private attackShield() {
     this.freeze(4);
     this.playAnimation(SolAnimations.Shield);
-    SoundCache.play(SHIELD_START);
     DelayedAction.registerDelayedAction(
       new DelayedAction(this.firstShield ? this.doFirstShield.bind(this) : this.doSecondShield.bind(this), 2),
     );
-    DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(SHIELD_END), 3));
     this.firstSpear = true;
     this.firstShield = !this.firstShield;
     return this.phaseId < 2 ? 6 : 5;
@@ -731,7 +692,6 @@ export class SolHeredit extends Mob {
     DelayedAction.registerDelayedAction(
       new DelayedAction(() => {
         this.playAnimation(SolAnimations.Grapple);
-        SoundCache.play(GRAPPLE_CHARGE);
       }, 1),
     );
     EquipmentControls?.instance.addEquipmentInteraction((clickedSlot) => {
@@ -749,9 +709,6 @@ export class SolHeredit extends Mob {
     });
     DelayedAction.registerDelayedNpcAction(
       new DelayedAction(() => {
-        if (didParry) {
-          SoundCache.play(GRAPPLE_PARRY);
-        }
         if (didPerfectParry) {
           this.aggro?.grantMaxDamageRollsOnNextAttack();
         }
@@ -778,25 +735,21 @@ export class SolHeredit extends Mob {
     // check belongs on the following tick when that hitsplat lands.
     this.tripleParryAttackTicks = short ? [attackStartTick + 3, attackStartTick + 6, attackStartTick + 9] : [attackStartTick + 3, attackStartTick + 6, attackStartTick + 10];
     this.punishEagerProtectionPrayer();
-    SoundCache.play(TRIPLE_START);
-    SoundCache.play(TRIPLE_CHARGE_1);
     DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(15).bind(this), 2));
-    DelayedAction.registerDelayedAction(
+    /*DelayedAction.registerDelayedAction(
       new DelayedAction(() => {
         SoundCache.play(TRIPLE_PARRY_1);
       }, 3),
-    );
-    DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_CHARGE_2), 4));
+    );*/
     DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(short ? 25 : 30).bind(this), 5));
-    DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_2), 6));
+    // DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_2), 6));
     if (short) {
-      DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_CHARGE_3_SHORT), 6));
       DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(35).bind(this), 8));
-      DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_3), 9));
+      // DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_3), 10));
     } else {
-      DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_CHARGE_3_LONG), 6));
       DelayedAction.registerDelayedAction(new DelayedAction(this.doParryAttack(45).bind(this), 9));
-      DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_3), 10));
+      // DelayedAction.registerDelayedAction(new DelayedAction(() => SoundCache.play(TRIPLE_PARRY_3), 10));
+
     }
   }
 
@@ -943,7 +896,9 @@ export class SolHeredit extends Mob {
   }
 
   create3dModel() {
-    return CacheRenderModel.forRenderable(this, CacheRenderReferences.npc(12821));
+    return CacheRenderModel.forRenderable(this, CacheRenderReferences.npc(12821), {
+      frameSoundDelayMs: SOL_FRAME_SOUNDS_DELAY_MS
+    });
   }
 
   override async preload() {
