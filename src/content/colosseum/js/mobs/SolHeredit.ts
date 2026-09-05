@@ -160,7 +160,7 @@ export class SolHeredit extends Mob {
 
   specialAttackCooldown = 0;
 
-  forceAttack: Attacks | null = Attacks.SPEAR; // first attack is always a spear?
+  forceAttack: Attacks | null = Attacks.SPEAR; // first attack is always a spear
 
   lastLocation = { ...this.location };
 
@@ -422,30 +422,54 @@ export class SolHeredit extends Mob {
     }
   }
 
-  private selectAttack() {
-    if (this.forceAttack) {
+  private getUserSelectedAttacks() {
+    // Attacks selected in the UI, not necessarily what's possible in the game.
+    const attacks = new Set<Attacks>();
+    const settings = colosseumSettings.getSnapshot();
+    if (settings.useSpears) {
+      attacks.add(Attacks.SPEAR);
+    }
+    if (settings.useShields) {
+      attacks.add(Attacks.SHIELD);
+    }
+    if (settings.useTriple) {
+      attacks.add(Attacks.TRIPLE_SHORT);
+    }
+    if (settings.useGrapple) {
+      attacks.add(Attacks.GRAPPLE);
+    }
+    if (settings.usePhaseTransitions) {
+      attacks.add(Attacks.PHASE_TRANSITION);
+    }
+    return attacks;
+  }
+
+  private selectAttack(): Attacks | null {
+    const settings = colosseumSettings.getSnapshot();
+    const selectedAttacks = this.getUserSelectedAttacks();
+    // check we can actually do a forced attack
+    if (this.forceAttack && selectedAttacks.has(this.forceAttack)) {
       return this.forceAttack;
     }
-    const canSpecial = this.specialAttackCooldown <= 0;
-    const settings = colosseumSettings.getSnapshot();
+    this.forceAttack = null;
 
-    const attackPool = [
+    const canSpecial = this.specialAttackCooldown <= 0;
+
+    const attackPool: Attacks[] = [
       // hacky 4x weighting for autos
-      ...(settings.useShields && [Attacks.SHIELD]),
-      ...(settings.useShields && [Attacks.SHIELD]),
-      ...(settings.useShields && [Attacks.SHIELD]),
-      ...(settings.useShields && [Attacks.SHIELD]),
-      ...(settings.useSpears && [Attacks.SPEAR]),
-      ...(settings.useSpears && [Attacks.SPEAR]),
-      ...(settings.useSpears && [Attacks.SPEAR]),
-      ...(settings.useSpears && [Attacks.SPEAR]),
-      ...(settings.useTriple && canSpecial && this.phaseId >= 3 && [Attacks.TRIPLE_LONG]),
-      ...(settings.useTriple && canSpecial && this.phaseId >= 1 && this.phaseId < 3 && [Attacks.TRIPLE_SHORT]),
-      ...(settings.useGrapple && canSpecial && this.phaseId >= 2 && [Attacks.GRAPPLE]),
+      ...(settings.useShields ? [Attacks.SHIELD, Attacks.SHIELD, Attacks.SHIELD, Attacks.SHIELD] : []),
+      ...(settings.useSpears ? [Attacks.SPEAR, Attacks.SPEAR, Attacks.SPEAR, Attacks.SPEAR] : []),
+      ...(settings.useTriple && canSpecial && this.phaseId >= 3 ? [Attacks.TRIPLE_LONG] : []),
+      ...(settings.useTriple && canSpecial && this.phaseId >= 1 && this.phaseId < 3 ? [Attacks.TRIPLE_SHORT] : []),
+      ...(settings.useGrapple && canSpecial && this.phaseId >= 2 ? [Attacks.GRAPPLE] : []),
     ];
     if (attackPool.length === 0) {
       // at least allow it to do something
       this.specialAttackCooldown = 0;
+      // forced an single attack  (and it can't do that attack due to phasing, for example), so allow it anyway
+      if (selectedAttacks.size > 0) {
+        return selectedAttacks.values().next().value!;
+      }
       return null;
     }
     return attackPool[Math.floor(Random.get() * attackPool.length)];
