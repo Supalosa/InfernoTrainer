@@ -4,6 +4,11 @@ import { Model, Location } from "osrs-sdk";
 import { Edge, LaserOrb, ORB_SHOOT_DIRECTIONS } from "../entities/LaserOrb";
 import { ColosseumConstants } from "../Constants";
 
+// Cache spotanim graphics now provide the charge and attack visuals. Keep the
+// former primitive beam/projectile simulation available for comparison, but
+// disabled while we tune the authentic timing.
+const SHOW_PRIMITIVE_LASER_EFFECTS = false;
+
 export class LaserOrbModel implements Model {
   static forLaserOrb(r: LaserOrb) {
     return new LaserOrbModel(r);
@@ -89,26 +94,17 @@ export class LaserOrbModel implements Model {
     this.cube.position.z = y - this.laserOrb.size / 2;
 
     this.cube.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), (Math.PI / 2) * tickPercent);
-    if (this.laserOrb.isFiring) {
+    if (SHOW_PRIMITIVE_LASER_EFFECTS && this.laserOrb.isFiring) {
       this.cube.scale.set(1 + tickPercent / 4, 1 + tickPercent / 4, 1 + tickPercent / 4);
     } else {
       this.cube.scale.set(1, 1, 1);
     }
     const beamMaxLength = this.getBeamMaxLength(tickPercent);
-    if (this.laserOrb.showBeam) {
-      if (this.beam.parent !== scene) {
-        scene.add(this.beam);
-      }
-      const beamLength = beamMaxLength * this.laserOrb.beamPercent(tickPercent);
-      this.beam.position.x = x + this.laserOrb.size / 2;
-      this.beam.position.y = 0;
-      this.beam.position.z = y - this.laserOrb.size / 2;
-      this.beam.scale.set(1, beamLength, 1);
-    } else if (this.beam.parent === scene) {
-      scene.remove(this.beam);
-    }
+    // All four directions now use their cache charge/fire world graphics.
+    // Keep the legacy primitive beam detached while timing the cache effects.
+    if (this.beam.parent === scene) scene.remove(this.beam);
     const projectilePct = this.laserOrb.projectilePercent(tickPercent);
-    if (projectilePct > 0 && projectilePct < 1) {
+    if (SHOW_PRIMITIVE_LASER_EFFECTS && projectilePct > 0 && projectilePct < 1) {
       if (this.projectile.parent !== scene) {
         scene.add(this.projectile);
       }

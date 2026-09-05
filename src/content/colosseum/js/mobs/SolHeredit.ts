@@ -24,6 +24,7 @@ import {
   SoundCache,
   Trainer,
   Viewport,
+  GraphicsObject,
 } from "osrs-sdk";
 
 import { SolGroundSlam } from "../entities/SolGroundSlam";
@@ -150,6 +151,10 @@ class ParryUnblockableWeapon extends MeleeWeapon {
 const MIN_LASER_ORB_COOLDOWN = 25;
 const MAX_LASER_ORB_COOLDOWN = 35;
 const ENRAGE_LASER_ORB_COOLDOWN = 12;
+// Temporary visual test mode: put all four crystal orbs on the perimeter and
+// fire them on a predictable cadence instead of waiting for phase transitions.
+const LASER_TEST_MODE = true;
+const LASER_TEST_FIRE_INTERVAL = 10;
 const PROTECTION_PRAYERS = ["Protect from Melee", "Protect from Range", "Protect from Magic"];
 
 export class SolHeredit extends Mob {
@@ -238,6 +243,11 @@ export class SolHeredit extends Mob {
 
     this.playAnimation(SolAnimations.Land);
     this.setRotationImmediate(Math.PI * 1.5); // south
+
+    if (LASER_TEST_MODE) {
+      // createLaserOrb() chooses the next cardinal edge in order.
+      for (let i = 0; i < 4; i++) this.createLaserOrb();
+    }
   }
 
   get bonuses(): UnitBonuses {
@@ -329,6 +339,9 @@ export class SolHeredit extends Mob {
     }
     this.tickNumber++;
     this.laserOrbCooldown--;
+    if (LASER_TEST_MODE && this.tickNumber % LASER_TEST_FIRE_INTERVAL === 0) {
+      this.fireOrbs();
+    }
     this.attackStyle = this.attackStyleForNewAttack();
 
     this.attackFeedback = AttackIndicators.NONE;
@@ -416,7 +429,7 @@ export class SolHeredit extends Mob {
       this.didAttack();
       this.attackDelay = nextDelay;
       // trigger laser orbs on anything but a phase transition
-      if (nextAttack !== Attacks.PHASE_TRANSITION && this.laserOrbs.length > 0 && this.laserOrbCooldown < 0) {
+      if (!LASER_TEST_MODE && nextAttack !== Attacks.PHASE_TRANSITION && this.laserOrbs.length > 0 && this.laserOrbCooldown < 0) {
         this.fireOrbs();
       }
     }
@@ -875,6 +888,13 @@ export class SolHeredit extends Mob {
     }
     this.poolCache[key] = true;
     this.region.addEntity(new SolSandPool(this.region, { x, y }));
+    this.region.addEntity(new GraphicsObject(
+      this.region,
+      { x, y },
+      CACHE_ASSETS.spotAnims.sandPool.id,
+      // tiny vertical offset to avoid z-fighting
+      { height: 0.005, delay: 0 },
+    ));
   }
 
   private getAttackDirection() {

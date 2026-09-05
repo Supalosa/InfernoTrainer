@@ -11,6 +11,9 @@ import {
   Pathing,
   Location,
   Trainer,
+  GraphicsObject,
+  CACHE_ASSETS,
+  DelayedAction,
 } from "osrs-sdk";
 
 import _ from "lodash";
@@ -56,6 +59,38 @@ const pickLocation = (edge: Edge): Location => {
   const x = boundaries[0].x + Math.floor(Math.random() * (boundaries[1].x - boundaries[0].x));
   const y = boundaries[0].y + Math.floor(Math.random() * (boundaries[1].y - boundaries[0].y));
   return { x, y };
+};
+
+// Keep the first pass deliberately simple: each placed cache graphic starts
+// two client cycles (about 40ms) after the prior tile, producing a slow sweep
+// from the firing orb across the arena.
+const VERTICAL_LASER_TILE_DELAY = 2;
+// The orb's game-tick firing window starts the cache charge graphic first;
+// begin the attack graphic roughly three game ticks later (90 client cycles),
+// matching the old custom beam's first visible firing frame.
+const VERTICAL_LASER_CHARGE_TO_FIRE_DELAY = 90;
+const LASER_LENGTH = {
+  vertical: ColosseumConstants.ARENA_SOUTH - ColosseumConstants.ARENA_NORTH - 1,
+  horizontal: ColosseumConstants.ARENA_EAST - ColosseumConstants.ARENA_WEST - 1,
+};
+
+const LASER_SPOT_ANIMS: { [edge in Edge]: { charge: number; fire: number } } = {
+  [Edge.SOUTH]: {
+    charge: CACHE_ASSETS.spotAnims.laserSouthCharge.id,
+    fire: CACHE_ASSETS.spotAnims.laserSouthFire.id,
+  },
+  [Edge.WEST]: {
+    charge: CACHE_ASSETS.spotAnims.laserWestCharge.id,
+    fire: CACHE_ASSETS.spotAnims.laserWestFire.id,
+  },
+  [Edge.NORTH]: {
+    charge: CACHE_ASSETS.spotAnims.laserNorthCharge.id,
+    fire: CACHE_ASSETS.spotAnims.laserNorthFire.id,
+  },
+  [Edge.EAST]: {
+    charge: CACHE_ASSETS.spotAnims.laserEastCharge.id,
+    fire: CACHE_ASSETS.spotAnims.laserEastFire.id,
+  },
 };
 
 export class LaserOrb extends Entity {
@@ -115,6 +150,34 @@ export class LaserOrb extends Entity {
 
   public fire() {
     this.firingFreeze = 9;
+    const { charge, fire } = LASER_SPOT_ANIMS[this.edge];
+    DelayedAction.registerDelayedAction(new DelayedAction(() => {
+      this.spawnLaserLine(charge, 0);
+    }, 3));
+    DelayedAction.registerDelayedAction(new DelayedAction(() => {
+        this.spawnLaserLine(fire, VERTICAL_LASER_CHARGE_TO_FIRE_DELAY);
+    }, 4));
+  }
+
+  private spawnLaserLine(spotAnimId: number, delayOffset: number) {
+    const direction = ORB_SHOOT_DIRECTIONS[this.edge];
+    const length = this.edge === Edge.NORTH || this.edge === Edge.SOUTH
+      ? LASER_LENGTH.vertical
+      : LASER_LENGTH.horizontal;
+    for (let index = 0; index < length; index++) {
+      this.region.addEntity(new GraphicsObject(
+        this.region,
+        {
+          x: this.location.x + direction.x * index,
+          y: this.location.y + direction.y * index,
+        },
+        spotAnimId,
+        {
+          delay: delayOffset + index * VERTICAL_LASER_TILE_DELAY,
+          height: 0.5,
+        },
+      ));
+    }
   }
 
   get isFiring() {
