@@ -174,6 +174,8 @@ export class SolHeredit extends Mob {
 
   phaseId = -1;
   poolCache: { [xy: string]: boolean } = {};
+  private groundSlamTick = -1;
+  private groundSlamTiles = new Set<string>();
   finalPhasePoolTimer = 7; // once the phase transition is up
 
   stationaryTimer = 0;
@@ -526,11 +528,20 @@ export class SolHeredit extends Mob {
           continue;
         }
         const delay = Math.max(radX, radY) / radius;
-        this.region.addEntity(
-          new SolGroundSlam(this.region, { x: xx, y: yy }, this, this.aggro, delay, this.tickNumber),
-        );
+        this.addGroundSlam(xx, yy, delay);
       }
     }
+  }
+
+  private addGroundSlam(x: number, y: number, delay: number) {
+    if (this.groundSlamTick !== this.tickNumber) {
+      this.groundSlamTick = this.tickNumber;
+      this.groundSlamTiles.clear();
+    }
+    const key = `${x}.${y}`;
+    if (this.groundSlamTiles.has(key)) return;
+    this.groundSlamTiles.add(key);
+    this.region.addEntity(new SolGroundSlam(this.region, { x, y }, this, this.aggro, delay));
   }
 
   private isArenaTile(x: number, y: number) {
@@ -557,9 +568,7 @@ export class SolHeredit extends Mob {
     while (true) {
       const delay = n / length;
       if (this.isArenaTile(fromX, fromY)) {
-        this.region.addEntity(
-          new SolGroundSlam(this.region, { x: fromX, y: fromY }, this, this.aggro, delay, this.tickNumber),
-        );
+        this.addGroundSlam(fromX, fromY, delay);
       }
       n++;
       if (fromX === toX && fromY === toY) break;

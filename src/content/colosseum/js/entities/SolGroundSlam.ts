@@ -32,8 +32,7 @@ export class SolGroundSlam extends Entity {
     from: Unit,
     to: Unit,
     // number from 0-1 to delay the visual effect in ticks
-    private delay: number | null = 0,
-    private creationTick: number
+    private delay: number | null = 0
   ) {
     super(region, location);
     this.from = from;
