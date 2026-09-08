@@ -1,3 +1,4 @@
+import { COLOSSEUM_ASSETS } from "../../../../assets";
 "use strict";
 
 import {
@@ -12,7 +13,6 @@ import {
   Location,
   Trainer,
   GraphicsObject,
-  CACHE_ASSETS,
   DelayedAction,
 } from "osrs-sdk";
 
@@ -76,20 +76,20 @@ const LASER_LENGTH = {
 
 const LASER_SPOT_ANIMS: { [edge in Edge]: { charge: number; fire: number } } = {
   [Edge.SOUTH]: {
-    charge: CACHE_ASSETS.spotAnims.laserSouthCharge.id,
-    fire: CACHE_ASSETS.spotAnims.laserSouthFire.id,
+    charge: COLOSSEUM_ASSETS.spotAnims.laserSouthCharge.id,
+    fire: COLOSSEUM_ASSETS.spotAnims.laserSouthFire.id,
   },
   [Edge.WEST]: {
-    charge: CACHE_ASSETS.spotAnims.laserWestCharge.id,
-    fire: CACHE_ASSETS.spotAnims.laserWestFire.id,
+    charge: COLOSSEUM_ASSETS.spotAnims.laserWestCharge.id,
+    fire: COLOSSEUM_ASSETS.spotAnims.laserWestFire.id,
   },
   [Edge.NORTH]: {
-    charge: CACHE_ASSETS.spotAnims.laserNorthCharge.id,
-    fire: CACHE_ASSETS.spotAnims.laserNorthFire.id,
+    charge: COLOSSEUM_ASSETS.spotAnims.laserNorthCharge.id,
+    fire: COLOSSEUM_ASSETS.spotAnims.laserNorthFire.id,
   },
   [Edge.EAST]: {
-    charge: CACHE_ASSETS.spotAnims.laserEastCharge.id,
-    fire: CACHE_ASSETS.spotAnims.laserEastFire.id,
+    charge: COLOSSEUM_ASSETS.spotAnims.laserEastCharge.id,
+    fire: COLOSSEUM_ASSETS.spotAnims.laserEastFire.id,
   },
 };
 

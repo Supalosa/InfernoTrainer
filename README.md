@@ -28,52 +28,31 @@ Sure. Right now the code is undergoing rapid development and the API is not stab
 
 ## Development notes
 
-Use Node 16 for now. There's an SSL error on version >= 18.
+Use Node 20. Asset requirements belong to this trainer in [src/assets.ts](src/assets.ts).
+[osrs-assets.config.ts](osrs-assets.config.ts) pins the OpenRS2 cache and output directory.
+See [assets.md](assets.md) for package installation and local development.
 
-To use a local checkout of `osrs-sdk` from the sibling directory (note: the SDK **must** be a sibling of this project and have the name `osrs-sdk`), run:
+Install dependencies and generate the static asset bundle before starting the trainer:
 
-    npm run link:sdk
-
-This builds the SDK  and uses the standard npm link workflow without changing
-the committed dependency or lockfile. Re-run it after SDK source changes, then
-restart the trainer dev server. Use `npm unlink osrs-sdk` followed by
-`npm install` to restore the published package.
-
-To select a hosted cache-render bundle at build/dev-server time:
-
-    OSRS_CACHE_RENDER_MANIFEST_URL=https://assets.example.com/osrs-cache-render/manifest.json npm run start
-
+    npm run assets
     npm run start
+
+The generated directory is `public/osrs-assets`. Webpack copies it into
+`dist/osrs-assets`; the trainer loads its manifest from the same site by default.
+To host assets separately:
+
+    OSRS_CACHE_RENDER_MANIFEST_URL=https://assets.example.com/manifest.json npm run start
 
 ### Netlify beta builds
 
-The `beta` branch uses the `[context.beta]` configuration in `netlify.toml` and
-[`scripts/build-beta.sh`](scripts/build-beta.sh). That build clones the SDK
-repository and branch named by `OSRS_SDK_REPO` and
-`OSRS_SDK_BRANCH` (defaulting to the cache-render branch), builds it, downloads
-and extracts the cache-render assets using the cache reader repository and
-branch named by `OSRS_CACHE_READER_REPO` and `OSRS_CACHE_READER_BRANCH`, then
-installs that built SDK checkout before building the trainer. The generated cache bundle is
-copied into `dist/cache-render` and served by the trainer site. The OpenRS2
-cache is stored under `/opt/build/cache/osrs-cache-render` (or
-`NETLIFY_CACHE_DIR` when provided), so subsequent builds reuse it. These values
-can be overridden in Netlify for a fork or another SDK branch.
+The beta context runs [scripts/build-beta.sh](scripts/build-beta.sh). It builds
+the SDK and reader revisions selected in `netlify.toml`, compiles this trainer's
+asset manifest, and includes the generated directory in the deployed site.
 
-`OSRS_OPENRS2_CACHE_ID` pins the OpenRS2 cache used for the asset bundle. It is
-set to `2437`, whose cache revision is `236`; its associated XTEAs are required
-to decode the renderer's map assets. Do not advance this value to a later cache
-without confirming that its XTEAs are available.
+Downloads are reused under `NETLIFY_CACHE_DIR/osrs-cache-render/openrs2`
+(default `/opt/build/cache/osrs-cache-render/openrs2`). The trainer config pins
+the cache used for normal builds. An optional `OSRS_OPENRS2_CACHE_ID` overrides
+it for experiments; check map XTEA availability when selecting another cache.
 
-The beta context uses these asset settings:
-
-    OSRS_ASSET_BASE_URL=https://assets-soltrainer.netlify.app
-    OSRS_CACHE_RENDER_MANIFEST_URL=/cache-render/manifest.json
-
-The trainer build bundles that SDK into `dist/main.js`. Since the SDK branch is
-cloned by name, each beta deploy uses the latest commit on that branch. For a
-fully reproducible deploy, change the command to check out a specific commit
-after cloning.
-
-Running test
-
-    npx jest
+The SDK and reader selectors may be branch names or immutable tags. Use tags for
+reproducible deployments.

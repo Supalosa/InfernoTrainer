@@ -2,9 +2,8 @@
   command = "npm run build"
   publish = "dist"
 
-# Netlify uses this context for deploys of the `beta` branch. The beta build
-# clones and builds the unpublished SDK from its cache-render branch. Set
-# OSRS_ASSET_BASE_URL in Netlify to select the host for legacy SDK assets.
+# Beta deploys build the selected SDK and cache reader revisions, generate this
+# trainer's cache assets, and include them in the published application.
 [context.beta]
   command = "bash scripts/build-beta.sh"
   publish = "dist"
@@ -14,8 +13,6 @@
   OSRS_SDK_BRANCH = "feat/cache-render-bundle"
   OSRS_CACHE_READER_REPO = "https://github.com/Supalosa/osrscachereader.git"
   OSRS_CACHE_READER_BRANCH = "feat/reader-only-entrypoint"
-  # Keep the cache and its XTEAs together. Later caches do not have the XTEAs
-  # needed to decode this renderer's map assets.
-  OSRS_OPENRS2_CACHE_ID = "2437"
+  # Cache ID is pinned by this trainer's osrs-assets.config.ts.
   OSRS_ASSET_BASE_URL = "https://assets-soltrainer.netlify.app"
-  OSRS_CACHE_RENDER_MANIFEST_URL = "/cache-render/manifest.json"
+  OSRS_CACHE_RENDER_MANIFEST_URL = "/osrs-assets/manifest.json"

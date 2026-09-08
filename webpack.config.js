@@ -28,6 +28,8 @@ const config = {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
     port: 8000,
+    host: "0.0.0.0",
+    disableHostCheck: true,
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
@@ -39,6 +41,7 @@ const config = {
   plugins: [
     new CopyPlugin({
       patterns: [
+        { from: "public/osrs-assets", to: "osrs-assets", noErrorOnMissing: true },
         { from: `index.html`, to: "", context: `src/` },
         { from: `index.html`, to: "colosseum.html", context: `src/` },
         { from: `manifest.json`, to: "", context: `src/` },

@@ -1,3 +1,4 @@
+import { COLOSSEUM_ASSETS } from "../../../../assets";
 "use strict";
 
 import _ from "lodash";
@@ -12,7 +13,6 @@ import {
   Location,
   EquipmentTypes,
   AttackIndicators,
-  CACHE_ASSETS,
   cacheSound,
   Mob,
   Pathing,
@@ -88,15 +88,15 @@ const DIRECTIONS = [
 // so we added a way to configure the delay per-model.
 const SOL_FRAME_SOUNDS_DELAY_MS = 240;
 
-const TRIPLE_PARRY_1 = new Sound(cacheSound(CACHE_ASSETS.sounds.solTripleParry1.id), 0.1);
-const TRIPLE_PARRY_2 = new Sound(cacheSound(CACHE_ASSETS.sounds.solTripleParry2.id), 0.1);
-const TRIPLE_PARRY_3 = new Sound(cacheSound(CACHE_ASSETS.sounds.solTripleParry3.id), 0.1);
+const TRIPLE_PARRY_1 = new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.solTripleParry1.id), 0.1);
+const TRIPLE_PARRY_2 = new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.solTripleParry2.id), 0.1);
+const TRIPLE_PARRY_3 = new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.solTripleParry3.id), 0.1);
 
 
-const POOL_SPAWN = new Sound(cacheSound(CACHE_ASSETS.sounds.solPoolSpawn.id), 0.1);
-const POOL_SHRIEK = new Sound(cacheSound(CACHE_ASSETS.sounds.solPoolShriek.id), 0.1);
-const LASER_CHARGE = new Sound(cacheSound(CACHE_ASSETS.sounds.solLaserCharge.id), 0.1);
-const LASER_FIRE = new Sound(cacheSound(CACHE_ASSETS.sounds.solLaserFire.id), 0.1);
+const POOL_SPAWN = new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.solPoolSpawn.id), 0.1);
+const POOL_SHRIEK = new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.solPoolShriek.id), 0.1);
+const LASER_CHARGE = new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.solLaserCharge.id), 0.1);
+const LASER_FIRE = new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.solLaserFire.id), 0.1);
 
 const SOL_SOUNDS = [
   POOL_SPAWN,
@@ -701,7 +701,7 @@ export class SolHeredit extends Mob {
     // used above 50%
     this.playAnimation(SolAnimations.TripleAttackShort);
     this.addSpotAnim({
-      id: CACHE_ASSETS.spotAnims.solTripleAttackShort.id,
+      id: COLOSSEUM_ASSETS.spotAnims.solTripleAttackShort.id,
       channel: "sol-triple-attack",
       animation: SolAnimations.TripleAttackShort,
       height: 0,
@@ -716,7 +716,7 @@ export class SolHeredit extends Mob {
     // used below 50%
     this.playAnimation(SolAnimations.TripleAttackLong);
     this.addSpotAnim({
-      id: CACHE_ASSETS.spotAnims.solTripleAttackLong.id,
+      id: COLOSSEUM_ASSETS.spotAnims.solTripleAttackLong.id,
       channel: "sol-triple-attack",
       animation: SolAnimations.TripleAttackLong,
       height: 0,
@@ -891,7 +891,7 @@ export class SolHeredit extends Mob {
     this.region.addEntity(new GraphicsObject(
       this.region,
       { x, y },
-      CACHE_ASSETS.spotAnims.sandPool.id,
+      COLOSSEUM_ASSETS.spotAnims.sandPool.id,
       // tiny vertical offset to avoid z-fighting
       { height: 0.005, delay: 0 },
     ));

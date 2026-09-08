@@ -14,7 +14,6 @@ import {
   Location,
   Trainer,
   GraphicsObject,
-  CACHE_ASSETS,
 } from "osrs-sdk";
 
 import { SandPoolModel } from "../rendering/SandPoolModel";

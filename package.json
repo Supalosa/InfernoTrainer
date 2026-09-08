@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npx webpack serve",
     "build": "webpack",
-    "link:sdk": "npm --prefix ../osrs-sdk run build && npm link ../osrs-sdk ../osrs-sdk/packages/osrs-sdk-react",
+    "assets": "osrs-sdk-assets build",
+    "link:sdk": "npm --prefix ../osrs-sdk run build && npm link ../osrs-sdk ../osrs-sdk/packages/osrs-sdk-react ../osrs-sdk/packages/osrs-sdk-assets",
     "lint": "eslint . --ext .ts --fix",
     "prettier": "npx prettier --write ."
   },

@@ -82,7 +82,7 @@ function createTrainer() {
   CacheRender.configure(
     __OSRS_CACHE_RENDER_MANIFEST_URL__
       || window.OSRS_CACHE_RENDER_MANIFEST_URL
-      || "http://127.0.0.1:8081/manifest.json",
+      || new URL("osrs-assets/manifest.json", window.location.href).href,
   );
   Settings.readFromStorage();
   applyTransferredSettings();
