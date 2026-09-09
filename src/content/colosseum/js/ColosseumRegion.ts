@@ -163,7 +163,9 @@ export class ColosseumRegion extends Region {
       this.addEntity(new WallMan(this, { x: 20, y: 32 }, null));
     }
 
-    this.addMob(new SolHeredit(this, { x: 25, y: 24 }, { aggro: player }));
+    const sol = new SolHeredit(this, { x: 25, y: 24 }, { aggro: player });
+    this.addMob(sol);
+    this.setBoss(sol);
 
     // Add 3d scene
     if (Settings.use3dView) {
