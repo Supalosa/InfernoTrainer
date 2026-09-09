@@ -1,6 +1,6 @@
 import "../../../../test/setupFiles";
 
-import { DelayedAction, EquipmentControls, EquipmentTypes, Player, Settings, TestRegion, Viewport, World } from "osrs-sdk";
+import { DelayedAction, EquipmentControls, EquipmentTypes, Player, Random, Settings, TestRegion, Viewport, World } from "osrs-sdk";
 import { Attacks, SolHeredit } from "../js/mobs/SolHeredit";
 
 
@@ -89,6 +89,26 @@ describe("sol heredit attacks", () => {
       expect(boss.hasLOS).toEqual(true);
       expect(boss.attackDelay).toBeLessThan(0);
     }
+  });
+
+  test("requires two auto attacks after a phase transition before a special", () => {
+    // The special is the final weighted-pool entry, so select it as soon as the cooldown permits.
+    const random = jest.spyOn(Random, "get").mockReturnValue(0.999);
+    boss.setAggro(player);
+    region.addMob(boss);
+    boss.phaseId = 3;
+    boss.forceAttack = Attacks.PHASE_TRANSITION;
+
+    world.tickWorld();
+    expect(boss.specialAttackCooldown).toEqual(2);
+    boss.forceAttack = null;
+    expect((boss as any).selectAttack()).toEqual(Attacks.SPEAR);
+    boss.specialAttackCooldown--;
+    expect((boss as any).selectAttack()).toEqual(Attacks.SPEAR);
+    boss.specialAttackCooldown--;
+    expect((boss as any).selectAttack()).toEqual(Attacks.TRIPLE_LONG);
+
+    random.mockRestore();
   });
 
   describe("triple attack tests", () => {

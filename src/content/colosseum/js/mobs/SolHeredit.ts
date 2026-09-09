@@ -424,6 +424,7 @@ export class SolHeredit extends Mob {
           nextDelay = this.attackGrapple();
           break;
         case Attacks.PHASE_TRANSITION:
+          this.specialAttackCooldown = SPECIAL_ATTACK_COOLDOWN;
           this.forceAttack = Attacks.SPEAR;
           nextDelay = this.phaseTransition(this.phaseId);
           break;
