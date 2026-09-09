@@ -30,7 +30,6 @@ export const COLOSSEUM_ASSETS = {
         attackAlt5: 10888,
         death: 10877,
       },
-      clickbox: { faceAlpha: 254 },
     },
   },
   regions: {
