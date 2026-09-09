@@ -153,7 +153,7 @@ const MAX_LASER_ORB_COOLDOWN = 35;
 const ENRAGE_LASER_ORB_COOLDOWN = 12;
 // Temporary visual test mode: put all four crystal orbs on the perimeter and
 // fire them on a predictable cadence instead of waiting for phase transitions.
-const LASER_TEST_MODE = true;
+const LASER_TEST_MODE = false;
 const LASER_TEST_FIRE_INTERVAL = 10;
 const PROTECTION_PRAYERS = ["Protect from Melee", "Protect from Range", "Protect from Magic"];
 
