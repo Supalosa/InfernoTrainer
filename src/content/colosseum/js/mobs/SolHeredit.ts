@@ -1096,6 +1096,18 @@ export class SolHeredit extends Mob {
     return true;
   }
 
+  override drawOverheadText(context, scale, alignCenter = true, prefix = "") {
+    if (!alignCenter) {
+      super.drawOverheadText(context, scale, alignCenter, prefix);
+      return;
+    }
+    context.save();
+    // Place the text baseline just above the health bar drawn at y=0.
+    context.translate(0, (this.size / 2) * scale);
+    super.drawOverheadText(context, scale, alignCenter, prefix);
+    context.restore();
+  }
+
   override drawUILayer(tickPercent, projector, context, scale) {
     super.drawUILayer(tickPercent, projector, context, scale);
     // draw overhead text on the bottom left to simulate chatbox
