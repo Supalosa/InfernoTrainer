@@ -7,7 +7,7 @@ import type { Loadout } from "osrs-sdk";
 import ColosseumMapImage from "../assets/images/map.png";
 
 import { colosseumLoadout, configureColosseumPlayer } from "./ColosseumLoadout";
-import { ColosseumScene, useStaticScene } from "./ColosseumScene";
+import { ColosseumScene } from "./ColosseumScene";
 import { Attacks, SolHeredit as SolHeredit } from "./mobs/SolHeredit";
 
 import { WallMan } from "./entities/WallMan";
@@ -169,7 +169,7 @@ export class ColosseumRegion extends Region {
 
     // Add 3d scene
     if (Settings.use3dView) {
-      this.addEntity(new ColosseumScene(this, { x: 0, y: useStaticScene ? 48 : 0 }));
+      this.addEntity(new ColosseumScene(this, { x: 0, y: 0 }));
     }
 
     this.updateSolarFlares();

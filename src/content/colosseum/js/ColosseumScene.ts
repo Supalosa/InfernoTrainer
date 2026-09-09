@@ -1,9 +1,6 @@
 "use strict";
 
-import { Assets, Entity, CacheRenderSceneModel, CollisionType, GLTFModel, Model, LineOfSightMask } from "osrs-sdk";
-
-const SceneModel = Assets.getAssetUrl("models/colosseum_partial.glb");
-export const useStaticScene = new URLSearchParams(window.location.search).get("static-scene") === "1";
+import { Entity, CacheRenderSceneModel, CollisionType, Model, LineOfSightMask } from "osrs-sdk";
 
 // Temporary integration shim. Keep the cache asset region-local and tune this
 // at the trainer boundary until trainer coordinates adopt the cache origin.
@@ -43,15 +40,9 @@ export class ColosseumScene extends Entity {
     // 400. Cache model units are 1/128 world units, so the compiler's
     // origin-normalized terrain sits (1360 - 400) / 128 = 7.5 units above
     // trainer plane zero.
-    if (!useStaticScene) return new CacheRenderSceneModel("region:7216", {
+    return new CacheRenderSceneModel("region:7216", {
       elevation: CacheSceneOffset.elevation,
       originOffset: CacheSceneOffset,
     });
-    // one day we'll figure out the offsets used in the exporter...
-    return new GLTFModel(this, [SceneModel], { scale: 1, verticalOffset: -11.2, 
-      originOffset: {
-      x: -6.5,
-      y: 12.5,
-    }});
   }
 }
