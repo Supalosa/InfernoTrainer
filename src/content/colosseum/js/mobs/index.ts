@@ -1,6 +1,7 @@
 export { Manticore, ManticoreAnimations } from "osrs-sdk";
 
 export { JavelinColossus, JavelinColossusAnimations } from "./JavelinColossus";
+export { JaguarWarrior, JaguarWarriorAnimations } from "./JaguarWarrior";
 export { Minotaur, MinotaurAnimations } from "./Minotaur";
 export { SerpentShaman, SerpentShamanAnimations } from "./SerpentShaman";
 export { ShockwaveColossus, ShockwaveColossusAnimations } from "./ShockwaveColossus";

@@ -20,6 +20,13 @@ export enum JavelinColossusAnimations {
   Death = 4,
 }
 
+class JavelinWeapon extends RangedWeapon {
+  override calculateHitDelay(distance: number) {
+    // observed this always takes 3 ticks to land. add one because it gets decremented immediately
+    return 3 + 1;
+  }
+}
+
 /** The Fortis Colosseum's Javelin Colossus (NPC definition 12817). */
 export class JavelinColossus extends Mob {
   static readonly NPC_ID = COLOSSEUM_ASSETS.npcs.javelinColossus.id;
@@ -34,9 +41,14 @@ export class JavelinColossus extends Mob {
 
   override setStats() {
     this.weapons = {
-      range: new RangedWeapon({
-        sound: new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.javelinColossusAttack.id), 0.1),
-        visuals: { spotAnim: { id: COLOSSEUM_ASSETS.spotAnims.javelinColossusProjectile.id } },
+      range: new JavelinWeapon({
+        visuals: {
+          spotAnim: {
+            id: COLOSSEUM_ASSETS.spotAnims.javelinColossusProjectile.id
+          },
+          startCycleOffset: 60,
+          endCycleOffset: 90,
+        }
       }),
     };
     this.stats = {

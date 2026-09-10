@@ -16,6 +16,13 @@ export enum ShockwaveColossusAnimations {
   Death = 3,
 }
 
+class ShockwaveWeapon extends MagicWeapon {
+  override calculateHitDelay(distance: number) {
+    // as observed by testing a each range, +1 because it gets decremented immediately after.
+    return Math.floor((2 * distance + 4) / 7) + 2 + 1;
+  }
+}
+
 export class ShockwaveColossus extends Mob {
   static readonly NPC_ID = COLOSSEUM_ASSETS.npcs.shockwaveColossus.id;
 
@@ -28,7 +35,16 @@ export class ShockwaveColossus extends Mob {
   }
 
   override setStats() {
-    this.weapons = { magic: new MagicWeapon() };
+    this.weapons = {
+      magic: new ShockwaveWeapon({
+        visuals: {
+          spotAnim: {
+            id: COLOSSEUM_ASSETS.spotAnims.shockwaveColossusProjectile.id
+          },
+          startCycleOffset: 60,
+        },
+      }),
+    };
     this.stats = {
       attack: 1,
       strength: 1,

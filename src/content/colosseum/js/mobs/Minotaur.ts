@@ -31,7 +31,9 @@ export class Minotaur extends Mob {
   }
 
   override setStats() {
-    this.weapons = { crush: new MeleeWeapon() };
+    // Melee projectiles otherwise resolve on the firing tick. The Minotaur's
+    // hitsplat is observed one tick after its attack.
+    this.weapons = { crush: new MeleeWeapon({ setDelay: 2 }) };
     this.stats = {
       attack: 300,
       strength: 300,

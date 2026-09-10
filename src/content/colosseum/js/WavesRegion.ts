@@ -8,8 +8,10 @@ import { colosseumSettings } from "./ColosseumSettings";
 import { COLOSSEUM_ASSETS } from "../../../assets";
 import {
   JavelinColossus,
+  JaguarWarrior,
   LineOfSightPillar1x1,
   LineOfSightPillar3x3,
+  Minotaur,
   SerpentShaman,
   ShockwaveColossus,
 } from "./mobs";
@@ -17,7 +19,9 @@ import { withWaveSpawnPathing } from "./mobs/WaveSpawnPathing";
 
 const WaveSerpentShaman = withWaveSpawnPathing(SerpentShaman);
 const WaveJavelinColossus = withWaveSpawnPathing(JavelinColossus);
+const WaveJaguarWarrior = withWaveSpawnPathing(JaguarWarrior);
 const WaveManticore = withWaveSpawnPathing(Manticore);
+const WaveMinotaur = withWaveSpawnPathing(Minotaur);
 const WaveShockwaveColossus = withWaveSpawnPathing(ShockwaveColossus);
 
 export const WAVE_COMPOSITIONS = {
@@ -106,6 +110,11 @@ export const COLOSSEUM_SPAWN_POINTS = [
 // spawns that lead to double souths
 const SOUTH_SPAWN_1 = { x: 26, y: 33 } as const;
 const SOUTH_SPAWN_2 = { x: 23, y: 29 } as const;
+const REINFORCEMENT_DELAY_TICKS = 67;
+const REINFORCEMENT_START_X = 25;
+const NORTH_REINFORCEMENT_Y = 12;
+// This is the scene-debug coordinate observed for the south reinforcement row.
+const SOUTH_REINFORCEMENT_Y = 41;
 
 function shuffle<T>(values: readonly T[]): T[] {
   const shuffled = [...values];
@@ -129,6 +138,8 @@ function npcOrder(mob: Mob) {
   if (mob instanceof SerpentShaman) return 1;
   if (mob instanceof JavelinColossus) return 2;
   if (mob instanceof ShockwaveColossus) return 3;
+  if (mob instanceof JaguarWarrior) return 4;
+  if (mob instanceof Minotaur) return 5;
   return Number.MAX_SAFE_INTEGER;
 }
 
@@ -139,6 +150,9 @@ export class WavesRegion extends ColosseumRegion {
     shaman: [], javelin: [], manticore: [], shockwave: [],
   };
   private selectedWave: WaveNumber;
+  private reinforcementMobPool: { jaguar: Mob; minotaur: Mob; shaman: Mob } | null = null;
+  private reinforcementTicks = 0;
+  private reinforcementsSpawned = false;
   private wavePhase: "waiting" | "countdown" | "active" = "waiting";
   private waveStartRequested = false;
   private waveSpawnTicks = 0;
@@ -173,11 +187,17 @@ export class WavesRegion extends ColosseumRegion {
       ],
       shockwave: [new WaveShockwaveColossus(this, { x: 29, y: 32 }, mobOptions)],
     };
+    this.reinforcementMobPool = {
+      jaguar: new WaveJaguarWarrior(this, { x: 25, y: 12 }, mobOptions),
+      minotaur: new WaveMinotaur(this, { x: 25, y: 12 }, mobOptions),
+      shaman: new WaveSerpentShaman(this, { x: 25, y: 12 }, mobOptions),
+    };
     this.pendingMobs = [
       ...this.waveMobPool.shaman,
       ...this.waveMobPool.javelin,
       ...this.waveMobPool.manticore,
       ...this.waveMobPool.shockwave,
+      ...Object.values(this.reinforcementMobPool),
     ];
 
     // A 3x3 NPC is anchored at its southwest tile, one tile southwest of
@@ -209,6 +229,9 @@ export class WavesRegion extends ColosseumRegion {
     this.waveStartRequested = false;
     this.waveSpawnTicks = 0;
     this.spawnEligibilityPlayerLocation = null;
+    this.reinforcementMobPool = null;
+    this.reinforcementTicks = 0;
+    this.reinforcementsSpawned = false;
     this.pendingMobs = [];
     const reset = super.reset(false);
     // The modal owns the wave-start gate. Keep the world live so the player
@@ -261,6 +284,13 @@ export class WavesRegion extends ColosseumRegion {
       return;
     }
 
+    if (this.wavePhase === "active") {
+      if (!this.reinforcementsSpawned && --this.reinforcementTicks <= 0) {
+        this.spawnReinforcements();
+      }
+      return;
+    }
+
     if (this.wavePhase !== "countdown") return;
     this.waveSpawnTicks--;
     if (this.waveSpawnTicks === 1) {
@@ -307,6 +337,7 @@ export class WavesRegion extends ColosseumRegion {
     this.pendingMobs = [];
     this.spawnEligibilityPlayerLocation = null;
     this.wavePhase = "active";
+    this.reinforcementTicks = REINFORCEMENT_DELAY_TICKS;
   }
 
   override async preload() {
@@ -318,5 +349,35 @@ export class WavesRegion extends ColosseumRegion {
 
   private notifyWaveStateChanged() {
     this.waveStateListeners.forEach((listener) => listener());
+  }
+
+  private spawnReinforcements() {
+    const pool = this.reinforcementMobPool;
+    if (!pool) return;
+
+    let reinforcements: Mob[];
+    if (this.selectedWave <= 3) reinforcements = [pool.jaguar];
+    else if (this.selectedWave <= 6) reinforcements = [pool.shaman, pool.jaguar];
+    else if (this.selectedWave <= 9) reinforcements = [pool.minotaur];
+    else reinforcements = [pool.minotaur, pool.shaman];
+
+    reinforcements = shuffle(reinforcements);
+    const player = this.players[0];
+    const y = player.location.y <= 27 ? NORTH_REINFORCEMENT_Y : SOUTH_REINFORCEMENT_Y;
+    let x = REINFORCEMENT_START_X;
+    reinforcements.forEach((mob) => {
+      mob.setLocation({ x, y });
+      x += mob.size;
+    });
+
+    // Preserve the randomized left-to-right allocation while restoring the
+    // Colosseum's canonical NPC processing order for insertion.
+    reinforcements.sort((first, second) => npcOrder(first) - npcOrder(second));
+    const aggressive = colosseumSettings.getSnapshot().npcsAggressive;
+    reinforcements.forEach((mob) => {
+      if (aggressive) mob.setAggro(player);
+      this.addMob(mob);
+    });
+    this.reinforcementsSpawned = true;
   }
 }

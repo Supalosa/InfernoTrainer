@@ -28,7 +28,11 @@ export class SerpentShaman extends Mob {
   }
 
   override setStats() {
-    this.weapons = { magic: new MagicWeapon() };
+    this.weapons = {
+      magic: new MagicWeapon({
+        visuals: { spotAnim: { id: COLOSSEUM_ASSETS.spotAnims.serpentShamanProjectile.id } },
+      }),
+    };
     this.stats = {
       attack: 1,
       strength: 1,

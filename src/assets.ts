@@ -3,6 +3,14 @@ import type { CacheAssets } from "osrs-sdk/asset-manifest";
 /** Colosseum requirements shared by gameplay and the asset builder. */
 export const COLOSSEUM_ASSETS = {
   npcs: {
+    jaguarWarrior: {
+      id: 12810,
+      animations: {
+        // Jaguar warriors use the human Dragon Claws attack and player death.
+        attack: 7514,
+        death: 836,
+      },
+    },
     manticore: {
       id: 12818,
       animations: {
@@ -64,7 +72,11 @@ export const COLOSSEUM_ASSETS = {
     solWallB: { id: 50964, animations: { idle: 7508 } },
   },
   spotAnims: {
+    shockwaveColossusProjectile: { id: 1341 },
+    serpentShamanProjectile: { id: 1459 },
     javelinColossusProjectile: { id: 2673 },
+    javelinColossusArtillerySpear: { id: 2674 },
+    javelinColossusArtilleryExplosion: { id: 2265 },
     solTripleAttackLong: { id: 2667 },
     solTripleAttackShort: { id: 2668 },
     solDust: { id: 2669 },
@@ -87,7 +99,7 @@ export const COLOSSEUM_ASSETS = {
   },
   sounds: {
     manticoreTripleThrowProjectile01: { id: 8382 },
-    javelinColossusAttack: { id: 8348 },
+    javelinColossusAttack: { id: 8348 }, // actually this seems to be the landing sound
     manticoreProjectile01: { id: 8406 },
     manticoreProjectile02: { id: 8400 },
     manticoreProjectile03: { id: 8383 },
