@@ -64,6 +64,7 @@ export const COLOSSEUM_ASSETS = {
     solWallB: { id: 50964, animations: { idle: 7508 } },
   },
   spotAnims: {
+    javelinColossusProjectile: { id: 2673 },
     solTripleAttackLong: { id: 2667 },
     solTripleAttackShort: { id: 2668 },
     solDust: { id: 2669 },
@@ -85,6 +86,11 @@ export const COLOSSEUM_ASSETS = {
     laserImpact: { id: 2697 },
   },
   sounds: {
+    manticoreTripleThrowProjectile01: { id: 8382 },
+    javelinColossusAttack: { id: 8348 },
+    manticoreProjectile01: { id: 8406 },
+    manticoreProjectile02: { id: 8400 },
+    manticoreProjectile03: { id: 8383 },
     waveStartPrompt: { id: 2266 },
     waveStartStartHover: { id: 7986 },
     waveStartAcknowledged: { id: 8010 },

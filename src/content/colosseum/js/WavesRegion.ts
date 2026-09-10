@@ -97,8 +97,9 @@ export const COLOSSEUM_SPAWN_POINTS = [
   { x: 38, y: 28 },
 ] as const;
 
-const SOUTHERNMOST_SPAWN = { x: 26, y: 33 } as const;
-const SOUTHERN_TOP_LEFT_SPAWN = { x: 23, y: 29 } as const;
+// spawns that lead to double souths
+const SOUTH_SPAWN_1 = { x: 26, y: 33 } as const;
+const SOUTH_SPAWN_2 = { x: 23, y: 29 } as const;
 
 function shuffle<T>(values: readonly T[]): T[] {
   const shuffled = [...values];
@@ -278,7 +279,7 @@ export class WavesRegion extends ColosseumRegion {
     );
     const forceDoubleSouth = colosseumSettings.getSnapshot().forceDoubleSouth;
     const forcedSpawns = forceDoubleSouth
-      ? [SOUTHERNMOST_SPAWN, SOUTHERN_TOP_LEFT_SPAWN].slice(0, randomizedMobs.length)
+      ? [SOUTH_SPAWN_1, SOUTH_SPAWN_2].slice(0, randomizedMobs.length)
       : [];
     const remainingSpawns = shuffle(eligibleSpawns.filter(
       (spawn) => !forcedSpawns.some((forced) => sameLocation(spawn, forced)),

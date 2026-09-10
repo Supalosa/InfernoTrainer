@@ -1,8 +1,10 @@
 import {
   CacheRenderModel,
   CacheRenderReferences,
+  cacheSound,
   Mob,
   RangedWeapon,
+  Sound,
   UnitBonuses,
 } from "osrs-sdk";
 import type { Model } from "osrs-sdk";
@@ -31,7 +33,12 @@ export class JavelinColossus extends Mob {
   }
 
   override setStats() {
-    this.weapons = { range: new RangedWeapon() };
+    this.weapons = {
+      range: new RangedWeapon({
+        sound: new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.javelinColossusAttack.id), 0.1),
+        visuals: { spotAnim: { id: COLOSSEUM_ASSETS.spotAnims.javelinColossusProjectile.id } },
+      }),
+    };
     this.stats = {
       attack: 220,
       strength: 200,
