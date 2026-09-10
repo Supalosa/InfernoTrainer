@@ -5,6 +5,7 @@ import {
   Region,
   Settings,
   TileMarker,
+  Trainer,
   TrainerInstance,
   TrainerLoadingState,
 } from "osrs-sdk";
@@ -98,7 +99,10 @@ function createTrainer() {
   return new TrainerInstance(region, { readyTimer: 5 });
 }
 
-type AttackSetting = Exclude<keyof ColosseumSettingsState, "showSolarFlareTiles" | "solarFlareLevel">;
+type AttackSetting = Exclude<
+  keyof ColosseumSettingsState,
+  "npcsAggressive" | "showSolarFlareTiles" | "solarFlareLevel"
+>;
 
 function AttackCheckbox({ label, setting }: { label: string; setting: AttackSetting }) {
   const settings = useSettingsStore(colosseumSettings);
@@ -128,13 +132,27 @@ function Credits() {
   );
 }
 
-function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; region: ColosseumRegion }) {
-  const settings = useSettingsSnapshot();
-  const colosseumSettingsSnapshot = useSettingsStore(colosseumSettings);
-  const [showCredits, setShowCredits] = useState(false);
-
+function WavesSidebar() {
+  const settings = useSettingsStore(colosseumSettings);
   return (
-    <div>
+    <>
+      <label>
+        <input
+          type="checkbox"
+          checked={settings.npcsAggressive}
+          onChange={(event) => colosseumSettings.set({ npcsAggressive: event.currentTarget.checked })}
+        />
+        Aggressive NPCs on wave start
+      </label>
+      <button type="button" onClick={() => Trainer.reset()}>Reset wave</button>
+    </>
+  );
+}
+
+function BossSidebar({ region }: { region: ColosseumRegion }) {
+  const settings = useSettingsStore(colosseumSettings);
+  return (
+    <>
       <span style={{ color: "lime" }}>Right click Sol to skip to specific phases.</span>
       <hr />
       <p>Attack sequence selector:</p>
@@ -147,7 +165,7 @@ function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; reg
       <p>Solar Flare:</p>
       <select
         aria-label="Solar Flare"
-        value={colosseumSettingsSnapshot.solarFlareLevel}
+        value={settings.solarFlareLevel}
         onChange={(event) => region.setSolarFlareLevel(Number(event.currentTarget.value))}
       >
         <option value={0}>None</option>
@@ -158,12 +176,25 @@ function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; reg
       <label>
         <input
           type="checkbox"
-          checked={colosseumSettingsSnapshot.showSolarFlareTiles}
+          checked={settings.showSolarFlareTiles}
           onChange={(event) => region.setShowSolarFlareTiles(event.currentTarget.checked)}
         />
         Solar Flare Tiles
       </label>
       <br />
+    </>
+  );
+}
+
+function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; region: ColosseumRegion }) {
+  const settings = useSettingsSnapshot();
+  const [showCredits, setShowCredits] = useState(false);
+
+  return (
+    <div>
+      {region instanceof WavesRegion
+        ? <WavesSidebar />
+        : <BossSidebar region={region} />}
       <hr />
 
       <a href="https://discord.gg/nryYHbvtTa">Discord</a><br />

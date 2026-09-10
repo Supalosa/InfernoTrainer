@@ -7,6 +7,7 @@ import {
 } from "osrs-sdk";
 
 export type ColosseumSettingsState = {
+  npcsAggressive: boolean;
   showSolarFlareTiles: boolean;
   solarFlareLevel: number;
   useGrapple: boolean;
@@ -18,6 +19,7 @@ export type ColosseumSettingsState = {
 
 const STORAGE_KEY = "colosseum-trainer:settings";
 const defaults: ColosseumSettingsState = {
+  npcsAggressive: false,
   showSolarFlareTiles: false,
   solarFlareLevel: 1,
   useGrapple: true,
@@ -42,6 +44,7 @@ const storage: SettingsStorage<ColosseumSettingsState> = {
       10,
     );
     const migrated = {
+      npcsAggressive: false,
       showSolarFlareTiles: window.localStorage.getItem("showSolarFlareTiles") === "true",
       solarFlareLevel: Number.isFinite(legacySolarFlareLevel)
         ? legacySolarFlareLevel
