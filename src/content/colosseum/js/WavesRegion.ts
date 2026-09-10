@@ -1,4 +1,4 @@
-import { cacheSound, Manticore, Player, Settings, Sound, SoundCache, TileMarker, Viewport } from "osrs-sdk";
+import { cacheSound, Manticore, Player, Random, Settings, Sound, SoundCache, TileMarker, Viewport } from "osrs-sdk";
 import type { Loadout, Mob } from "osrs-sdk";
 
 import { colosseumLoadout } from "./ColosseumLoadout";
@@ -97,6 +97,34 @@ export const COLOSSEUM_SPAWN_POINTS = [
   { x: 38, y: 28 },
 ] as const;
 
+const SOUTHERNMOST_SPAWN = { x: 26, y: 33 } as const;
+const SOUTHERN_TOP_LEFT_SPAWN = { x: 23, y: 29 } as const;
+
+function shuffle<T>(values: readonly T[]): T[] {
+  const shuffled = [...values];
+  for (let index = shuffled.length - 1; index > 0; index--) {
+    const swapIndex = Math.floor(Random.get() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
+function isWithinTiles(first: { x: number; y: number }, second: { x: number; y: number }, distance: number) {
+  return Math.max(Math.abs(first.x - second.x), Math.abs(first.y - second.y)) <= distance;
+}
+
+function sameLocation(first: { x: number; y: number }, second: { x: number; y: number }) {
+  return first.x === second.x && first.y === second.y;
+}
+
+function npcOrder(mob: Mob) {
+  if (mob instanceof Manticore) return 0;
+  if (mob instanceof SerpentShaman) return 1;
+  if (mob instanceof JavelinColossus) return 2;
+  if (mob instanceof ShockwaveColossus) return 3;
+  return Number.MAX_SAFE_INTEGER;
+}
+
 /** Visual sandbox for the NPCs used by ordinary Colosseum waves. */
 export class WavesRegion extends ColosseumRegion {
   private pendingMobs: Mob[] = [];
@@ -107,6 +135,7 @@ export class WavesRegion extends ColosseumRegion {
   private wavePhase: "waiting" | "countdown" | "active" = "waiting";
   private waveStartRequested = false;
   private waveSpawnTicks = 0;
+  private spawnEligibilityPlayerLocation: { x: number; y: number } | null = null;
   private waveStateListeners = new Set<() => void>();
 
   constructor(loadouts: Loadout[] = [colosseumLoadout]) {
@@ -172,6 +201,7 @@ export class WavesRegion extends ColosseumRegion {
     this.wavePhase = "waiting";
     this.waveStartRequested = false;
     this.waveSpawnTicks = 0;
+    this.spawnEligibilityPlayerLocation = null;
     this.pendingMobs = [];
     const reset = super.reset(false);
     // The modal owns the wave-start gate. Keep the world live so the player
@@ -226,6 +256,9 @@ export class WavesRegion extends ColosseumRegion {
 
     if (this.wavePhase !== "countdown") return;
     this.waveSpawnTicks--;
+    if (this.waveSpawnTicks === 1) {
+      this.spawnEligibilityPlayerLocation = { ...this.players[0].location };
+    }
     if (this.waveSpawnTicks > 0) return;
 
     const player = this.players[0];
@@ -237,11 +270,35 @@ export class WavesRegion extends ColosseumRegion {
       ...this.waveMobPool.manticore.slice(0, composition.manticore),
       ...this.waveMobPool.shockwave.slice(0, composition.shockwave),
     ];
-    waveMobs.forEach((mob) => {
+
+    const randomizedMobs = shuffle(waveMobs);
+    const eligibilityPlayerLocation = this.spawnEligibilityPlayerLocation ?? player.location;
+    const eligibleSpawns = COLOSSEUM_SPAWN_POINTS.filter(
+      (spawn) => !isWithinTiles(spawn, eligibilityPlayerLocation, 4),
+    );
+    const forceDoubleSouth = colosseumSettings.getSnapshot().forceDoubleSouth;
+    const forcedSpawns = forceDoubleSouth
+      ? [SOUTHERNMOST_SPAWN, SOUTHERN_TOP_LEFT_SPAWN].slice(0, randomizedMobs.length)
+      : [];
+    const remainingSpawns = shuffle(eligibleSpawns.filter(
+      (spawn) => !forcedSpawns.some((forced) => sameLocation(spawn, forced)),
+    ));
+    const allocatedSpawns = [...forcedSpawns, ...remainingSpawns];
+    if (allocatedSpawns.length < randomizedMobs.length) {
+      throw new Error("Not enough eligible Colosseum spawn points for this wave");
+    }
+
+    randomizedMobs.forEach((mob, index) => mob.setLocation(allocatedSpawns[index]));
+
+    // NPC_INFO.id in osrs-colosseum defines server processing order. Location
+    // allocation is random, but insertion into the Region must retain it.
+    randomizedMobs.sort((first, second) => npcOrder(first) - npcOrder(second));
+    randomizedMobs.forEach((mob) => {
       if (aggressive) mob.setAggro(player);
       this.addMob(mob);
     });
     this.pendingMobs = [];
+    this.spawnEligibilityPlayerLocation = null;
     this.wavePhase = "active";
   }
 
