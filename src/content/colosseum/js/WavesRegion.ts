@@ -10,10 +10,25 @@ import {
   JavelinColossus,
   LineOfSightPillar1x1,
   LineOfSightPillar3x3,
-  Minotaur,
   SerpentShaman,
   ShockwaveColossus,
 } from "./mobs";
+
+export const WAVE_COMPOSITIONS = {
+  1: { shaman: 1, javelin: 0, manticore: 0, shockwave: 0 },
+  2: { shaman: 1, javelin: 1, manticore: 0, shockwave: 0 },
+  3: { shaman: 1, javelin: 2, manticore: 0, shockwave: 0 },
+  4: { shaman: 1, javelin: 0, manticore: 1, shockwave: 0 },
+  5: { shaman: 1, javelin: 1, manticore: 1, shockwave: 0 },
+  6: { shaman: 1, javelin: 2, manticore: 1, shockwave: 0 },
+  7: { shaman: 0, javelin: 1, manticore: 1, shockwave: 1 },
+  8: { shaman: 0, javelin: 2, manticore: 1, shockwave: 1 },
+  9: { shaman: 0, javelin: 1, manticore: 2, shockwave: 0 },
+  10: { shaman: 0, javelin: 2, manticore: 2, shockwave: 0 },
+  11: { shaman: 0, javelin: 1, manticore: 2, shockwave: 1 },
+} as const;
+
+export type WaveNumber = keyof typeof WAVE_COMPOSITIONS;
 
 // Perimeter tiles derived from osrs-colosseum's blockedTileRanges. Only the
 // inaccessible tiles bordering an accessible tile are retained. Coordinates
@@ -85,6 +100,10 @@ export const COLOSSEUM_SPAWN_POINTS = [
 /** Visual sandbox for the NPCs used by ordinary Colosseum waves. */
 export class WavesRegion extends ColosseumRegion {
   private pendingMobs: Mob[] = [];
+  private waveMobPool: Record<"shaman" | "javelin" | "manticore" | "shockwave", Mob[]> = {
+    shaman: [], javelin: [], manticore: [], shockwave: [],
+  };
+  private selectedWave: WaveNumber;
   private wavePhase: "waiting" | "countdown" | "active" = "waiting";
   private waveStartRequested = false;
   private waveSpawnTicks = 0;
@@ -92,6 +111,7 @@ export class WavesRegion extends ColosseumRegion {
 
   constructor(loadouts: Loadout[] = [colosseumLoadout]) {
     super(loadouts);
+    this.selectedWave = colosseumSettings.getSnapshot().waveNumber as WaveNumber;
   }
 
   override getName() {
@@ -105,13 +125,23 @@ export class WavesRegion extends ColosseumRegion {
     const mobOptions = {
       cooldown: 3,
     };
+    this.waveMobPool = {
+      shaman: [new SerpentShaman(this, { x: 23, y: 30 }, mobOptions)],
+      javelin: [
+        new JavelinColossus(this, { x: 20, y: 30 }, mobOptions),
+        new JavelinColossus(this, { x: 29, y: 24 }, mobOptions),
+      ],
+      manticore: [
+        new Manticore(this, { x: 21, y: 24 }, mobOptions),
+        new Manticore(this, { x: 29, y: 19 }, mobOptions),
+      ],
+      shockwave: [new ShockwaveColossus(this, { x: 29, y: 32 }, mobOptions)],
+    };
     this.pendingMobs = [
-      new Manticore(this, { x: 21, y: 24 }, mobOptions),
-      new Manticore(this, { x: 29, y: 19 }, mobOptions),
-      new Minotaur(this, { x: 29, y: 24 }, mobOptions),
-      new SerpentShaman(this, { x: 23, y: 30 }, mobOptions),
-      new JavelinColossus(this, { x: 20, y: 30 }, mobOptions),
-      new ShockwaveColossus(this, { x: 29, y: 32 }, mobOptions),
+      ...this.waveMobPool.shaman,
+      ...this.waveMobPool.javelin,
+      ...this.waveMobPool.manticore,
+      ...this.waveMobPool.shockwave,
     ];
 
     // A 3x3 NPC is anchored at its southwest tile, one tile southwest of
@@ -165,6 +195,15 @@ export class WavesRegion extends ColosseumRegion {
 
   readonly isWaveStartModalOpen = () => this.wavePhase === "waiting";
 
+  readonly getSelectedWave = () => this.selectedWave;
+
+  setSelectedWave(wave: WaveNumber) {
+    if (this.wavePhase !== "waiting" || wave === this.selectedWave) return;
+    this.selectedWave = wave;
+    colosseumSettings.set({ waveNumber: wave });
+    this.notifyWaveStateChanged();
+  }
+
   override postTick() {
     if (this.wavePhase === "waiting" && this.waveStartRequested) {
       // postTick is a server-tick boundary: close the modal here, then count
@@ -191,7 +230,14 @@ export class WavesRegion extends ColosseumRegion {
 
     const player = this.players[0];
     const aggressive = colosseumSettings.getSnapshot().npcsAggressive;
-    this.pendingMobs.forEach((mob) => {
+    const composition = WAVE_COMPOSITIONS[this.selectedWave];
+    const waveMobs = [
+      ...this.waveMobPool.shaman.slice(0, composition.shaman),
+      ...this.waveMobPool.javelin.slice(0, composition.javelin),
+      ...this.waveMobPool.manticore.slice(0, composition.manticore),
+      ...this.waveMobPool.shockwave.slice(0, composition.shockwave),
+    ];
+    waveMobs.forEach((mob) => {
       if (aggressive) mob.setAggro(player);
       this.addMob(mob);
     });

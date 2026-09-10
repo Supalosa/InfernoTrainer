@@ -14,7 +14,7 @@ import {
 } from "osrs-sdk";
 import { DefaultSidebar, GameOverlay, LoadoutManager, Modal, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
-import { WavesRegion } from "./content/colosseum/js/WavesRegion";
+import { WAVE_COMPOSITIONS, WaveNumber, WavesRegion } from "./content/colosseum/js/WavesRegion";
 import { COLOSSEUM_ASSETS } from "./assets";
 import { colosseumLoadout } from "./content/colosseum/js/ColosseumLoadout";
 import {
@@ -105,7 +105,7 @@ function createTrainer() {
 
 type AttackSetting = Exclude<
   keyof ColosseumSettingsState,
-  "npcsAggressive" | "showSolarFlareTiles" | "solarFlareLevel"
+  "npcsAggressive" | "waveNumber" | "showSolarFlareTiles" | "solarFlareLevel"
 >;
 
 function AttackCheckbox({ label, setting }: { label: string; setting: AttackSetting }) {
@@ -159,11 +159,39 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
     region.isWaveStartModalOpen,
     region.isWaveStartModalOpen,
   );
+  const selectedWave = useSyncExternalStore(
+    region.subscribeWaveState,
+    region.getSelectedWave,
+    region.getSelectedWave,
+  );
+
+  const waveLabels: Record<WaveNumber, string> = {
+    1: "Shaman",
+    2: "Shaman, Javelin",
+    3: "Shaman, 2x Javelin",
+    4: "Shaman, Manticore",
+    5: "Shaman, Javelin, Manticore",
+    6: "Shaman, 2x Javelin, Manticore",
+    7: "Javelin, Manticore, Shockwave",
+    8: "2x Javelin, Manticore, Shockwave",
+    9: "Javelin, 2x Manticore",
+    10: "2x Javelin, 2x Manticore",
+    11: "Javelin, 2x Manticore, Shockwave",
+  };
 
   return (
     <Modal blocking={false} open={open} aria-label="Start wave">
       <div style={{ background: "#111", border: "1px solid #ffff00", padding: 20, width: 240 }}>
-        <p style={{ marginTop: 0, textAlign: "center" }}>Ready to start the wave?</p>
+        <p style={{ marginTop: 0, textAlign: "center" }}>Frems aren't implemented and I probably won't</p>
+        <select
+          aria-label="Wave"
+          value={selectedWave}
+          onChange={(event) => region.setSelectedWave(Number(event.currentTarget.value) as WaveNumber)}
+        >
+          {(Object.keys(WAVE_COMPOSITIONS) as unknown as WaveNumber[]).map((wave) => (
+            <option key={wave} value={wave}>Wave {wave} — {waveLabels[wave]}</option>
+          ))}
+        </select>
         <button
           type="button"
           onClick={() => region.requestWaveStart()}
