@@ -10,6 +10,7 @@ import {
 } from "osrs-sdk";
 import { DefaultSidebar, GameOverlay, LoadoutManager, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
+import { WavesRegion } from "./content/colosseum/js/WavesRegion";
 import { colosseumLoadout } from "./content/colosseum/js/ColosseumLoadout";
 import {
   colosseumSettings,
@@ -90,6 +91,7 @@ function createTrainer() {
 
   const regions: Record<string, Region> = {
     "colosseum.html": new ColosseumRegion(loadoutTemplates),
+    "waves.html": new WavesRegion(loadoutTemplates),
   };
   const regionName = window.location.pathname.split("/").pop() ?? "colosseum.html";
   const region = regions[regionName] ?? regions["colosseum.html"];

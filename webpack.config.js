@@ -44,6 +44,7 @@ const config = {
         { from: "public/osrs-assets", to: "osrs-assets", noErrorOnMissing: true },
         { from: `index.html`, to: "", context: `src/` },
         { from: `index.html`, to: "colosseum.html", context: `src/` },
+        { from: `index.html`, to: "waves.html", context: `src/` },
         { from: `manifest.json`, to: "", context: `src/` },
         {
           from: `assets/images/webappicon.png`,
