@@ -105,7 +105,7 @@ function createTrainer() {
 
 type AttackSetting = Exclude<
   keyof ColosseumSettingsState,
-  "npcsAggressive" | "waveNumber" | "showSolarFlareTiles" | "solarFlareLevel"
+  "forceDoubleSouth" | "npcsAggressive" | "waveNumber" | "showSolarFlareTiles" | "solarFlareLevel"
 >;
 
 function AttackCheckbox({ label, setting }: { label: string; setting: AttackSetting }) {
@@ -154,6 +154,7 @@ function WavesSidebar() {
 }
 
 function WaveStartModal({ region }: { region: WavesRegion }) {
+  const settings = useSettingsStore(colosseumSettings);
   const open = useSyncExternalStore(
     region.subscribeWaveState,
     region.isWaveStartModalOpen,
@@ -192,6 +193,14 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
             <option key={wave} value={wave}>Wave {wave} — {waveLabels[wave]}</option>
           ))}
         </select>
+        <label>
+          <input
+            type="checkbox"
+            checked={settings.forceDoubleSouth}
+            onChange={(event) => colosseumSettings.set({ forceDoubleSouth: event.currentTarget.checked })}
+          />
+          Force double south
+        </label>
         <button
           type="button"
           onClick={() => region.requestWaveStart()}

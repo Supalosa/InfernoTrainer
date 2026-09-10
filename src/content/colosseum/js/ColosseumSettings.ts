@@ -7,6 +7,7 @@ import {
 } from "osrs-sdk";
 
 export type ColosseumSettingsState = {
+  forceDoubleSouth: boolean;
   npcsAggressive: boolean;
   waveNumber: number;
   showSolarFlareTiles: boolean;
@@ -20,6 +21,7 @@ export type ColosseumSettingsState = {
 
 const STORAGE_KEY = "colosseum-trainer:settings";
 const defaults: ColosseumSettingsState = {
+  forceDoubleSouth: false,
   npcsAggressive: false,
   waveNumber: 11,
   showSolarFlareTiles: false,
@@ -50,6 +52,7 @@ const storage: SettingsStorage<ColosseumSettingsState> = {
       10,
     );
     const migrated = {
+      forceDoubleSouth: false,
       npcsAggressive: false,
       waveNumber: 11,
       showSolarFlareTiles: window.localStorage.getItem("showSolarFlareTiles") === "true",
