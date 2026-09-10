@@ -183,7 +183,11 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
   return (
     <Modal blocking={false} open={open} aria-label="Start wave">
       <div style={{ background: "#111", border: "1px solid #ffff00", padding: 20, width: 240 }}>
-        <p style={{ marginTop: 0, textAlign: "center" }}>Frems aren't implemented and I probably won't</p>
+        <h2 style={{ marginTop: 0, textAlign: "center" }}>Secret double south trainer</h2>
+        <p style={{ marginTop: 0, textAlign: "center" }}>
+          I threw this together very quickly. Frems, javelin toss,
+          reinforcements aren't implemented and I probably won't
+        </p>
         <select
           aria-label="Wave"
           value={selectedWave}
