@@ -779,7 +779,7 @@ export class SolHeredit extends Mob {
             this,
             this.aggro,
             "stab",
-            { hidden: true, setDelay: 0 },
+            { visuals: { hidden: true }, setDelay: 0 },
           ),
         );
         EquipmentControls?.instance.resetEquipmentInteractions();
@@ -837,7 +837,7 @@ export class SolHeredit extends Mob {
         this,
         this.aggro,
         "stab",
-        { hidden: true, setDelay: 1, checkPrayerAtHit: true },
+        { visuals: { hidden: true }, setDelay: 1, checkPrayerAtHit: true },
       ),
     );
   };
@@ -997,6 +997,10 @@ export class SolHeredit extends Mob {
 
   get maxSpeed() {
     return 2;
+  }
+
+  override get canRun() {
+    return true;
   }
 
   override movementStep() {

@@ -19,6 +19,30 @@ export const COLOSSEUM_ASSETS = {
         death: 10894,
       },
     },
+    serpentShaman: {
+      id: 12811,
+      animations: {
+        attack: 10859,
+        death: 10860,
+      },
+    },
+    minotaur: {
+      id: 12812,
+      animations: {
+        defend: 10841,
+        attack: 10843,
+        heal: 10844,
+        spawn: 10845,
+        death: 10846,
+      },
+    },
+    shockwaveColossus: {
+      id: 12819,
+      animations: {
+        attack: 10903,
+        death: 10895,
+      },
+    },
     solHeredit: {
       id: 12821,
       animations: {
