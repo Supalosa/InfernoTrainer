@@ -43,7 +43,7 @@ const storage: SettingsStorage<ColosseumSettingsState> = {
       const loaded = jsonStorage.load(fallbacks);
       return {
         ...loaded,
-        waveNumber: Math.max(1, Math.min(11, Math.trunc(Number(loaded.waveNumber) || fallbacks.waveNumber))),
+        waveNumber: Math.max(1, Math.min(12, Math.trunc(Number(loaded.waveNumber) || fallbacks.waveNumber))),
       };
     }
 

@@ -178,6 +178,7 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
     9: "Javelin, 2x Manticore",
     10: "2x Javelin, 2x Manticore",
     11: "Javelin, 2x Manticore, Shockwave",
+    12: "performance test / good luck",
   };
 
   return (

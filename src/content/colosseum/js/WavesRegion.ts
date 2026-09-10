@@ -1,4 +1,4 @@
-import { cacheSound, Manticore, Player, Random, Settings, Sound, SoundCache, TileMarker, Viewport } from "osrs-sdk";
+import { cacheSound, Collision, Manticore, Pathing, Player, Random, Settings, Sound, SoundCache, TileMarker, Viewport } from "osrs-sdk";
 import type { Loadout, Mob } from "osrs-sdk";
 
 import { colosseumLoadout } from "./ColosseumLoadout";
@@ -36,6 +36,8 @@ export const WAVE_COMPOSITIONS = {
   9: { shaman: 0, javelin: 1, manticore: 2, shockwave: 0 },
   10: { shaman: 0, javelin: 2, manticore: 2, shockwave: 0 },
   11: { shaman: 0, javelin: 1, manticore: 2, shockwave: 1 },
+  // Temporary joke wave: thirty NPCs scattered throughout the arena.
+  12: { shaman: 8, javelin: 8, manticore: 7, shockwave: 7 },
 } as const;
 
 export type WaveNumber = keyof typeof WAVE_COMPOSITIONS;
@@ -176,16 +178,10 @@ export class WavesRegion extends ColosseumRegion {
       cooldown: 3,
     };
     this.waveMobPool = {
-      shaman: [new WaveSerpentShaman(this, { x: 23, y: 30 }, mobOptions)],
-      javelin: [
-        new WaveJavelinColossus(this, { x: 20, y: 30 }, mobOptions),
-        new WaveJavelinColossus(this, { x: 29, y: 24 }, mobOptions),
-      ],
-      manticore: [
-        new WaveManticore(this, { x: 21, y: 24 }, mobOptions),
-        new WaveManticore(this, { x: 29, y: 19 }, mobOptions),
-      ],
-      shockwave: [new WaveShockwaveColossus(this, { x: 29, y: 32 }, mobOptions)],
+      shaman: Array.from({ length: 8 }, () => new WaveSerpentShaman(this, { x: 23, y: 30 }, mobOptions)),
+      javelin: Array.from({ length: 8 }, () => new WaveJavelinColossus(this, { x: 20, y: 30 }, mobOptions)),
+      manticore: Array.from({ length: 7 }, () => new WaveManticore(this, { x: 21, y: 24 }, mobOptions)),
+      shockwave: Array.from({ length: 7 }, () => new WaveShockwaveColossus(this, { x: 29, y: 32 }, mobOptions)),
     };
     this.reinforcementMobPool = {
       jaguar: new WaveJaguarWarrior(this, { x: 25, y: 12 }, mobOptions),
@@ -313,14 +309,19 @@ export class WavesRegion extends ColosseumRegion {
     const eligibleSpawns = COLOSSEUM_SPAWN_POINTS.filter(
       (spawn) => !isWithinTiles(spawn, eligibilityPlayerLocation, 4),
     );
-    const forceDoubleSouth = colosseumSettings.getSnapshot().forceDoubleSouth;
-    const forcedSpawns = forceDoubleSouth
-      ? [SOUTH_SPAWN_1, SOUTH_SPAWN_2].slice(0, randomizedMobs.length)
-      : [];
-    const remainingSpawns = shuffle(eligibleSpawns.filter(
-      (spawn) => !forcedSpawns.some((forced) => sameLocation(spawn, forced)),
-    ));
-    const allocatedSpawns = [...forcedSpawns, ...remainingSpawns];
+    let allocatedSpawns: Array<{ x: number; y: number }>;
+    if (this.selectedWave === 12) {
+      allocatedSpawns = this.allocateJokeWaveSpawns(randomizedMobs, eligibilityPlayerLocation);
+    } else {
+      const forceDoubleSouth = colosseumSettings.getSnapshot().forceDoubleSouth;
+      const forcedSpawns = forceDoubleSouth
+        ? [SOUTH_SPAWN_1, SOUTH_SPAWN_2].slice(0, randomizedMobs.length)
+        : [];
+      const remainingSpawns = shuffle(eligibleSpawns.filter(
+        (spawn) => !forcedSpawns.some((forced) => sameLocation(spawn, forced)),
+      ));
+      allocatedSpawns = [...forcedSpawns, ...remainingSpawns];
+    }
     if (allocatedSpawns.length < randomizedMobs.length) {
       throw new Error("Not enough eligible Colosseum spawn points for this wave");
     }
@@ -379,5 +380,27 @@ export class WavesRegion extends ColosseumRegion {
       this.addMob(mob);
     });
     this.reinforcementsSpawned = true;
+  }
+
+  private allocateJokeWaveSpawns(mobs: Mob[], playerLocation: { x: number; y: number }) {
+    const allocated: Array<{ x: number; y: number; size: number }> = [];
+    return mobs.map((mob) => {
+      const candidates: Array<{ x: number; y: number }> = [];
+      for (let x = 11; x <= 40 - mob.size; x++) {
+        for (let y = 11 + mob.size; y <= 41; y++) {
+          if (!isWithinTiles({ x, y }, playerLocation, 4)
+            && Pathing.canTileBePathedTo(this, x, y, mob.size, mob)
+            && !allocated.some((other) => Collision.collisionMath(
+              x, y, mob.size, other.x, other.y, other.size,
+            ))) {
+            candidates.push({ x, y });
+          }
+        }
+      }
+      if (candidates.length === 0) throw new Error("Ran out of room for joke-wave NPCs");
+      const location = candidates[Math.floor(Random.get() * candidates.length)];
+      allocated.push({ ...location, size: mob.size });
+      return location;
+    });
   }
 }
