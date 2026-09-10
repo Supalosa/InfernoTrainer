@@ -1,17 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useSyncExternalStore } from "react";
 import {
   CacheRender,
+  cacheSound,
   ControlPanelController,
   Region,
   Settings,
+  Sound,
+  SoundCache,
   TileMarker,
   Trainer,
   TrainerInstance,
   TrainerLoadingState,
 } from "osrs-sdk";
-import { DefaultSidebar, GameOverlay, LoadoutManager, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
+import { DefaultSidebar, GameOverlay, LoadoutManager, Modal, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
 import { WavesRegion } from "./content/colosseum/js/WavesRegion";
+import { COLOSSEUM_ASSETS } from "./assets";
 import { colosseumLoadout } from "./content/colosseum/js/ColosseumLoadout";
 import {
   colosseumSettings,
@@ -149,6 +153,29 @@ function WavesSidebar() {
   );
 }
 
+function WaveStartModal({ region }: { region: WavesRegion }) {
+  const open = useSyncExternalStore(
+    region.subscribeWaveState,
+    region.isWaveStartModalOpen,
+    region.isWaveStartModalOpen,
+  );
+
+  return (
+    <Modal blocking={false} open={open} aria-label="Start wave">
+      <div style={{ background: "#111", border: "1px solid #ffff00", padding: 20, width: 240 }}>
+        <p style={{ marginTop: 0, textAlign: "center" }}>Ready to start the wave?</p>
+        <button
+          type="button"
+          onClick={() => region.requestWaveStart()}
+          onMouseEnter={() => SoundCache.play(new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.waveStartStartHover.id), 0.05))}
+        >
+          Start
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
 function BossSidebar({ region }: { region: ColosseumRegion }) {
   const settings = useSettingsStore(colosseumSettings);
   return (
@@ -242,6 +269,7 @@ export function ColosseumApp() {
       <GameOverlay>
         <div id="disclaimer_panel">Work in progress.<br />All assets are property of Jagex.</div>
         <TrainerLoadingSplash state={loading} />
+        {trainer.region instanceof WavesRegion && <WaveStartModal region={trainer.region} />}
         <LoadoutManager
           loadouts={loadoutTemplates}
           open={loadoutOpen}

@@ -1,10 +1,11 @@
-import { Manticore, Player, Settings, TileMarker } from "osrs-sdk";
-import type { Loadout } from "osrs-sdk";
+import { cacheSound, Manticore, Player, Settings, Sound, SoundCache, TileMarker, Viewport } from "osrs-sdk";
+import type { Loadout, Mob } from "osrs-sdk";
 
 import { colosseumLoadout } from "./ColosseumLoadout";
 import { ColosseumRegion } from "./ColosseumRegion";
 import { ColosseumScene } from "./ColosseumScene";
 import { colosseumSettings } from "./ColosseumSettings";
+import { COLOSSEUM_ASSETS } from "../../../assets";
 import {
   JavelinColossus,
   LineOfSightPillar1x1,
@@ -66,8 +67,29 @@ const OUTER_GATE_BLOCKERS = [
   { x: 9, y: 28 }, { x: 9, y: 29 },
 ] as const;
 
+export const COLOSSEUM_SPAWN_POINTS = [
+  { x: 13, y: 28 },
+  { x: 19, y: 26 },
+  { x: 13, y: 23 },
+  { x: 23, y: 23 },
+  { x: 29, y: 23 },
+  { x: 27, y: 18 },
+  { x: 23, y: 29 },
+  { x: 29, y: 29 },
+  { x: 26, y: 33 },
+  { x: 34, y: 25 },
+  { x: 38, y: 23 },
+  { x: 38, y: 28 },
+] as const;
+
 /** Visual sandbox for the NPCs used by ordinary Colosseum waves. */
 export class WavesRegion extends ColosseumRegion {
+  private pendingMobs: Mob[] = [];
+  private wavePhase: "waiting" | "countdown" | "active" = "waiting";
+  private waveStartRequested = false;
+  private waveSpawnTicks = 0;
+  private waveStateListeners = new Set<() => void>();
+
   constructor(loadouts: Loadout[] = [colosseumLoadout]) {
     super(loadouts);
   }
@@ -79,18 +101,18 @@ export class WavesRegion extends ColosseumRegion {
   override initialiseRegion() {
     const player = new Player(this, { x: 17, y: 24 });
     this.addPlayer(player);
-    player.freeze(this.world.getReadyTimer);
 
     const mobOptions = {
-      cooldown: 3 + 1, // 3 intended, and 1 because it gets decremented immediately on unhiding
-      ...(colosseumSettings.getSnapshot().npcsAggressive ? { aggro: player } : {}),
+      cooldown: 3,
     };
-    this.addMob(new Manticore(this, { x: 21, y: 24 }, mobOptions));
-    this.addMob(new Manticore(this, { x: 29, y: 19 }, mobOptions));
-    this.addMob(new Minotaur(this, { x: 29, y: 24 }, mobOptions));
-    this.addMob(new SerpentShaman(this, { x: 23, y: 30 }, mobOptions));
-    this.addMob(new JavelinColossus(this, { x: 20, y: 30 }, mobOptions));
-    this.addMob(new ShockwaveColossus(this, { x: 29, y: 32 }, mobOptions));
+    this.pendingMobs = [
+      new Manticore(this, { x: 21, y: 24 }, mobOptions),
+      new Manticore(this, { x: 29, y: 19 }, mobOptions),
+      new Minotaur(this, { x: 29, y: 24 }, mobOptions),
+      new SerpentShaman(this, { x: 23, y: 30 }, mobOptions),
+      new JavelinColossus(this, { x: 20, y: 30 }, mobOptions),
+      new ShockwaveColossus(this, { x: 29, y: 32 }, mobOptions),
+    ];
 
     // A 3x3 NPC is anchored at its southwest tile, one tile southwest of
     // each pillar's centre coordinate.
@@ -117,12 +139,74 @@ export class WavesRegion extends ColosseumRegion {
   }
 
   override reset(startWorld = true) {
+    this.wavePhase = "waiting";
+    this.waveStartRequested = false;
+    this.waveSpawnTicks = 0;
+    this.pendingMobs = [];
     const reset = super.reset(false);
-    // Mob.visible() and World.tickRegion() both observe this countdown, so the
-    // wave NPCs remain hidden and inactive for exactly five game ticks.
-    this.world.getReadyTimer = 5;
-    reset.player.frozen = 5;
+    // The modal owns the wave-start gate. Keep the world live so the player
+    // can move during the five ticks between modal close and NPC placement.
+    this.world.getReadyTimer = 0;
+    reset.player.frozen = 1;
+    Viewport.viewport.rotateEast();
+    this.notifyWaveStateChanged();
     if (startWorld) this.world.startTicking();
     return reset;
+  }
+
+  requestWaveStart() {
+    if (this.wavePhase === "waiting") this.waveStartRequested = true;
+  }
+
+  readonly subscribeWaveState = (listener: () => void) => {
+    this.waveStateListeners.add(listener);
+    return () => this.waveStateListeners.delete(listener);
+  };
+
+  readonly isWaveStartModalOpen = () => this.wavePhase === "waiting";
+
+  override postTick() {
+    if (this.wavePhase === "waiting" && this.waveStartRequested) {
+      // postTick is a server-tick boundary: close the modal here, then count
+      // five complete ticks before placing the NPCs into the Region.
+      this.wavePhase = "countdown";
+      this.waveStartRequested = false;
+      this.waveSpawnTicks = 5;
+      SoundCache.play(new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.waveStartAcknowledged.id), 0.1));
+      this.notifyWaveStateChanged();
+      return;
+    }
+
+    if (this.wavePhase === "waiting") {
+      // Player movement is processed before postTick. Refreshing a one-tick
+      // freeze here holds them until the server acknowledges Start, without
+      // pausing the world or preventing camera input.
+      this.players[0].freeze(1);
+      return;
+    }
+
+    if (this.wavePhase !== "countdown") return;
+    this.waveSpawnTicks--;
+    if (this.waveSpawnTicks > 0) return;
+
+    const player = this.players[0];
+    const aggressive = colosseumSettings.getSnapshot().npcsAggressive;
+    this.pendingMobs.forEach((mob) => {
+      if (aggressive) mob.setAggro(player);
+      this.addMob(mob);
+    });
+    this.pendingMobs = [];
+    this.wavePhase = "active";
+  }
+
+  override async preload() {
+    await Promise.all([
+      super.preload(),
+      ...this.pendingMobs.map((mob) => mob.preload()),
+    ]);
+  }
+
+  private notifyWaveStateChanged() {
+    this.waveStateListeners.forEach((listener) => listener());
   }
 }

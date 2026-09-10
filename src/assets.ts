@@ -85,6 +85,9 @@ export const COLOSSEUM_ASSETS = {
     laserImpact: { id: 2697 },
   },
   sounds: {
+    waveStartPrompt: { id: 2266 },
+    waveStartStartHover: { id: 7986 },
+    waveStartAcknowledged: { id: 8010 },
     solSpearStart: { id: 8147 },
     solShieldStart: { id: 8150 },
     solShieldEnd: { id: 8145 },
