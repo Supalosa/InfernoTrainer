@@ -13,6 +13,12 @@ import {
   SerpentShaman,
   ShockwaveColossus,
 } from "./mobs";
+import { withWaveSpawnPathing } from "./mobs/WaveSpawnPathing";
+
+const WaveSerpentShaman = withWaveSpawnPathing(SerpentShaman);
+const WaveJavelinColossus = withWaveSpawnPathing(JavelinColossus);
+const WaveManticore = withWaveSpawnPathing(Manticore);
+const WaveShockwaveColossus = withWaveSpawnPathing(ShockwaveColossus);
 
 export const WAVE_COMPOSITIONS = {
   1: { shaman: 1, javelin: 0, manticore: 0, shockwave: 0 },
@@ -156,16 +162,16 @@ export class WavesRegion extends ColosseumRegion {
       cooldown: 3,
     };
     this.waveMobPool = {
-      shaman: [new SerpentShaman(this, { x: 23, y: 30 }, mobOptions)],
+      shaman: [new WaveSerpentShaman(this, { x: 23, y: 30 }, mobOptions)],
       javelin: [
-        new JavelinColossus(this, { x: 20, y: 30 }, mobOptions),
-        new JavelinColossus(this, { x: 29, y: 24 }, mobOptions),
+        new WaveJavelinColossus(this, { x: 20, y: 30 }, mobOptions),
+        new WaveJavelinColossus(this, { x: 29, y: 24 }, mobOptions),
       ],
       manticore: [
-        new Manticore(this, { x: 21, y: 24 }, mobOptions),
-        new Manticore(this, { x: 29, y: 19 }, mobOptions),
+        new WaveManticore(this, { x: 21, y: 24 }, mobOptions),
+        new WaveManticore(this, { x: 29, y: 19 }, mobOptions),
       ],
-      shockwave: [new ShockwaveColossus(this, { x: 29, y: 32 }, mobOptions)],
+      shockwave: [new WaveShockwaveColossus(this, { x: 29, y: 32 }, mobOptions)],
     };
     this.pendingMobs = [
       ...this.waveMobPool.shaman,
