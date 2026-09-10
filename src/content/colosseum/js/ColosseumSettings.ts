@@ -22,8 +22,8 @@ export type ColosseumSettingsState = {
 const STORAGE_KEY = "colosseum-trainer:settings";
 const defaults: ColosseumSettingsState = {
   forceDoubleSouth: false,
-  npcsAggressive: false,
-  waveNumber: 11,
+  npcsAggressive: true,
+  waveNumber: 10,
   showSolarFlareTiles: false,
   solarFlareLevel: 1,
   useGrapple: true,
@@ -43,7 +43,7 @@ const storage: SettingsStorage<ColosseumSettingsState> = {
       const loaded = jsonStorage.load(fallbacks);
       return {
         ...loaded,
-        waveNumber: Math.max(1, Math.min(11, Math.trunc(Number(loaded.waveNumber) || 11))),
+        waveNumber: Math.max(1, Math.min(11, Math.trunc(Number(loaded.waveNumber) || fallbacks.waveNumber))),
       };
     }
 
@@ -53,8 +53,8 @@ const storage: SettingsStorage<ColosseumSettingsState> = {
     );
     const migrated = {
       forceDoubleSouth: false,
-      npcsAggressive: false,
-      waveNumber: 11,
+      npcsAggressive: true,
+      waveNumber: 10,
       showSolarFlareTiles: window.localStorage.getItem("showSolarFlareTiles") === "true",
       solarFlareLevel: Number.isFinite(legacySolarFlareLevel)
         ? legacySolarFlareLevel
