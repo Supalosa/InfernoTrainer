@@ -52,12 +52,12 @@ export class JavelinColossus extends Mob {
       }),
     };
     this.stats = {
-      attack: 220,
-      strength: 200,
-      defence: 300,
-      range: 190,
+      attack: 200,
+      strength: 300,
+      defence: 190,
+      range: 360,
       magic: 225,
-      hitpoint: 360,
+      hitpoint: 220,
     };
     this.currentStats = JSON.parse(JSON.stringify(this.stats));
   }

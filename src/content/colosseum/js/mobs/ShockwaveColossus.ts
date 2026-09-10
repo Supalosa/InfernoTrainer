@@ -46,10 +46,10 @@ export class ShockwaveColossus extends Mob {
       }),
     };
     this.stats = {
-      attack: 1,
-      strength: 1,
+      attack: 120,
+      strength: 190,
       defence: 150,
-      range: 1,
+      range: 220,
       magic: 350,
       hitpoint: 125,
     };
@@ -58,9 +58,9 @@ export class ShockwaveColossus extends Mob {
 
   override get bonuses(): UnitBonuses {
     return {
-      attack: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
-      defence: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
-      other: { meleeStrength: 0, rangedStrength: 0, magicDamage: 1, prayer: 0 },
+      attack: { stab: 0, slash: 0, crush: 0, magic: 55, range: 0 },
+      defence: { stab: 15, slash: 15, crush: 15, magic: 5, range: 35 },
+      other: { meleeStrength: 0, rangedStrength: 0, magicDamage: 1.35, prayer: 0 },
     };
   }
 
@@ -81,7 +81,9 @@ export class ShockwaveColossus extends Mob {
   }
 
   override magicMaxHit() {
-    return 56;
+    // Base damage 42 with the infobox's 35% magic-strength bonus yields the
+    // canonical final max hit of floor(42 * 1.35) = 56.
+    return 42;
   }
 
   override get idlePoseId() {

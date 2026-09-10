@@ -34,10 +34,10 @@ export class SerpentShaman extends Mob {
       }),
     };
     this.stats = {
-      attack: 1,
-      strength: 1,
+      attack: 100,
+      strength: 90,
       defence: 90,
-      range: 1,
+      range: 160,
       magic: 220,
       hitpoint: 125,
     };
@@ -46,9 +46,9 @@ export class SerpentShaman extends Mob {
 
   override get bonuses(): UnitBonuses {
     return {
-      attack: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
-      defence: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
-      other: { meleeStrength: 0, rangedStrength: 0, magicDamage: 1, prayer: 0 },
+      attack: { stab: 0, slash: 0, crush: 0, magic: 50, range: 0 },
+      defence: { stab: 30, slash: 30, crush: 30, magic: 15, range: 50 },
+      other: { meleeStrength: 0, rangedStrength: 0, magicDamage: 1.15, prayer: 0 },
     };
   }
 
@@ -65,7 +65,8 @@ export class SerpentShaman extends Mob {
   }
 
   override magicMaxHit() {
-    return 27;
+    // Base damage 25 with the 15% magic-strength bonus yields max hit 28.
+    return 25;
   }
 
   override get idlePoseId() {

@@ -30,10 +30,10 @@ export class JaguarWarrior extends Mob {
   override setStats() {
     this.weapons = { slash: new MeleeWeapon() };
     this.stats = {
-      attack: 125,
-      strength: 125,
+      attack: 200,
+      strength: 330,
       defence: 125,
-      range: 1,
+      range: 160,
       magic: 100,
       hitpoint: 125,
     };
@@ -42,9 +42,9 @@ export class JaguarWarrior extends Mob {
 
   override get bonuses(): UnitBonuses {
     return {
-      attack: { stab: 0, slash: 100, crush: 0, magic: 0, range: 0 },
-      defence: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
-      other: { meleeStrength: 160, rangedStrength: 0, magicDamage: 1, prayer: 0 },
+      attack: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
+      defence: { stab: 30, slash: 30, crush: 30, magic: 15, range: 45 },
+      other: { meleeStrength: 25, rangedStrength: 0, magicDamage: 1, prayer: 0 },
     };
   }
 

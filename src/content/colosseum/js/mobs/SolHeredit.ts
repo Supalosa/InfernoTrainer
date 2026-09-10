@@ -258,7 +258,7 @@ export class SolHeredit extends Mob {
         stab: 250,
         slash: 0,
         crush: 0,
-        magic: 80,
+        magic: 0,
         range: 150,
       },
       defence: {
@@ -269,7 +269,7 @@ export class SolHeredit extends Mob {
         range: 825,
       },
       other: {
-        meleeStrength: 0,
+        meleeStrength: 5,
         rangedStrength: 5,
         magicDamage: 1.0,
         prayer: 0,

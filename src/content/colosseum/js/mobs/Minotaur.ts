@@ -36,9 +36,9 @@ export class Minotaur extends Mob {
     this.weapons = { crush: new MeleeWeapon({ setDelay: 2 }) };
     this.stats = {
       attack: 300,
-      strength: 300,
+      strength: 360,
       defence: 190,
-      range: 1,
+      range: 120,
       magic: 250,
       hitpoint: 225,
     };
@@ -47,9 +47,9 @@ export class Minotaur extends Mob {
 
   override get bonuses(): UnitBonuses {
     return {
-      attack: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
-      defence: { stab: 0, slash: 0, crush: 0, magic: 0, range: 0 },
-      other: { meleeStrength: 72, rangedStrength: 0, magicDamage: 1, prayer: 0 },
+      attack: { stab: 0, slash: 0, crush: 15, magic: 0, range: 0 },
+      defence: { stab: 0, slash: 0, crush: 0, magic: 0, range: 12 },
+      other: { meleeStrength: 64, rangedStrength: 0, magicDamage: 1, prayer: 0 },
     };
   }
 
