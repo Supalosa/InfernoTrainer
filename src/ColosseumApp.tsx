@@ -147,7 +147,7 @@ function WavesSidebar() {
         />
         Aggressive NPCs on wave start
       </label>
-      <button type="button" onClick={() => Trainer.reset()}>Reset wave</button>
+      <RuneScapeButton type="button" onClick={() => Trainer.reset()}>Reset wave</RuneScapeButton>
     </>
   );
 }
@@ -264,20 +264,17 @@ function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; reg
         : <BossSidebar region={region} />}
       <hr />
 
-      <a href="https://discord.gg/nryYHbvtTa">Discord</a><br />
-      <button type="button" onClick={() => setShowCredits((visible) => !visible)}>Credits</button>
-      {showCredits && <Credits />}
-      <hr />
-      <a href="https://los.colosim.com">Line-of-Sight Solver</a>
-      <a href="https://inferno.colosim.com/?wave=69">Zuk Trainer</a>
-      <a href="https://verzik.colosim.com/?">Verzik P3 Tanking Trainer</a>
-      <hr />
-
-      <button type="button" onClick={() => ControlPanelController.controller.setActiveControl("SETTINGS")}>Settings</button>
-      <button type="button" onClick={onLoadoutToggle}>Loadout</button>
       <div style={{ paddingBottom: 10, paddingTop: 10, textAlign: "center", width: "100%" }}>
         <div id="gpu_warning" />
       </div>
+      <RuneScapeButton type="button" onClick={() => window.location.assign("https://discord.gg/nryYHbvtTa")}>Discord</RuneScapeButton>
+      <RuneScapeButton type="button" onClick={() => setShowCredits((visible) => !visible)}>Credits</RuneScapeButton>
+      {showCredits && <Credits />}
+      <hr />
+      <RuneScapeButton type="button" onClick={() => window.location.assign("https://los.colosim.com")}>Line-of-Sight Solver</RuneScapeButton>
+      <hr />
+      <RuneScapeButton type="button" onClick={() => ControlPanelController.controller.setActiveControl("SETTINGS")}>Settings</RuneScapeButton>
+      <RuneScapeButton type="button" onClick={onLoadoutToggle}>Loadout</RuneScapeButton>
     </div>
   );
 }
