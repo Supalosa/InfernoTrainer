@@ -7,12 +7,11 @@ import {
   Settings,
   Sound,
   SoundCache,
-  TileMarker,
   Trainer,
   TrainerInstance,
   TrainerLoadingState,
 } from "osrs-sdk";
-import { DefaultSidebar, GameOverlay, LoadoutManager, Modal, RuneScapeButton, RuneScapePanel, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
+import { DefaultSidebar, GameOverlay, LoadoutManager, Modal, RuneScapeButton, RuneScapePanel, TrainerApp, TrainerLoadingSplash, useSettingsStore } from "osrs-sdk-react";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
 import { WAVE_COMPOSITIONS, WaveNumber, WavesRegion } from "./content/colosseum/js/WavesRegion";
 import { COLOSSEUM_ASSETS } from "./assets";
@@ -256,7 +255,6 @@ function BossSidebar({ region }: { region: ColosseumRegion }) {
 }
 
 function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; region: ColosseumRegion }) {
-  const settings = useSettingsSnapshot();
   const [showCredits, setShowCredits] = useState(false);
 
   return (
@@ -277,20 +275,6 @@ function Sidebar({ onLoadoutToggle, region }: { onLoadoutToggle: () => void; reg
 
       <button type="button" onClick={() => ControlPanelController.controller.setActiveControl("SETTINGS")}>Settings</button>
       <button type="button" onClick={onLoadoutToggle}>Loadout</button>
-      <hr />
-      <span>More settings:</span>
-      <div>
-        <input
-          id="tileMarkerColor"
-          type="color"
-          value={settings.tileMarkerColor}
-          onChange={(event) => {
-            Settings.set({ tileMarkerColor: event.currentTarget.value });
-            TileMarker.onSetColor(event.currentTarget.value);
-          }}
-        />
-        <label htmlFor="tileMarkerColor">Tile Markers</label>
-      </div>
       <div style={{ paddingBottom: 10, paddingTop: 10, textAlign: "center", width: "100%" }}>
         <div id="gpu_warning" />
       </div>
