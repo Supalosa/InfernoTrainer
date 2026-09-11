@@ -166,17 +166,17 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
   );
 
   const waveLabels: Record<WaveNumber, string> = {
-    1: "Shaman",
-    2: "Shaman, Javelin",
-    3: "Shaman, 2x Javelin",
-    4: "Shaman, Manticore",
-    5: "Shaman, Javelin, Manticore",
-    6: "Shaman, 2x Javelin, Manticore",
-    7: "Javelin, Manticore, Shockwave",
-    8: "2x Javelin, Manticore, Shockwave",
-    9: "Javelin, 2x Manticore",
-    10: "2x Javelin, 2x Manticore",
-    11: "Javelin, 2x Manticore, Shockwave",
+    1: "Warband, Shaman",
+    2: "Warband, Shaman, Javelin",
+    3: "Warband, Shaman, 2x Javelin",
+    4: "Warband, Shaman, Manticore",
+    5: "Warband, Shaman, Javelin, Manticore",
+    6: "Warband, Shaman, 2x Javelin, Manticore",
+    7: "Warband, Javelin, Manticore, Shockwave",
+    8: "Warband, 2x Javelin, Manticore, Shockwave",
+    9: "Warband, Javelin, 2x Manticore",
+    10: "Warband, 2x Javelin, 2x Manticore",
+    11: "Warband, Javelin, 2x Manticore, Shockwave",
     12: "performance test / good luck",
   };
 
@@ -185,8 +185,8 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
       <RuneScapePanel style={{ width: 280 }}>
         <h2 style={{ marginTop: 0, textAlign: "center" }}>Secret double south trainer</h2>
         <p style={{ marginTop: 0, textAlign: "center" }}>
-          I threw this together very quickly. Frems, javelin toss,
-          reinforcements aren't implemented and I probably won't
+          Wave starts include the Fremennik warband and timed reinforcements.
+          Javelin toss is not implemented yet.
         </p>
         <select
           aria-label="Wave"

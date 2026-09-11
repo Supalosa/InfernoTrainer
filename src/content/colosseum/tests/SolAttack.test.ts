@@ -3,6 +3,10 @@ import "../../../../test/setupFiles";
 import { DelayedAction, EquipmentControls, EquipmentTypes, Player, Random, Settings, TestRegion, Viewport, World } from "osrs-sdk";
 import { Attacks, SolHeredit } from "../js/mobs/SolHeredit";
 
+type SolGrappleTestAccess = {
+  attackGrapple(): number;
+  grappleParryMessage: string | null;
+};
 
 // sol heredit movement tests
 describe("sol heredit attacks", () => {
@@ -19,6 +23,7 @@ describe("sol heredit attacks", () => {
     region.world = world;
     world.addRegion(region);
     Viewport.setupViewport(region, document.createElement("canvas"), document.createElement("div"), true);
+    Viewport.viewport.tick = jest.fn();
     player = new Player(region, { x: 15, y: 15 });
     boss = new SolHeredit(region, { x: 13, y: 20 }, { aggro: player });
     boss.stunned = 0;
@@ -271,15 +276,19 @@ describe("sol heredit attacks", () => {
     });
 
     test("check a final-two-tick grapple parry grants max damage rolls for the next attack", () => {
-      boss.setAggro(player);
-      region.addMob(boss);
-      boss.forceAttack = Attacks.GRAPPLE;
-      world.tickWorld();
+      // Start the grapple directly so this test isolates the parry reward from
+      // Sol's movement and special-attack selection prerequisites.
+      world.globalTickCounter = 1;
+      const grapple = boss as unknown as SolGrappleTestAccess;
+      grapple.attackGrapple();
+      DelayedAction.afterNpcTick();
+      DelayedAction.tick();
       world.tickWorld(3);
       Object.values(EquipmentTypes).forEach((slot) => EquipmentControls.instance.equipmentInteractions[0](slot));
+      expect(grapple.grappleParryMessage).toBe("You perfectly parry Sol Heredit's grapple!");
       world.tickWorld();
 
-      expect(player.forceMaxDamageRollsOnNextAttack).toBe(true);
+      expect(boss.forceMaxDamageRollsOnNextIncomingAttack).toBe(true);
     });
   });
 });

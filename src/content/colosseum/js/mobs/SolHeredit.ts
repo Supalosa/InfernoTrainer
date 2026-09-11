@@ -769,7 +769,7 @@ export class SolHeredit extends Mob {
     DelayedAction.registerDelayedNpcAction(
       new DelayedAction(() => {
         if (didPerfectParry) {
-          this.aggro?.grantMaxDamageRollsOnNextAttack();
+          this.grantMaxDamageRollsOnNextIncomingAttack();
         }
         // queue damage to be played this tick (remember NPCs take turn before enemy)
         this.aggro?.addProjectile(

@@ -7,6 +7,9 @@ import { ColosseumScene } from "./ColosseumScene";
 import { colosseumSettings } from "./ColosseumSettings";
 import { COLOSSEUM_ASSETS } from "../../../assets";
 import {
+  FremennikWarbandArcher,
+  FremennikWarbandBerserker,
+  FremennikWarbandSeer,
   JavelinColossus,
   JaguarWarrior,
   LineOfSightPillar1x1,
@@ -114,6 +117,8 @@ export const COLOSSEUM_SPAWN_POINTS = [
 const SOUTH_SPAWN_1 = { x: 26, y: 33 } as const;
 const SOUTH_SPAWN_2 = { x: 23, y: 29 } as const;
 const REINFORCEMENT_DELAY_TICKS = 67;
+const FREMENNIK_ARCHER_SPAWN_TOP_LEFT = { x: 22, y: 21 } as const;
+const FREMENNIK_ARCHER_SPAWN_SIZE = 7;
 const REINFORCEMENT_START_X = 25;
 const NORTH_REINFORCEMENT_Y = 12;
 // This is the scene-debug coordinate observed for the south reinforcement row.
@@ -153,6 +158,11 @@ export class WavesRegion extends ColosseumRegion {
     shaman: [], javelin: [], manticore: [], shockwave: [],
   };
   private selectedWave: WaveNumber;
+  private fremennikWarbandPool: {
+    archer: FremennikWarbandArcher;
+    seer: FremennikWarbandSeer;
+    berserker: FremennikWarbandBerserker;
+  } | null = null;
   private reinforcementMobPool: { jaguar: Mob; minotaur: Mob; shaman: Mob } | null = null;
   private reinforcementTicks = 0;
   private reinforcementsSpawned = false;
@@ -184,6 +194,11 @@ export class WavesRegion extends ColosseumRegion {
       manticore: Array.from({ length: 7 }, () => new WaveManticore(this, { x: 21, y: 24 }, mobOptions)),
       shockwave: Array.from({ length: 7 }, () => new WaveShockwaveColossus(this, { x: 29, y: 32 }, mobOptions)),
     };
+    this.fremennikWarbandPool = {
+      berserker: new FremennikWarbandBerserker(this, { x: 23, y: 20 }, { cooldown: 3 }),
+      seer: new FremennikWarbandSeer(this, { x: 24, y: 21 }, { cooldown: 4 }),
+      archer: new FremennikWarbandArcher(this, { x: 22, y: 21 }, { cooldown: 5 }),
+    };
     this.reinforcementMobPool = {
       jaguar: new WaveJaguarWarrior(this, { x: 25, y: 12 }, mobOptions),
       minotaur: new WaveMinotaur(this, { x: 25, y: 12 }, mobOptions),
@@ -194,6 +209,7 @@ export class WavesRegion extends ColosseumRegion {
       ...this.waveMobPool.javelin,
       ...this.waveMobPool.manticore,
       ...this.waveMobPool.shockwave,
+      ...Object.values(this.fremennikWarbandPool),
       ...Object.values(this.reinforcementMobPool),
     ];
 
@@ -227,6 +243,7 @@ export class WavesRegion extends ColosseumRegion {
     this.waveSpawnTicks = 0;
     this.spawnEligibilityPlayerLocation = null;
     this.reinforcementMobPool = null;
+    this.fremennikWarbandPool = null;
     this.reinforcementTicks = 0;
     this.reinforcementsSpawned = false;
     this.pendingMobs = [];
@@ -332,6 +349,7 @@ export class WavesRegion extends ColosseumRegion {
     // NPC_INFO.id in osrs-colosseum defines server processing order. Location
     // allocation is random, but insertion into the Region must retain it.
     randomizedMobs.sort((first, second) => npcOrder(first) - npcOrder(second));
+    if (this.selectedWave !== 12) this.spawnFremennikWarband(player, aggressive);
     randomizedMobs.forEach((mob) => {
       if (aggressive) mob.setAggro(player);
       this.addMob(mob);
@@ -382,6 +400,26 @@ export class WavesRegion extends ColosseumRegion {
       if (mob instanceof Minotaur) mob.playAnimation(MinotaurAnimations.Spawn);
     });
     this.reinforcementsSpawned = true;
+  }
+
+  private spawnFremennikWarband(player: Player, aggressive: boolean) {
+    const pool = this.fremennikWarbandPool;
+    if (!pool) return;
+
+    const archerLocation = {
+      x: FREMENNIK_ARCHER_SPAWN_TOP_LEFT.x + Math.floor(Random.get() * FREMENNIK_ARCHER_SPAWN_SIZE),
+      y: FREMENNIK_ARCHER_SPAWN_TOP_LEFT.y + Math.floor(Random.get() * FREMENNIK_ARCHER_SPAWN_SIZE),
+    };
+    pool.archer.setLocation(archerLocation);
+    pool.seer.setLocation({ x: archerLocation.x + 2, y: archerLocation.y });
+    pool.berserker.setLocation({ x: archerLocation.x + 1, y: archerLocation.y - 1 });
+
+    // This is also their observed server-index order. Their attack phases are
+    // independently fixed at spawn +3, +4 and +5 ticks.
+    [pool.berserker, pool.archer, pool.seer].forEach((mob) => {
+      if (aggressive) mob.setAggro(player);
+      this.addMob(mob);
+    });
   }
 
   private allocateJokeWaveSpawns(mobs: Mob[], playerLocation: { x: number; y: number }) {

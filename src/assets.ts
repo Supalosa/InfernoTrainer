@@ -3,6 +3,18 @@ import type { CacheAssets } from "osrs-sdk/asset-manifest";
 /** Colosseum requirements shared by gameplay and the asset builder. */
 export const COLOSSEUM_ASSETS = {
   npcs: {
+    fremennikWarbandArcher: {
+      id: 12814,
+      animations: { attack: 10850, defend: 10851, death: 10852 },
+    },
+    fremennikWarbandSeer: {
+      id: 12815,
+      animations: { attack: 10853, defend: 10854, death: 10855 },
+    },
+    fremennikWarbandBerserker: {
+      id: 12816,
+      animations: { attack: 10856, defend: 10857, death: 10858 },
+    },
     jaguarWarrior: {
       id: 12810,
       animations: {
@@ -72,6 +84,8 @@ export const COLOSSEUM_ASSETS = {
     solWallB: { id: 50964, animations: { idle: 7508 } },
   },
   spotAnims: {
+    fremennikArcherProjectile: { id: 9 },
+    fremennikSeerProjectile: { id: 130 },
     shockwaveColossusProjectile: { id: 1341 },
     serpentShamanProjectile: { id: 1459 },
     javelinColossusProjectile: { id: 2673 },

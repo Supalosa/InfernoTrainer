@@ -16,8 +16,21 @@ global.OffscreenCanvas = jest.fn().mockImplementation((width: number, height: nu
 });
 
 global.fetch = jest.fn().mockImplementation(() => ({
-  arrayBuffer: () => null,
+  arrayBuffer: () => new ArrayBuffer(0),
 }));
+
+Object.defineProperty(globalThis, "ResizeObserver", {
+  configurable: true,
+  value: class ResizeObserverMock {
+    constructor(private readonly callback: (entries: Array<{ contentRect: { width: number; height: number } }>) => void) {}
+
+    observe() {
+      this.callback([{ contentRect: { width: window.innerWidth, height: window.innerHeight } }]);
+    }
+
+    disconnect() {}
+  },
+});
 
 jest.mock("osrs-sdk", () => {
   const originalModule = jest.requireActual<typeof import("osrs-sdk")>(
@@ -74,3 +87,5 @@ Random.setRandom(() => {
 
 Settings.readFromStorage();
 */
+
+jest.requireMock<typeof import("osrs-sdk")>("osrs-sdk").Settings.readFromStorage();
