@@ -12,7 +12,7 @@ import {
   TrainerInstance,
   TrainerLoadingState,
 } from "osrs-sdk";
-import { DefaultSidebar, GameOverlay, LoadoutManager, Modal, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
+import { DefaultSidebar, GameOverlay, LoadoutManager, Modal, RuneScapeButton, RuneScapePanel, TrainerApp, TrainerLoadingSplash, useSettingsSnapshot, useSettingsStore } from "osrs-sdk-react";
 import { ColosseumRegion } from "./content/colosseum/js/ColosseumRegion";
 import { WAVE_COMPOSITIONS, WaveNumber, WavesRegion } from "./content/colosseum/js/WavesRegion";
 import { COLOSSEUM_ASSETS } from "./assets";
@@ -183,7 +183,7 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
 
   return (
     <Modal blocking={false} open={open} aria-label="Start wave">
-      <div style={{ background: "#111", border: "1px solid #ffff00", padding: 20, width: 240 }}>
+      <RuneScapePanel style={{ width: 280 }}>
         <h2 style={{ marginTop: 0, textAlign: "center" }}>Secret double south trainer</h2>
         <p style={{ marginTop: 0, textAlign: "center" }}>
           I threw this together very quickly. Frems, javelin toss,
@@ -206,14 +206,14 @@ function WaveStartModal({ region }: { region: WavesRegion }) {
           />
           Force double south
         </label>
-        <button
+        <RuneScapeButton
           type="button"
           onClick={() => region.requestWaveStart()}
           onMouseEnter={() => SoundCache.play(new Sound(cacheSound(COLOSSEUM_ASSETS.sounds.waveStartStartHover.id), 0.05))}
         >
           Start
-        </button>
-      </div>
+        </RuneScapeButton>
+      </RuneScapePanel>
     </Modal>
   );
 }
@@ -303,6 +303,8 @@ export function ColosseumApp() {
   const [loading, setLoading] = useState<TrainerLoadingState>();
   const [loadoutOpen, setLoadoutOpen] = useState(false);
 
+  const isLoaded = loading?.status === "ready";
+
   return (
     <TrainerApp
       trainer={trainer}
@@ -311,7 +313,7 @@ export function ColosseumApp() {
       <GameOverlay>
         <div id="disclaimer_panel">Work in progress.<br />All assets are property of Jagex.</div>
         <TrainerLoadingSplash state={loading} />
-        {trainer.region instanceof WavesRegion && <WaveStartModal region={trainer.region} />}
+        {trainer.region instanceof WavesRegion && isLoaded && <WaveStartModal region={trainer.region} />}
         <LoadoutManager
           loadouts={loadoutTemplates}
           open={loadoutOpen}
