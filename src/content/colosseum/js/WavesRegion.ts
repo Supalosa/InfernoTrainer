@@ -12,6 +12,7 @@ import {
   LineOfSightPillar1x1,
   LineOfSightPillar3x3,
   Minotaur,
+  MinotaurAnimations,
   SerpentShaman,
   ShockwaveColossus,
 } from "./mobs";
@@ -378,6 +379,7 @@ export class WavesRegion extends ColosseumRegion {
     reinforcements.forEach((mob) => {
       if (aggressive) mob.setAggro(player);
       this.addMob(mob);
+      if (mob instanceof Minotaur) mob.playAnimation(MinotaurAnimations.Spawn);
     });
     this.reinforcementsSpawned = true;
   }
