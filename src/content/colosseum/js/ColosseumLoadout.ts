@@ -33,8 +33,8 @@ export const colosseumLoadout: Loadout = {
     CACHE_ASSETS.items.saradominBrew.id,
     CACHE_ASSETS.items.superRestore.id,
     CACHE_ASSETS.items.superRestore.id,
-    null,
-    null,
+    CACHE_ASSETS.items.eyeOfAyak.id,
+    CACHE_ASSETS.items.twistedBow.id,
     null,
     null,
     null,
@@ -56,7 +56,7 @@ export function configureColosseumPlayer(player: Player) {
   player.currentStats.defence = 99;
 
   // A fake supercombat boost.
-  for (const stat of ["attack", "strength", "defence"] as const) {
+  for (const stat of ["attack", "strength", "range", "defence"] as const) {
     const boost = Math.floor(player.stats[stat] * 0.15) + 5;
     player.currentStats[stat] = player.stats[stat] + boost;
   }
