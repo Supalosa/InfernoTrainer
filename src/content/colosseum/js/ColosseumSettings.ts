@@ -8,6 +8,7 @@ import {
 
 export type ColosseumSettingsState = {
   forceDoubleSouth: boolean;
+  myopiaLevel: number;
   npcsAggressive: boolean;
   waveNumber: number;
   showSolarFlareTiles: boolean;
@@ -22,6 +23,7 @@ export type ColosseumSettingsState = {
 const STORAGE_KEY = "colosseum-trainer:settings";
 const defaults: ColosseumSettingsState = {
   forceDoubleSouth: false,
+  myopiaLevel: 0,
   npcsAggressive: true,
   waveNumber: 10,
   showSolarFlareTiles: false,
@@ -53,6 +55,7 @@ const storage: SettingsStorage<ColosseumSettingsState> = {
     );
     const migrated = {
       forceDoubleSouth: false,
+      myopiaLevel: 0,
       npcsAggressive: true,
       waveNumber: 10,
       showSolarFlareTiles: window.localStorage.getItem("showSolarFlareTiles") === "true",

@@ -51,6 +51,13 @@ class SceneCoordinateLabel extends Entity {
   create3dModel() { return CanvasSpriteModel.forRenderable(this); }
 }
 
+class MyopicPlayer extends Player {
+  override get attackRange() {
+    const { myopiaLevel } = colosseumSettings.getSnapshot();
+    return Math.max(1, (this.equipment.weapon?.attackRange ?? 1) - 2 * myopiaLevel);
+  }
+}
+
 export class ColosseumRegion extends Region {
   constructor(loadouts: Loadout[] = [colosseumLoadout]) {
     super(loadouts);
@@ -104,7 +111,7 @@ export class ColosseumRegion extends Region {
 
   initialiseRegion() {
     // create player
-    const player = new Player(this, {
+    const player = new MyopicPlayer(this, {
       x: 27,
       y: 29,
     });
