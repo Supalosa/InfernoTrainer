@@ -2,7 +2,6 @@
 
 import { Region, Viewport, Settings, Player, CardinalDirection, ImageLoader, Trainer } from "osrs-sdk";
 
-
 import ColosseumMapImage from "../assets/images/map.png";
 
 import { ColosseumLoadout } from "./ColosseumLoadout";
@@ -48,12 +47,23 @@ export class ColosseumRegion extends Region {
   }
 
   initializeAndGetLoadoutType() {
-    const loadoutSelector = document.getElementById("loadouts") as HTMLInputElement;
+    const loadoutSelector = document.getElementById("loadouts") as HTMLSelectElement;
+    loadoutSelector.innerHTML = "";
+
+    ColosseumLoadout.availableLoadouts.forEach(({ value, label }) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      loadoutSelector.appendChild(option);
+    });
+
+    Settings.loadout = Settings.loadout || "max_melee"; // default to max_melee if not set
     loadoutSelector.value = Settings.loadout;
-    loadoutSelector.addEventListener("change", () => {
+    loadoutSelector.onchange = () => {
       Settings.loadout = loadoutSelector.value;
       Settings.persistToStorage();
-    });
+      Trainer.reset();
+    };
 
     return loadoutSelector.value;
   }
@@ -91,7 +101,8 @@ export class ColosseumRegion extends Region {
 
     this.addPlayer(player);
 
-    const loadout = new ColosseumLoadout("max_melee");
+    const loadoutType = this.initializeAndGetLoadoutType();
+    const loadout = new ColosseumLoadout(loadoutType);
     loadout.setStats(player);
     player.setUnitOptions(loadout.getLoadout());
 
