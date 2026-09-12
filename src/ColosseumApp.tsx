@@ -104,7 +104,7 @@ function createTrainer() {
 
 type AttackSetting = Exclude<
   keyof ColosseumSettingsState,
-  "forceDoubleSouth" | "npcsAggressive" | "waveNumber" | "showSolarFlareTiles" | "solarFlareLevel"
+  "forceDoubleSouth" | "myopiaLevel" | "npcsAggressive" | "waveNumber" | "showSolarFlareTiles" | "solarFlareLevel"
 >;
 
 function AttackCheckbox({ label, setting }: { label: string; setting: AttackSetting }) {
@@ -249,6 +249,18 @@ function BossSidebar({ region }: { region: ColosseumRegion }) {
         />
         Solar Flare Tiles
       </label>
+
+      <p>Myopia:</p>
+      <select
+        aria-label="Myopia"
+        value={settings.myopiaLevel}
+        onChange={(event) => colosseumSettings.set({ myopiaLevel: Number(event.currentTarget.value) })}
+      >
+        <option value={0}>None</option>
+        <option value={1}>Level 1</option>
+        <option value={2}>Level 2</option>
+        <option value={3}>Level 3</option>
+      </select>
       <br />
     </>
   );
